@@ -1803,7 +1803,7 @@ blockquote {
             <div class="about-mark">mbifê</div>
             <div class="section-heading">
               <p class="eyebrow">À propos</p>
-              <h2>Je suis Zala Aziz Farick, étudiant en 2e année d'informatique appliquée à l'IFOAD.</h2>
+              <h2>Je suis Zala Aziz Farick, étudiant en informatique à l'IFOAD.</h2>
             </div>
             <p>
               Avec mbifê, je veux créer une application de rencontre plus claire, plus humaine et plus respectueuse. Mon idée
@@ -1822,7 +1822,7 @@ blockquote {
               <p class="eyebrow">Profil</p>
               <h2>Zala Aziz Farick</h2>
               <ul class="about-list">
-                <li>Étudiant en 2e année d'informatique appliquée à l'IFOAD</li>
+                <li>Étudiant en informatique à l'IFOAD</li>
                 <li>Créateur du projet mbifê</li>
                 <li>Intéressé par les applications web, les produits numériques et l'expérience utilisateur</li>
               </ul>
@@ -1879,213 +1879,9 @@ blockquote {
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>
-const profiles = [
-  {
-    id: "naomi",
-    name: "Naomi",
-    age: 28,
-    city: "Lyon",
-    distance: 3,
-    tags: ["serious", "creative", "verified", "nearby"],
-    verified: true,
-    score: 94,
-    photo:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=85",
-    bio: "Designer d'espaces, fan de marchés le dimanche et de films qui donnent envie de débattre après.",
-    intent: "Relation sérieuse, douce, avec beaucoup de curiosité.",
-    interests: ["architecture", "jazz", "cuisine ivoirienne"],
-    traits: [
-      ["Rythme de vie", 88],
-      ["Intentions", 96],
-      ["Humour", 82],
-      ["Valeurs", 93],
-    ],
-    prompts: [
-      "Tu choisirais quel marché pour un premier café tranquille ?",
-      "Quel film t'a fait changer d'avis sur quelque chose ?",
-      "Je vote pour un débat doux autour d'un dessert. Tu prends quoi ?",
-    ],
-    dateIdeas: [
-      ["Café + expo courte", "Une heure légère pour voir si la conversation respire naturellement."],
-      ["Atelier cuisine", "Vous aimez tous les deux apprendre avec les mains et rire des ratés."],
-    ],
-  },
-  {
-    id: "sofia",
-    name: "Sofia",
-    age: 31,
-    city: "Paris",
-    distance: 8,
-    tags: ["serious", "verified"],
-    verified: true,
-    score: 89,
-    photo:
-      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1200&q=85",
-    bio: "Cheffe de projet climat, collectionne les carnets et les adresses où le thé est vraiment bon.",
-    intent: "Construire lentement, sans jeu de pouvoir.",
-    interests: ["randonnée", "lecture", "thé"],
-    traits: [
-      ["Rythme de vie", 80],
-      ["Intentions", 92],
-      ["Humour", 76],
-      ["Valeurs", 97],
-    ],
-    prompts: [
-      "Quel endroit calme à Paris mérite plus d'amour ?",
-      "Tu préfères une grande randonnée ou une longue conversation ?",
-      "Quel livre tu offrirais à quelqu'un que tu veux mieux connaître ?",
-    ],
-    dateIdeas: [
-      ["Salon de thé discret", "Assez calme pour parler, assez court pour rester confortable."],
-      ["Balade végétale", "Un parcours avec de petites pauses et zéro pression."],
-    ],
-  },
-  {
-    id: "malo",
-    name: "Malo",
-    age: 29,
-    city: "Bordeaux",
-    distance: 2,
-    tags: ["creative", "nearby"],
-    verified: false,
-    score: 86,
-    photo:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=85",
-    bio: "Photographe, nageur tôt le matin, très bon pour trouver la meilleure lumière d'une rue.",
-    intent: "Rencontrer quelqu'un de sincère, sans script pré-écrit.",
-    interests: ["photo argentique", "océan", "ramen"],
-    traits: [
-      ["Rythme de vie", 91],
-      ["Intentions", 78],
-      ["Humour", 88],
-      ["Valeurs", 84],
-    ],
-    prompts: [
-      "Tu choisirais quel quartier pour une mini session photo ?",
-      "Mer au lever du soleil ou dîner improvisé ?",
-      "Quelle odeur te rappelle instantanément une bonne journée ?",
-    ],
-    dateIdeas: [
-      ["Balade photo", "Un rendez-vous actif, facile, avec de quoi parler sans forcer."],
-      ["Ramen comptoir", "Ambiance simple, conversation proche et sortie facile."],
-    ],
-  },
-  {
-    id: "ines",
-    name: "Inès",
-    age: 27,
-    city: "Nantes",
-    distance: 5,
-    tags: ["serious", "creative", "nearby", "verified"],
-    verified: true,
-    score: 91,
-    photo:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85",
-    bio: "Développeuse produit, danseuse salsa débutante et spécialiste des playlists pour cuisiner.",
-    intent: "Une relation complice, stable, avec de l'espace pour chacun.",
-    interests: ["salsa", "produit", "playlists"],
-    traits: [
-      ["Rythme de vie", 85],
-      ["Intentions", 90],
-      ["Humour", 94],
-      ["Valeurs", 86],
-    ],
-    prompts: [
-      "Quelle chanson sauve toujours une soirée cuisine ?",
-      "Tu es plutôt projet du dimanche ou improvisation totale ?",
-      "On teste un cours de salsa débutant sans se juger ?",
-    ],
-    dateIdeas: [
-      ["Cours de danse débutant", "Un brise-glace vivant avec beaucoup de place pour rire."],
-      ["Dîner playlist", "Chacun ajoute trois titres, puis vous comparez les histoires derrière."],
-    ],
-  },
-  {
-    id: "adam",
-    name: "Adam",
-    age: 33,
-    city: "Marseille",
-    distance: 14,
-    tags: ["verified"],
-    verified: true,
-    score: 82,
-    photo:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=85",
-    bio: "Kinésithérapeute, adore cuisiner pour les autres et partir sans trop planifier le week-end.",
-    intent: "Rencontre sérieuse, mais pas austère.",
-    interests: ["sport doux", "cuisine", "road trips"],
-    traits: [
-      ["Rythme de vie", 78],
-      ["Intentions", 87],
-      ["Humour", 90],
-      ["Valeurs", 80],
-    ],
-    prompts: [
-      "Quel plat mérite de devenir un test de compatibilité ?",
-      "Week-end planifié ou sac léger et départ tôt ?",
-      "Quelle petite habitude te rend la vie meilleure ?",
-    ],
-    dateIdeas: [
-      ["Marché + cuisine", "Choisir trois ingrédients ensemble, simple et très révélateur."],
-      ["Promenade en bord de mer", "Facile à interrompre, facile à prolonger."],
-    ],
-  },
-  {
-    id: "lea",
-    name: "Léa",
-    age: 26,
-    city: "Lille",
-    distance: 1,
-    tags: ["creative", "nearby", "verified"],
-    verified: true,
-    score: 88,
-    photo:
-      "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=1200&q=85",
-    bio: "Illustratrice, café serré, longues marches, et opinions très précises sur les croissants.",
-    intent: "Créer une vraie connexion, avec légèreté et franchise.",
-    interests: ["illustration", "cafés", "balades"],
-    traits: [
-      ["Rythme de vie", 92],
-      ["Intentions", 83],
-      ["Humour", 89],
-      ["Valeurs", 87],
-    ],
-    prompts: [
-      "Quel café mérite officiellement le titre de meilleur croissant ?",
-      "Tu dessinerais quoi pour résumer ta semaine ?",
-      "Une balade parfaite commence par quelle rue ?",
-    ],
-    dateIdeas: [
-      ["Carnet croquis + café", "Un rendez-vous calme, créatif, sans silence gênant."],
-      ["Balade vitrine", "Regarder la ville ensemble donne vite matière à parler."],
-    ],
-  },
-];
+const profiles = [];
 
-const conversations = [
-  {
-    id: "ines",
-    messages: [
-      ["them", "J'ai vu que tu aimais les playlists de cuisine. Très important."],
-      ["me", "Absolument. Une mauvaise playlist peut ruiner des pâtes."],
-      ["them", "Alors premier test : soul, afrobeats ou électro douce ?"],
-    ],
-  },
-  {
-    id: "malo",
-    messages: [
-      ["them", "Je peux défendre le lever de soleil même avant café."],
-      ["me", "C'est courageux. Je demande des preuves photographiques."],
-    ],
-  },
-  {
-    id: "sofia",
-    messages: [
-      ["them", "Je connais un salon de thé minuscule où personne ne crie."],
-      ["me", "Ça ressemble déjà à une excellente technologie sociale."],
-    ],
-  },
-];
+const conversations = [];
 
 const dailyChallenge = {
   title: "Premier message: tu choisis quelle vibe ?",
@@ -2483,7 +2279,7 @@ function renderAuthState() {
   }
 
   if (authPanel) {
-    authPanel.hidden = Boolean(user);
+    authPanel.style.display = user ? "none" : "grid";
   }
 
   authForm.querySelectorAll("input, button").forEach((element) => {
@@ -2492,14 +2288,14 @@ function renderAuthState() {
 
   if (user) {
     authStatus.textContent = `Connecté: ${user.email}`;
-    authForm.hidden = true;
-    logoutButton.hidden = false;
+    authForm.style.display = "none";
+    logoutButton.style.display = "block";
     return;
   }
 
   authStatus.textContent = "Connecte-toi pour synchroniser likes, matches et messages.";
-  authForm.hidden = false;
-  logoutButton.hidden = true;
+  authForm.style.display = "grid";
+  logoutButton.style.display = "none";
 }
 
 function readAuthFields() {
@@ -2911,9 +2707,7 @@ function normalizeRemoteProfile(row) {
 }
 
 function allProfiles() {
-  const localIds = new Set(profiles.map((profile) => profile.id));
-  const remote = state.remoteProfiles.filter((profile) => !localIds.has(profile.id));
-  return remote.length ? [...remote, ...profiles] : profiles;
+  return state.remoteProfiles || [];
 }
 
 async function loadRemoteProfiles() {
