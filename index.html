@@ -1567,7 +1567,7 @@ blockquote {
         <section class="auth-panel" aria-labelledby="authTitle">
           <div>
             <h2 id="authTitle">Compte mbifê</h2>
-            <p id="authStatus">Backend non configuré</p>
+            <p id="authStatus">Supabase connecté</p>
           </div>
           <form id="authForm" class="auth-form">
             <input id="authName" name="name" type="text" autocomplete="name" placeholder="Nom public" />
@@ -2260,37 +2260,27 @@ function renderAuthState() {
   }
 
   const user = currentUser();
+
   document.body.classList.toggle("is-authenticated", Boolean(user));
 
   if (profileLogoutButton) {
     profileLogoutButton.hidden = !user;
   }
 
-  if (!hasSupabaseConfig()) {
-    if (authPanel) {
-      authPanel.style.display = "grid";
-    }
-    authStatus.textContent = "Supabase connecté";
-    authForm.querySelectorAll("input, button").forEach((element) => {
-      element.disabled = true;
-    });
-    logoutButton.hidden = true;
-    return;
-  }
-
-  if (authPanel) {
-    authPanel.style.display = user ? "none" : "grid";
-  }
-
-  authForm.querySelectorAll("input, button").forEach((element) => {
-    element.disabled = false;
-  });
-
   if (user) {
     authStatus.textContent = `Connecté: ${user.email}`;
     authForm.style.display = "none";
     logoutButton.style.display = "block";
+
+    if (authPanel) {
+      authPanel.style.display = "none";
+    }
+
     return;
+  }
+
+  if (authPanel) {
+    authPanel.style.display = "grid";
   }
 
   authStatus.textContent = "Connecte-toi pour synchroniser likes, matches et messages.";
@@ -2544,7 +2534,7 @@ function renderProfileForm() {
 
   if (profileStatusTitle && profileStatusText) {
     if (!hasSupabaseConfig()) {
-      profileStatusTitle.textContent = "Backend non configuré";
+      profileStatusTitle.textContent = "Supabase connecté";
       profileStatusText.textContent = "Ajoute Supabase pour enregistrer ton profil en ligne.";
     } else if (!user) {
       profileStatusTitle.textContent = "Connexion requise";
