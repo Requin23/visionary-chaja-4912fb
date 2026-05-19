@@ -1726,6 +1726,152 @@ blockquote {
   background-size:20px 20px;
 }
 
+
+/* ===== ACTIVE CONVERSATION LIKE WHATSAPP ===== */
+
+.conversation{
+  transition:all .2s ease;
+  border-radius:.8rem;
+}
+
+.conversation.active{
+  background:#d9fdd3 !important;
+  font-weight:900 !important;
+  transform:scale(1.01);
+}
+
+.conversation.active strong{
+  font-weight:900 !important;
+  color:#111;
+}
+
+.conversation.active span{
+  font-weight:700 !important;
+  color:#111;
+}
+
+.conversation:hover{
+  background:#f0f2f5;
+}
+
+.conversation img{
+  border-radius:50% !important;
+  border:2px solid transparent;
+}
+
+.conversation.active img{
+  border-color:#25d366 !important;
+}
+
+.online-status{
+  font-weight:700;
+}
+
+.online-dot{
+  animation:pulseOnline 1.5s infinite;
+}
+
+@keyframes pulseOnline{
+  0%{
+    transform:scale(1);
+    opacity:1;
+  }
+  50%{
+    transform:scale(1.25);
+    opacity:.7;
+  }
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+
+/* ===== FULLSCREEN CHAT LIKE WHATSAPP ===== */
+
+#messagesPanel{
+  position:relative;
+}
+
+.conversation-list.hidden{
+  display:none !important;
+}
+
+.chat-window.fullscreen{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:9999;
+  border-radius:0 !important;
+  background:#efeae2;
+}
+
+.chat-header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#075e54;
+  color:white;
+  padding:.8rem;
+}
+
+.chat-header strong{
+  font-size:1rem;
+}
+
+.chat-header button{
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  color:white;
+  font-size:1rem;
+}
+
+.chat-header-left{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+}
+
+.chat-header img{
+  border-radius:50%;
+}
+
+.chat-thread{
+  height:calc(100vh - 140px);
+  overflow-y:auto;
+  padding-bottom:2rem;
+}
+
+.message-image{
+  width:240px;
+  border-radius:1rem;
+  display:block;
+}
+
+.bubble video{
+  width:240px;
+  border-radius:1rem;
+  display:block;
+}
+
+.bubble audio{
+  width:240px;
+}
+
+#videoButton{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:white;
+  font-size:1rem;
+}
+
+
 </style>
   </head>
   <body>
@@ -1940,6 +2086,14 @@ blockquote {
             <div class="chat-thread" id="chatThread"></div>
             <form class="composer" id="composer">
 
+              
+<input
+                type="file"
+                id="videoInput"
+                accept="video/*"
+                hidden
+              />
+
               <input
                 type="file"
                 id="imageInput"
@@ -1951,7 +2105,12 @@ blockquote {
                 📷
               </button>
 
-              <button type="button" id="audioButton">
+              
+<button type="button" id="videoButton">
+📹
+</button>
+
+<button type="button" id="audioButton">
                 🎤
               </button>
 
@@ -4144,6 +4303,227 @@ window.addEventListener("DOMContentLoaded",()=>{
   }
 
 });
+
+
+
+// ===== WHATSAPP ACTIVE CHAT =====
+
+function activateConversationUI(){
+
+  const conversations =
+  document.querySelectorAll(".conversation");
+
+  conversations.forEach(item=>{
+
+    item.addEventListener("click",()=>{
+
+      conversations.forEach(el=>{
+        el.classList.remove("active");
+      });
+
+      item.classList.add("active");
+
+    });
+
+  });
+
+}
+
+window.addEventListener(
+  "DOMContentLoaded",
+  ()=>{
+
+    setTimeout(()=>{
+      activateConversationUI();
+    },1000);
+
+  }
+);
+
+
+
+
+// ===== FULLSCREEN CHAT =====
+
+window.addEventListener("DOMContentLoaded",()=>{
+
+  const conversationList =
+  document.querySelector("#conversationList");
+
+  const chatWindow =
+  document.querySelector(".chat-window");
+
+  const chatHeader =
+  document.querySelector("#chatHeader");
+
+  function setupConversationClick(){
+
+    const conversations =
+    document.querySelectorAll(".conversation");
+
+    conversations.forEach(item=>{
+
+      item.addEventListener("click",()=>{
+
+        conversationList.classList.add("hidden");
+
+        chatWindow.classList.add("fullscreen");
+
+        const userName =
+        item.querySelector("strong")?.textContent || "Discussion";
+
+        const userImage =
+        item.querySelector("img")?.src || "";
+
+        chatHeader.innerHTML = `
+
+          <div class="chat-header-left">
+
+            <button id="backChatButton">
+              ←
+            </button>
+
+            <img
+              src="${userImage}"
+              width="42"
+              height="42"
+            >
+
+            <div>
+
+              <strong>
+                ${userName}
+              </strong>
+
+              <div class="online-status">
+                <span class="online-dot"></span>
+                En ligne
+              </div>
+
+            </div>
+
+          </div>
+        `;
+
+        setTimeout(()=>{
+
+          const backButton =
+          document.querySelector("#backChatButton");
+
+          if(backButton){
+
+            backButton.onclick = ()=>{
+
+              conversationList.classList.remove("hidden");
+
+              chatWindow.classList.remove("fullscreen");
+
+            };
+
+          }
+
+        },100);
+
+      });
+
+    });
+
+  }
+
+  setTimeout(setupConversationClick,1200);
+
+});
+
+// ===== VIDEO SUPPORT =====
+
+window.addEventListener("DOMContentLoaded",()=>{
+
+  const videoInput =
+  document.querySelector("#videoInput");
+
+  const videoButton =
+  document.querySelector("#videoButton");
+
+  if(videoButton){
+
+    videoButton.onclick = ()=>{
+      videoInput.click();
+    };
+
+  }
+
+  if(videoInput){
+
+    videoInput.onchange = async ()=>{
+
+      try{
+
+        const file =
+        videoInput.files[0];
+
+        if(!file) return;
+
+        const filename =
+        Date.now() + "-" + file.name;
+
+        const upload =
+        await supabaseClient
+        .storage
+        .from("chat-images")
+        .upload(filename,file);
+
+        if(upload.error){
+
+          console.error(upload.error);
+
+          alert("Erreur vidéo");
+
+          return;
+
+        }
+
+        const { data } =
+        supabaseClient
+        .storage
+        .from("chat-images")
+        .getPublicUrl(filename);
+
+        chatThread.innerHTML += `
+
+          <div class="bubble me">
+
+            <video
+              controls
+              src="${data.publicUrl}">
+            </video>
+
+            <span class="message-time">
+              ${new Date().toLocaleTimeString([],{
+                hour:"2-digit",
+                minute:"2-digit"
+              })}
+            </span>
+
+          </div>
+        `;
+
+        chatThread.scrollTop =
+        chatThread.scrollHeight;
+
+      }catch(err){
+
+        console.error(err);
+
+        alert("Erreur vidéo");
+
+      }
+
+    };
+
+  }
+
+});
+
 
 </script>
 </body>
