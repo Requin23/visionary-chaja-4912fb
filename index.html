@@ -1516,6 +1516,102 @@ blockquote {
   }
 }
 
+
+/* ===== MODERN MESSENGER ===== */
+
+.chat-thread{
+  background:linear-gradient(to bottom,#f5f7fb,#ffffff);
+}
+
+.bubble{
+  position:relative;
+  padding:.8rem 1rem;
+  border-radius:1.2rem;
+  font-size:.95rem;
+  line-height:1.45;
+  animation:fadeMessage .2s ease;
+}
+
+.bubble.me{
+  background:linear-gradient(135deg,#ff4d6d,#ff758f);
+  color:white;
+  border-bottom-right-radius:.3rem;
+}
+
+.bubble.them{
+  background:white;
+  color:#222;
+  border-bottom-left-radius:.3rem;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+
+.message-time{
+  display:block;
+  margin-top:.3rem;
+  font-size:.7rem;
+  opacity:.7;
+}
+
+.online-status{
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  font-size:.82rem;
+  color:#666;
+}
+
+.online-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#00c853;
+  box-shadow:0 0 10px #00c853;
+}
+
+.message-image{
+  width:220px;
+  border-radius:1rem;
+  margin-top:.4rem;
+}
+
+.typing{
+  display:flex;
+  gap:.3rem;
+  padding:.8rem 1rem;
+}
+
+.typing span{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#999;
+  animation:bounce 1s infinite;
+}
+
+.typing span:nth-child(2){
+  animation-delay:.2s;
+}
+
+.typing span:nth-child(3){
+  animation-delay:.4s;
+}
+
+@keyframes bounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+
+@keyframes fadeMessage{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
 </style>
   </head>
   <body>
@@ -1729,8 +1825,32 @@ blockquote {
             <div class="chat-header" id="chatHeader"></div>
             <div class="chat-thread" id="chatThread"></div>
             <form class="composer" id="composer">
-              <input id="messageInput" name="message" type="text" autocomplete="off" placeholder="Écris une réponse simple..." />
+
+              <input
+                type="file"
+                id="imageInput"
+                accept="image/*"
+                hidden
+              />
+
+              <button type="button" id="imageButton">
+                📷
+              </button>
+
+              <button type="button" id="audioButton">
+                🎤
+              </button>
+
+              <input
+                id="messageInput"
+                name="message"
+                type="text"
+                autocomplete="off"
+                placeholder="Écris une réponse simple..."
+              />
+
               <button type="submit">Envoyer</button>
+
             </form>
           </div>
         </section>
@@ -3759,5 +3879,6 @@ restoreAuthSession();
 checkSupabaseStatus();
 
 </script>
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
 </html>
