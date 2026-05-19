@@ -1908,7 +1908,7 @@ const state = {
   history: [],
   matches: [],
   safeMode: false,
-  activeConversation: conversations[0].id,
+  activeConversation: conversations.length ? conversations[0].id : "",
   shareProfileIndex: 0,
   inviteCode: getStoredInviteCode(),
   invitesSent: Number(localStorage.getItem("mbifeInvitesSent") || "0"),
@@ -2260,27 +2260,37 @@ function renderAuthState() {
   }
 
   const user = currentUser();
-
   document.body.classList.toggle("is-authenticated", Boolean(user));
 
   if (profileLogoutButton) {
     profileLogoutButton.hidden = !user;
   }
 
-  if (user) {
-    authStatus.textContent = `Connecté: ${user.email}`;
-    authForm.style.display = "none";
-    logoutButton.style.display = "block";
-
+  if (!hasSupabaseConfig()) {
     if (authPanel) {
-      authPanel.style.display = "none";
+      authPanel.hidden = false;
     }
-
+    authStatus.textContent = "Supabase connecté";
+    authForm.querySelectorAll("input, button").forEach((element) => {
+      element.disabled = true;
+    });
+    logoutButton.hidden = true;
     return;
   }
 
   if (authPanel) {
-    authPanel.style.display = "grid";
+    authPanel.style.display = user ? "none" : "grid";
+  }
+
+  authForm.querySelectorAll("input, button").forEach((element) => {
+    element.disabled = false;
+  });
+
+  if (user) {
+    authStatus.textContent = `Connecté: ${user.email}`;
+    authForm.style.display = "none";
+    logoutButton.style.display = "block";
+    return;
   }
 
   authStatus.textContent = "Connecte-toi pour synchroniser likes, matches et messages.";
@@ -3143,6 +3153,17 @@ function renderDateIdeas(profile = currentProfile()) {
 
 function shareProfile() {
   const availableProfiles = allProfiles();
+
+  if (!availableProfiles.length) {
+    return {
+      name: "mbifê",
+      score: 0,
+      city: "Ouagadougou",
+      photo: "",
+      age: 0,
+    };
+  }
+
   return availableProfiles[state.shareProfileIndex % availableProfiles.length];
 }
 
@@ -3526,6 +3547,10 @@ function renderChat() {
   }
 
   const conversation = conversations.find((item) => item.id === state.activeConversation);
+
+  if (!conversation) {
+    return;
+  }
   const profile = profiles.find((item) => item.id === conversation.id);
 
   chatHeader.innerHTML = `
@@ -3583,6 +3608,10 @@ async function submitMessage(event) {
   }
 
   const conversation = conversations.find((item) => item.id === state.activeConversation);
+
+  if (!conversation) {
+    return;
+  }
   conversation.messages.push(["me", value]);
   messageInput.value = "";
   renderConversations();
