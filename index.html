@@ -1,2314 +1,1079 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mbifê - rencontres sincères</title>
-    <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800;900&display=swap');
-
-:root {
-  color-scheme: light;
-  --ink: #1a1826;
-  --muted: #6b6880;
-  --soft: #f4f0fb;
-  --surface: #faf8ff;
-  --panel: #ffffff;
-  --line: rgba(100, 80, 180, 0.13);
-
-  /* Thème neutre (défaut) */
-  --accent: #e6536a;
-  --accent2: #c6812e;
-  --accent-soft: #fff0f2;
-  --accent-grad: linear-gradient(135deg, #e6536a, #c6812e);
-  --sidebar-bg: rgba(250, 245, 255, 0.88);
-  --body-bg1: #fdf9ff;
-  --body-bg2: #f7f4ff;
-  --body-bg3: #eef4ff;
-
-  --rose: #e6536a;
-  --plum: #583456;
-  --mint: #1c9c83;
-  --gold: #c6812e;
-  --blue: #3a72db;
-  --shadow: 0 20px 60px rgba(60, 30, 80, 0.14);
-  --glass: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.8);
-  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
-}
-
-/* Thème masculin — bleu */
-body.theme-male {
-  --accent: #3a72db;
-  --accent2: #1c9c83;
-  --accent-soft: #eef4ff;
-  --accent-grad: linear-gradient(135deg, #3a72db, #1c9c83);
-  --sidebar-bg: rgba(240, 246, 255, 0.9);
-  --body-bg1: #f5f9ff;
-  --body-bg2: #eef4ff;
-  --body-bg3: #e8f4f8;
-  --line: rgba(58, 114, 219, 0.14);
-}
-
-/* Thème féminin — rose */
-body.theme-female {
-  --accent: #e6536a;
-  --accent2: #c6812e;
-  --accent-soft: #fff0f4;
-  --accent-grad: linear-gradient(135deg, #e6536a, #c83f7a);
-  --sidebar-bg: rgba(255, 245, 248, 0.9);
-  --body-bg1: #fff8fa;
-  --body-bg2: #fdf0f4;
-  --body-bg3: #fce8f0;
-  --line: rgba(230, 83, 106, 0.14);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  width: 100%;
-  overflow-x: hidden;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  width: 100%;
-  min-height: 100vh;
-  margin: 0;
-  overflow-x: hidden;
-  background:
-    radial-gradient(circle at 8% 8%, rgba(230, 83, 106, 0.1), transparent 32rem),
-    linear-gradient(135deg, var(--body-bg1) 0%, var(--body-bg2) 45%, var(--body-bg3) 100%);
-  color: var(--ink);
-  transition: background 0.5s ease;
-}
-
-button,
-input,
-textarea {
-  max-width: 100%;
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-img,
-canvas {
-  max-width: 100%;
-}
-
-.app-shell {
-  display: grid;
-  grid-template-columns: 18rem minmax(0, 1fr);
-  width: 100%;
-  min-height: 100vh;
-  overflow-x: clip;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  border-right: 1px solid var(--glass-border);
-  background: var(--sidebar-bg);
-  padding: 1.4rem;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 4px 0 32px rgba(80, 40, 120, 0.07);
-  transition: background 0.5s ease;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.sidebar::-webkit-scrollbar { display: none; }
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.brand-mark {
-  display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  place-items: center;
-  border-radius: 0.85rem;
-  background: var(--accent-grad);
-  color: white;
-  font-size: 1.45rem;
-  font-weight: 900;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-}
-
-.brand-name,
-.brand-subtitle,
-.eyebrow,
-.quality-panel p,
-.prompt-box p {
-  margin: 0;
-}
-
-.brand-name {
-  font-size: 1.35rem;
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.brand-subtitle {
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-
-.side-nav {
-  display: grid;
-  gap: 0.55rem;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 3rem;
-  border: 1px solid transparent;
-  border-radius: 0.65rem;
-  background: transparent;
-  color: var(--muted);
-  padding: 0.75rem 0.85rem;
-  text-align: left;
-  transition: all 160ms ease;
-  font-weight: 600;
-}
-
-.nav-item.active,
-.nav-item:hover {
-  border-color: rgba(var(--accent-rgb, 230, 83, 106), 0.22);
-  background: var(--glass);
-  color: var(--ink);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-}
-
-.nav-item.active {
-  border-left: 3px solid var(--accent);
-  background: var(--accent-soft);
-}
-
-.nav-item strong {
-  min-width: 1.65rem;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  padding: 0.2rem 0.45rem;
-  text-align: center;
-  font-size: 0.78rem;
-}
-
-.quality-panel {
-  margin-top: auto;
-  border: 1px solid var(--glass-border);
-  border-radius: 0.75rem;
-  background: var(--glass);
-  padding: 1rem;
-  backdrop-filter: blur(12px);
-}
-
-.quality-panel h2,
-.auth-panel h2 {
-  margin: 0 0 0.7rem;
-  font-size: 1rem;
-}
-
-.quality-panel p,
-.auth-panel p {
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.45;
-}
-
-.auth-panel {
-  display: grid;
-  gap: 0.75rem;
-  border: 1px solid var(--glass-border);
-  border-radius: 0.75rem;
-  background: var(--glass);
-  padding: 1rem;
-  backdrop-filter: blur(12px);
-}
-
-.auth-panel p {
-  margin: 0;
-}
-
-.auth-form {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.auth-form input {
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  background: var(--soft);
-  padding: 0.68rem 0.75rem;
-}
-
-.auth-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.45rem;
-}
-
-.auth-actions button,
-.auth-logout {
-  min-height: 2.55rem;
-  border-radius: 0.65rem;
-  font-weight: 800;
-}
-
-.auth-actions button {
-  border: 0;
-  background: var(--ink);
-  color: white;
-  transition: opacity 160ms;
-}
-.auth-actions button:hover { opacity: 0.88; }
-
-.auth-actions button:last-child {
-  background: var(--accent-grad);
-}
-
-.quality-meter {
-  height: 0.45rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(100,80,180,0.12);
-  margin-bottom: 0.75rem;
-}
-
-.quality-meter span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--accent-grad);
-}
-
-.workspace {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  padding: 1.35rem clamp(1rem, 3vw, 2rem);
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.eyebrow {
-  color: var(--accent);
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-h1 {
-  max-width: 42rem;
-  margin: 0.2rem 0 0;
-  font-size: clamp(1.7rem, 3vw, 3.15rem);
-  line-height: 1.02;
-  letter-spacing: 0;
-}
-
-h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  letter-spacing: 0;
-}
-
-.icon-button {
-  display: grid;
-  flex: 0 0 auto;
-  width: 2.8rem;
-  height: 2.8rem;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  background: white;
-  color: var(--mint);
-  font-size: 1.1rem;
-  font-weight: 900;
-}
-
-.icon-button[aria-pressed="true"] {
-  background: #e8fff7;
-  border-color: rgba(28, 156, 131, 0.35);
-}
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin: 1.25rem 0;
-}
-
-.filter-chip {
-  min-height: 2.45rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
-  color: var(--muted);
-  padding: 0.55rem 0.9rem;
-  font-weight: 600;
-  transition: all 160ms ease;
-}
-
-.filter-chip.active,
-.filter-chip:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-
-.panel {
-  display: none;
-  min-height: 0;
-  min-width: 0;
-}
-
-.panel.active {
-  display: grid;
-  min-width: 0;
-}
-
-#discoverPanel {
-  grid-template-columns: minmax(18rem, 31rem) minmax(17rem, 24rem);
-  align-items: start;
-  justify-content: center;
-  gap: clamp(1rem, 4vw, 2rem);
-}
-
-.deck-area {
-  display: grid;
-  gap: 1rem;
-  min-width: 0;
-}
-
-.profile-card {
-  position: relative;
-  min-height: clamp(32rem, 72vh, 39rem);
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 1.2rem;
-  background: #222;
-  box-shadow: var(--shadow);
-  isolation: isolate;
-}
-
-.profile-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -2;
-}
-
-.photo-wash {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(180deg, rgba(20, 18, 24, 0.08) 15%, rgba(20, 18, 24, 0.15) 45%, rgba(13, 10, 12, 0.88) 100%),
-    linear-gradient(45deg, rgba(230, 83, 106, 0.24), transparent 42%);
-}
-
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 100%;
-  color: white;
-  padding: 1.1rem;
-  min-width: 0;
-}
-
-.profile-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  margin-bottom: auto;
-}
-
-.badge-row,
-.interest-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.badge,
-.interest {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  background: rgba(18, 17, 23, 0.34);
-  padding: 0.32rem 0.58rem;
-  color: white;
-  font-size: 0.78rem;
-  backdrop-filter: blur(10px);
-}
-
-.badge.verified {
-  background: rgba(28, 156, 131, 0.72);
-}
-
-.distance {
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
-  color: var(--ink);
-  padding: 0.32rem 0.58rem;
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-.profile-title {
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
-  margin-top: clamp(7rem, 24vh, 13rem);
-}
-
-.profile-title h2 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  line-height: 0.95;
-}
-
-.profile-title span {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.profile-bio {
-  max-width: 32rem;
-  margin: 0.65rem 0 0.8rem;
-  color: rgba(255, 255, 255, 0.88);
-  line-height: 1.45;
-}
-
-.intent-card {
-  display: grid;
-  gap: 0.3rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.12);
-  padding: 0.75rem;
-  backdrop-filter: blur(12px);
-}
-
-.intent-card span {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.intent-card strong {
-  font-size: 1rem;
-}
-
-.actions {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(3rem, 1fr));
-  gap: 0.75rem;
-}
-
-.action-button {
-  display: grid;
-  min-height: 3.6rem;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 0.6rem;
-  background: white;
-  box-shadow: 0 10px 24px rgba(32, 26, 20, 0.08);
-  font-size: 1.55rem;
-  font-weight: 900;
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.action-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(32, 26, 20, 0.12);
-}
-
-.action-button.secondary {
-  color: var(--blue);
-}
-
-.action-button.pass {
-  color: #d4473f;
-}
-
-.action-button.like {
-  color: var(--rose);
-}
-
-.action-button.spark {
-  color: var(--gold);
-}
-
-.action-button.report {
-  color: var(--muted);
-}
-
-.profile-layout {
-  grid-template-columns: minmax(19rem, 1fr) minmax(18rem, 25rem);
-  gap: 1rem;
-  align-items: start;
-}
-
-.profile-editor,
-.profile-status-stack .about-card {
-  border: 1px solid var(--line);
-  border-radius: 0.65rem;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
-}
-
-.profile-editor {
-  display: grid;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.profile-form,
-.profile-status-stack {
-  display: grid;
-  gap: 1rem;
-}
-
-.avatar-editor {
-  display: grid;
-  gap: 0.55rem;
-}
-
-.avatar-editor img {
-  width: 100%;
-  max-height: 20rem;
-  border-radius: 0.6rem;
-  background: var(--soft);
-  object-fit: cover;
-}
-
-.profile-form label {
-  display: grid;
-  gap: 0.35rem;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.profile-form input,
-.profile-form textarea {
-  width: 100%;
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  background: white;
-  color: var(--ink);
-  padding: 0.72rem 0.85rem;
-  font-weight: 500;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-.profile-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-
-.profile-logout {
-  width: fit-content;
-}
-
-.profile-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1.85rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.86);
-  color: var(--ink);
-  padding: 0.32rem 0.58rem;
-  font-size: 0.78rem;
-  font-weight: 850;
-}
-
-.insight-panel,
-.date-lab,
-.chat-window,
-.conversation-list {
-  border: 1px solid var(--line);
-  border-radius: 0.65rem;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
-}
-
-.insight-panel {
-  display: grid;
-  gap: 1rem;
-  padding: 1rem;
-  position: sticky;
-  top: 1rem;
-}
-
-.insight-header h2 {
-  margin-top: 0.25rem;
-}
-
-.score-ring {
-  display: grid;
-  width: 10rem;
-  height: 10rem;
-  place-items: center;
-  justify-self: center;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at center, white 58%, transparent 59%),
-    conic-gradient(var(--rose) 0deg, var(--gold) 120deg, var(--mint) 220deg, #ded6ca 220deg);
-}
-
-.score-ring strong {
-  align-self: end;
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.score-ring span {
-  align-self: start;
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.trait-list {
-  display: grid;
-  gap: 0.65rem;
-}
-
-.trait {
-  display: grid;
-  gap: 0.3rem;
-}
-
-.trait-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.trait-bar {
-  height: 0.5rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: #ece6dc;
-}
-
-.trait-bar span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--mint), var(--gold));
-}
-
-.prompt-box {
-  display: grid;
-  gap: 0.65rem;
-  border-radius: 0.5rem;
-  background: var(--soft);
-  padding: 0.85rem;
-}
-
-.prompt-box p {
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.prompt-box button,
-.composer button {
-  border: 0;
-  border-radius: 0.5rem;
-  background: var(--ink);
-  color: white;
-  padding: 0.7rem 0.85rem;
-  font-weight: 800;
-}
-
-blockquote {
-  margin: 0;
-  color: var(--plum);
-  line-height: 1.45;
-}
-
-.two-column {
-  grid-template-columns: minmax(16rem, 1fr) minmax(17rem, 27rem);
-  gap: 1rem;
-  align-items: start;
-}
-
-.match-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
-  gap: 0.8rem;
-  margin-top: 0.9rem;
-}
-
-.mini-card {
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 0.55rem;
-  background: white;
-}
-
-.mini-card img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-.mini-card div {
-  display: grid;
-  gap: 0.25rem;
-  padding: 0.75rem;
-}
-
-.mini-card strong {
-  font-size: 1rem;
-}
-
-.mini-card span {
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
-.empty-state {
-  border: 1px dashed rgba(28, 27, 34, 0.25);
-  border-radius: 0.55rem;
-  background: rgba(255, 255, 255, 0.55);
-  padding: 1rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.date-lab {
-  display: grid;
-  gap: 0.9rem;
-  padding: 1rem;
-}
-
-.date-lab h2 {
-  line-height: 1.2;
-}
-
-.date-card {
-  display: grid;
-  gap: 0.65rem;
-}
-
-.date-option {
-  border-left: 4px solid var(--mint);
-  border-radius: 0.4rem;
-  background: var(--soft);
-  padding: 0.75rem;
-}
-
-.date-option strong {
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.date-option span {
-  color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.45;
-}
-
-.conversation-list {
-  display: grid;
-  gap: 0.3rem;
-  padding: 0.5rem;
-}
-
-.conversation {
-  display: grid;
-  grid-template-columns: 3rem 1fr;
-  gap: 0.65rem;
-  align-items: center;
-  border: 0;
-  border-radius: 0.5rem;
-  background: transparent;
-  padding: 0.55rem;
-  text-align: left;
-  min-width: 0;
-}
-
-.conversation.active,
-.conversation:hover {
-  background: var(--soft);
-}
-
-.conversation img {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
-  object-fit: cover;
-}
-
-.conversation strong,
-.conversation span {
-  display: block;
-}
-
-.conversation span {
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 0.84rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.chat-window {
-  display: grid;
-  min-height: 31rem;
-  grid-template-rows: auto 1fr auto;
-  overflow: hidden;
-}
-
-.chat-header {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  border-bottom: 1px solid var(--line);
-  padding: 0.85rem;
-}
-
-.chat-header img {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
-  object-fit: cover;
-}
-
-.chat-header p {
-  margin: 0.15rem 0 0;
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
-.chat-thread {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  padding: 1rem;
-  overflow: auto;
-}
-
-.bubble {
-  max-width: 82%;
-  border-radius: 0.7rem;
-  padding: 0.65rem 0.8rem;
-  line-height: 1.4;
-}
-
-.bubble.them {
-  align-self: flex-start;
-  background: var(--soft);
-}
-
-.bubble.me {
-  align-self: flex-end;
-  background: var(--accent-grad);
-  color: white;
-}
-
-.composer {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.55rem;
-  border-top: 1px solid var(--line);
-  padding: 0.75rem;
-}
-
-.composer input {
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  background: white;
-  padding: 0.72rem 0.85rem;
-}
-
-.viral-layout {
-  grid-template-columns: minmax(19rem, 34rem) minmax(18rem, 1fr);
-  gap: 1rem;
-  align-items: start;
-}
-
-.share-studio,
-.viral-card {
-  border: 1px solid var(--line);
-  border-radius: 0.65rem;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
-}
-
-.share-studio {
-  display: grid;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.section-heading {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.section-heading h2 {
-  line-height: 1.18;
-}
-
-.share-canvas {
-  width: 100%;
-  max-height: 34rem;
-  border-radius: 0.6rem;
-  background: #1c1b22;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-}
-
-.share-copy {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.share-copy label {
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.share-copy textarea {
-  width: 100%;
-  min-height: 6rem;
-  resize: vertical;
-  border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  background: var(--soft);
-  color: var(--ink);
-  padding: 0.75rem;
-  line-height: 1.45;
-}
-
-.viral-actions,
-.wing-actions,
-.challenge-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-
-.primary-button,
-.ghost-button,
-.wing-actions button,
-.challenge-options button {
-  min-height: 2.75rem;
-  border-radius: 0.5rem;
-  padding: 0.65rem 0.85rem;
-  font-weight: 850;
-}
-
-.primary-button {
-  border: 0;
-  background: var(--accent-grad);
-  color: white;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  transition: opacity 160ms, transform 120ms;
-}
-.primary-button:hover { opacity: 0.9; transform: translateY(-1px); }
-
-.ghost-button,
-.wing-actions button,
-.challenge-options button {
-  border: 1px solid var(--line);
-  background: white;
-  color: var(--ink);
-}
-
-.ghost-button:hover,
-.wing-actions button:hover,
-.challenge-options button:hover {
-  border-color: rgba(230, 83, 106, 0.34);
-  background: #fff0f2;
-}
-
-.viral-stack {
-  display: grid;
-  gap: 1rem;
-}
-
-.viral-card {
-  display: grid;
-  gap: 0.9rem;
-  padding: 1rem;
-}
-
-.invite-code {
-  margin: 0;
-  border-radius: 0.5rem;
-  background: var(--ink);
-  color: white;
-  padding: 0.8rem;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 950;
-  letter-spacing: 0.08em;
-  text-align: center;
-}
-
-.muted-copy {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.48;
-}
-
-.progress-row,
-.vote-item {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.progress-row span,
-.vote-label {
-  color: var(--muted);
-  font-size: 0.84rem;
-  font-weight: 750;
-}
-
-.progress-track,
-.vote-track {
-  height: 0.55rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: #ece6dc;
-}
-
-.progress-track span,
-.vote-track span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--rose), var(--gold), var(--mint));
-}
-
-.vote-list {
-  display: grid;
-  gap: 0.65rem;
-}
-
-.vote-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.challenge-options button.selected {
-  border-color: rgba(28, 156, 131, 0.45);
-  background: #e8fff7;
-  color: #12715f;
-}
-
-.about-layout {
-  grid-template-columns: minmax(19rem, 1fr) minmax(18rem, 25rem);
-  gap: 1rem;
-  align-items: start;
-}
-
-.about-hero,
-.about-card {
-  border: 1px solid var(--line);
-  border-radius: 0.65rem;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
-}
-
-.about-hero {
-  display: grid;
-  gap: 1rem;
-  padding: clamp(1rem, 3vw, 1.4rem);
-}
-
-.about-hero p {
-  max-width: 52rem;
-  margin: 0;
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.58;
-}
-
-.about-mark {
-  display: grid;
-  min-height: 14rem;
-  place-items: center;
-  border-radius: 0.65rem;
-  background:
-    linear-gradient(135deg, rgba(230, 83, 106, 0.9), rgba(198, 129, 46, 0.88)),
-    #1c1b22;
-  color: white;
-  font-size: clamp(2.8rem, 10vw, 6rem);
-  font-weight: 950;
-}
-
-.about-stack {
-  display: grid;
-  gap: 1rem;
-}
-
-.about-card {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1rem;
-}
-
-.about-card blockquote {
-  color: var(--plum);
-  font-size: 1rem;
-}
-
-.about-list {
-  display: grid;
-  gap: 0.55rem;
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--muted);
-  line-height: 1.48;
-}
-
-.contact-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.75rem;
-  width: fit-content;
-  border-radius: 0.5rem;
-  background: var(--ink);
-  color: white;
-  padding: 0.7rem 0.9rem;
-  font-weight: 850;
-  text-decoration: none;
-}
-
-.contact-link:hover {
-  background: var(--plum);
-}
-
-.gender-select {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.gender-label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex: 1;
-  border: 1px solid var(--line);
-  border-radius: 0.55rem;
-  background: white;
-  padding: 0.55rem 0.7rem;
-  cursor: pointer;
-  font-size: 0.88rem;
-  font-weight: 600;
-  transition: all 140ms;
-}
-.gender-label:has(input:checked) {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-.gender-label input { display: none; }
-
-.user-widget {
-  display: grid;
-  gap: 0.65rem;
-  padding: 0.75rem;
-  border: 1px solid var(--glass-border);
-  border-radius: 0.75rem;
-  background: var(--glass);
-}
-.user-avatar-row {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-.user-avatar {
-  width: 2.6rem;
-  height: 2.6rem;
-  border-radius: 50%;
-  background: var(--accent-grad);
-  display: grid;
-  place-items: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-.user-email {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 10rem;
-}
-.user-theme-badge {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--accent);
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  width: fit-content;
-}
-
-.auth-logout-sidebar {
-  display: none;
-}
-
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 1rem;
-  z-index: 20;
-  transform: translate(-50%, 140%);
-  border-radius: 999px;
-  background: var(--ink);
-  color: white;
-  padding: 0.75rem 1rem;
-  box-shadow: var(--shadow);
-  opacity: 0;
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translate(-50%, 0);
-}
-
-/* ── Actions collantes en bas sur mobile ── */
-@media (max-width: 620px) {
-  .sticky-actions {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 15;
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--glass-border);
-    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
-    display: flex;
-    gap: 0.5rem;
-  }
-  .sticky-actions .action-button {
-    flex: 1;
-    min-height: 3.25rem;
-    border-radius: 0.85rem;
-    font-size: 1.4rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-  }
-  #discoverPanel .actions {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 15;
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--glass-border);
-    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
-    border-radius: 0;
-    gap: 0.5rem;
-  }
-  .workspace {
-    padding-bottom: 6rem !important;
-  }
-}
-
-@media (max-width: 980px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    position: relative;
-    top: 0;
-    height: auto;
-    overflow-y: visible;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: start;
-    gap: 0.75rem;
-    border-right: 0;
-    border-bottom: 1px solid var(--glass-border);
-    padding: 0.85rem;
-  }
-
-  .brand-subtitle,
-  .quality-panel {
-    display: none;
-  }
-
-  .side-nav {
-    display: flex;
-    grid-column: 2;
-    min-width: 0;
-    margin-left: auto;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
-  }
-
-  .side-nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .nav-item {
-    flex: 0 0 auto;
-    gap: 0.55rem;
-    white-space: nowrap;
-  }
-
-  .auth-panel {
-    grid-column: 1 / -1;
-    padding: 0.75rem;
-  }
-
-  .auth-panel h2 {
-    margin-bottom: 0.25rem;
-  }
-
-  .auth-form {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: center;
-  }
-
-  .auth-actions {
-    grid-column: 1 / -1;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .auth-logout {
-    width: 100%;
-  }
-
-  #discoverPanel,
-  .profile-layout,
-  .two-column,
-  .viral-layout,
-  .about-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .insight-panel {
-    position: static;
-  }
-
-  .profile-card {
-    min-height: clamp(30rem, 68vh, 38rem);
-  }
-}
-
-@media (max-width: 620px) {
-  body {
-    background: linear-gradient(180deg, #fbf7ef 0%, #f7fbf7 52%, #eef4ff 100%);
-  }
-
-  .sidebar {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-    padding: 0.75rem;
-  }
-
-  .brand {
-    justify-content: space-between;
-  }
-
-  .side-nav {
-    grid-column: 1;
-    margin-left: 0;
-    margin-right: -0.75rem;
-    padding-right: 0.75rem;
-  }
-
-  .auth-panel {
-    grid-column: 1;
-  }
-
-  .auth-form {
-    grid-template-columns: 1fr;
-  }
-
-  .auth-actions {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .workspace {
-    padding: 0.9rem 0.75rem 5rem;
-  }
-
-  .topbar {
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  h1 {
-    font-size: 1.65rem;
-    line-height: 1.08;
-  }
-
-  .icon-button {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-
-  .brand-name {
-    font-size: 1.05rem;
-  }
-
-  .brand-mark {
-    width: 2.25rem;
-    height: 2.25rem;
-  }
-
-  .nav-item {
-    min-height: 2.45rem;
-    padding: 0.55rem 0.65rem;
-  }
-
-  .nav-item span {
-    max-width: 5.8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .filters {
-    flex-wrap: nowrap;
-    margin: 0.9rem -0.75rem 1rem 0;
-    overflow-x: auto;
-    padding-right: 0.75rem;
-    scrollbar-width: none;
-  }
-
-  .filters::-webkit-scrollbar {
-    display: none;
-  }
-
-  .filter-chip {
-    flex: 0 0 auto;
-  }
-
-  #discoverPanel,
-  .panel.active {
-    gap: 0.9rem;
-  }
-
-  .profile-card {
-    min-height: min(31rem, 68dvh);
-    border-radius: 0.65rem;
-  }
-
-  .profile-title {
-    margin-top: 0;
-  }
-
-  .profile-title h2 {
-    font-size: 2rem;
-  }
-
-  .profile-topline {
-    align-items: flex-start;
-  }
-
-  .distance {
-    flex: 0 0 auto;
-  }
-
-  .profile-content {
-    padding: 0.9rem;
-  }
-
-  .badge,
-  .interest,
-  .profile-badge {
-    font-size: 0.72rem;
-  }
-
-  .actions {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.4rem;
-  }
-
-  .action-button {
-    min-height: 3rem;
-    border-radius: 0.5rem;
-    font-size: 1.35rem;
-  }
-
-  .composer {
-    grid-template-columns: 1fr;
-  }
-
-  .chat-window {
-    min-height: min(34rem, 72dvh);
-  }
-
-  .chat-thread {
-    padding: 0.75rem;
-  }
-
-  .bubble {
-    max-width: 92%;
-  }
-
-  .conversation-list {
-    max-height: 17rem;
-    overflow: auto;
-  }
-
-  .match-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-editor,
-  .profile-status-stack .about-card,
-  .insight-panel,
-  .date-lab,
-  .chat-window,
-  .conversation-list,
-  .share-studio,
-  .viral-card,
-  .about-hero,
-  .about-card {
-    border-radius: 0.55rem;
-  }
-
-  .share-canvas {
-    max-height: none;
-    aspect-ratio: 4 / 5;
-  }
-
-  .contact-link {
-    width: 100%;
-  }
-
-  .profile-logout {
-    width: 100%;
-  }
-
-  .about-mark {
-    min-height: 9rem;
-  }
-
-  .viral-actions,
-  .wing-actions,
-  .challenge-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .viral-actions .primary-button,
-  .viral-actions .ghost-button {
-    width: 100%;
-  }
-
-  .toast {
-    width: calc(100% - 1.5rem);
-    border-radius: 0.6rem;
-    text-align: center;
-  }
-}
-
-@media (max-width: 390px) {
-  .workspace {
-    padding-inline: 0.6rem;
-  }
-
-  .brand-name {
-    font-size: 1rem;
-  }
-
-  .nav-item span {
-    max-width: 4.6rem;
-  }
-
-  .profile-card {
-    min-height: min(29rem, 66dvh);
-  }
-
-  .profile-bio,
-  .intent-card strong {
-    font-size: 0.92rem;
-  }
-
-  .actions {
-    gap: 0.32rem;
-  }
-
-  .action-button {
-    min-height: 2.8rem;
-  }
-}
-
-</style>
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Navigation mbifê">
-        <div class="brand">
-          <div class="brand-mark">m</div>
-          <div>
-            <p class="brand-name">mbifê</p>
-            <p class="brand-subtitle">rencontres mieux pensées</p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>mbifê — rencontres sincères</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --rose: #e6536a;
+      --gold: #d4872e;
+      --mint: #1c9c83;
+      --plum: #3d1f4e;
+      --ink: #110e1a;
+      --muted: #7a748a;
+      --soft: #f4f1fa;
+      --surface: #fff;
+      --line: rgba(110, 90, 160, 0.12);
+      --grad: linear-gradient(135deg, #e6536a 0%, #d4872e 100%);
+      --grad-blue: linear-gradient(135deg, #3a72db 0%, #1c9c83 100%);
+      --shadow-card: 0 24px 64px rgba(60,20,80,0.18);
+      --shadow-sm: 0 8px 24px rgba(60,20,80,0.1);
+      --radius: 1.4rem;
+      --nav-h: 5rem;
+      font-family: 'DM Sans', sans-serif;
+      color-scheme: light;
+    }
+
+    body.theme-male {
+      --rose: #3a72db;
+      --gold: #1c9c83;
+      --grad: linear-gradient(135deg, #3a72db 0%, #1c9c83 100%);
+      --plum: #0d2b5e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #faf8ff;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── APP SHELL ─── */
+    #app {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      background: linear-gradient(160deg, #fdf9ff 0%, #f7f4ff 55%, #eef4ff 100%);
+    }
+
+    /* ─── HEADER ─── */
+    #header {
+      flex: 0 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 1.1rem 0.55rem;
+      padding-top: calc(0.85rem + env(safe-area-inset-top));
+      background: rgba(250,248,255,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--line);
+      z-index: 10;
+      transition: background 0.3s ease;
+    }
+
+    .header-left {
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+
+    .brand-mark {
+      width: 2.4rem; height: 2.4rem;
+      border-radius: 0.65rem;
+      background: var(--grad);
+      display: grid; place-items: center;
+      color: white; font-family: 'Syne', sans-serif;
+      font-size: 1.2rem; font-weight: 900;
+      box-shadow: 0 4px 12px rgba(230,83,106,0.35);
+      transition: box-shadow 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      display: flex; flex-direction: column;
+    }
+
+    .header-eyebrow {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--rose);
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .header-h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 800; line-height: 1.1;
+      color: var(--ink);
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .header-actions {
+      display: flex; gap: 0.5rem;
+    }
+
+    .icon-btn {
+      width: 2.4rem; height: 2.4rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--muted);
+      display: grid; place-items: center;
+      font-size: 1rem; cursor: pointer;
+      transition: all 140ms ease;
+    }
+    .icon-btn:active { transform: scale(0.92); }
+    .icon-btn.active { background: #e8fff7; border-color: rgba(28,156,131,0.4); color: var(--mint); }
+
+    .notif-dot {
+      width: 0.5rem; height: 0.5rem;
+      border-radius: 50%;
+      background: var(--rose);
+      position: absolute; top: 0.3rem; right: 0.3rem;
+    }
+
+    /* ─── SCROLL AREA ─── */
+    #scroll {
+      flex: 1 1 0; overflow-y: auto; overflow-x: hidden;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      position: relative;
+    }
+    #scroll::-webkit-scrollbar { display: none; }
+
+    /* ─── PANELS ─── */
+    .panel {
+      position: absolute; inset: 0;
+      padding: 1rem 1rem calc(var(--nav-h) + 1.5rem);
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none;
+      opacity: 0; pointer-events: none;
+      transform: translateX(30px);
+      transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      will-change: opacity, transform;
+    }
+    .panel::-webkit-scrollbar { display: none; }
+    .panel.active {
+      opacity: 1; pointer-events: all;
+      transform: translateX(0);
+    }
+    .panel.exit-left { transform: translateX(-30px); }
+
+    /* ─── FILTERS ─── */
+    .filter-row {
+      display: flex; gap: 0.5rem;
+      overflow-x: auto; padding-bottom: 0.25rem;
+      margin: 0 -1rem 1rem; padding-inline: 1rem;
+      scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+
+    .chip {
+      flex: 0 0 auto;
+      border: 1.5px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      padding: 0.45rem 0.85rem;
+      font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 160ms ease;
+    }
+    .chip.active {
+      border-color: var(--rose);
+      background: rgba(230,83,106,0.08);
+      color: var(--rose);
+    }
+
+    /* ─── PROFILE CARD (Tinder style) ─── */
+    .card-stack {
+      position: relative;
+      height: min(62dvh, 30rem);
+      margin-bottom: 1rem;
+    }
+
+    .profile-card {
+      position: absolute; inset: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #1a1626;
+      box-shadow: var(--shadow-card);
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.2s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s ease;
+    }
+    .profile-card:active { cursor: grabbing; }
+    .profile-card.swiping { transition: none; }
+    .profile-card.fly-right {
+      transition: transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease !important;
+      transform: translateX(120%) rotate(18deg) !important;
+      opacity: 0;
+    }
+    .profile-card.fly-left {
+      transition: transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease !important;
+      transform: translateX(-120%) rotate(-18deg) !important;
+      opacity: 0;
+    }
+    .profile-card.fly-up {
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease !important;
+      transform: translateY(-120%) scale(0.9) !important;
+      opacity: 0;
+    }
+    .profile-card.appear {
+      animation: cardAppear 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes cardAppear {
+      from { transform: scale(0.88) translateY(12px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .card-photo {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; z-index: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card-wash {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(180deg,
+        rgba(15,10,22,0.05) 0%,
+        rgba(15,10,22,0.08) 40%,
+        rgba(15,10,22,0.75) 72%,
+        rgba(15,10,22,0.96) 100%),
+        linear-gradient(135deg, rgba(230,83,106,0.2) 0%, transparent 50%);
+    }
+
+    .card-body {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 1rem;
+      color: white;
+    }
+
+    .card-top {
+      margin-bottom: auto;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+
+    .card-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 999px;
+      background: rgba(15,10,22,0.35);
+      backdrop-filter: blur(8px);
+      padding: 0.28rem 0.6rem;
+      font-size: 0.72rem; font-weight: 600; color: white;
+    }
+    .card-badge.verified { background: rgba(28,156,131,0.7); border-color: rgba(28,156,131,0.5); }
+
+    .card-dist {
+      border-radius: 999px;
+      background: rgba(255,255,255,0.88);
+      color: var(--ink);
+      padding: 0.28rem 0.6rem;
+      font-size: 0.72rem; font-weight: 800;
+    }
+
+    .card-name-row {
+      display: flex; align-items: baseline; gap: 0.5rem;
+      margin-top: clamp(5rem, 18vh, 10rem);
+    }
+
+    .card-name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      font-weight: 900; line-height: 0.95;
+    }
+
+    .card-age {
+      font-size: 1.3rem; font-weight: 500;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .card-bio {
+      font-size: 0.9rem; line-height: 1.45;
+      color: rgba(255,255,255,0.85);
+      margin: 0.5rem 0 0.65rem;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-intent {
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 0.65rem;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      padding: 0.65rem 0.75rem;
+      display: grid; gap: 0.2rem;
+    }
+    .card-intent-label {
+      font-size: 0.65rem; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+    .card-intent-text { font-size: 0.88rem; font-weight: 500; }
+
+    /* Like / Pass overlay */
+    .swipe-stamp {
+      position: absolute; top: 1.4rem; z-index: 5;
+      border-radius: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem; font-weight: 900;
+      letter-spacing: 0.04em;
+      opacity: 0; transition: opacity 0.12s ease;
+      pointer-events: none;
+    }
+    .stamp-like {
+      left: 1rem;
+      border: 3px solid #4ce06a;
+      color: #4ce06a;
+      transform: rotate(-10deg);
+    }
+    .stamp-pass {
+      right: 1rem;
+      border: 3px solid #ff4d6d;
+      color: #ff4d6d;
+      transform: rotate(10deg);
+    }
+
+    /* ─── ACTION BUTTONS ─── */
+    .action-bar {
+      display: flex; justify-content: center; align-items: center;
+      gap: 0.85rem; padding: 0.25rem 0;
+    }
+
+    .act-btn {
+      border: none; border-radius: 50%; cursor: pointer;
+      display: grid; place-items: center;
+      transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 150ms ease;
+      flex-shrink: 0;
+    }
+    .act-btn:active { transform: scale(0.88) !important; }
+
+    .act-btn.sm {
+      width: 3rem; height: 3rem; font-size: 1.2rem;
+      background: white; color: var(--muted);
+      box-shadow: var(--shadow-sm);
+    }
+    .act-btn.lg {
+      width: 3.8rem; height: 3.8rem; font-size: 1.65rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+    }
+    .act-btn.pass { background: white; color: #ff4d6d; box-shadow: var(--shadow-sm); }
+    .act-btn.like { background: var(--grad); color: white; }
+    .act-btn.spark { background: linear-gradient(135deg,#f7b733,#fc4a1a); color: white; }
+    .act-btn:hover { transform: translateY(-3px); }
+
+    /* ─── INSIGHT PANEL ─── */
+    .insight-card {
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      background: white;
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+      margin-top: 1rem;
+    }
+
+    .insight-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+    .insight-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 800;
+    }
+    .score-pill {
+      display: flex; align-items: center; gap: 0.35rem;
+      border-radius: 999px;
+      background: rgba(230,83,106,0.1);
+      padding: 0.3rem 0.65rem;
+      font-size: 0.8rem; font-weight: 800;
+      color: var(--rose);
+    }
+
+    .trait-list { display: grid; gap: 0.55rem; }
+    .trait { display: grid; gap: 0.25rem; }
+    .trait-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .trait-bar {
+      height: 0.42rem; border-radius: 999px;
+      background: var(--soft); overflow: hidden;
+    }
+    .trait-fill {
+      height: 100%; border-radius: inherit;
+      background: var(--grad);
+      transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .prompt-box {
+      margin-top: 0.85rem;
+      border-radius: 0.75rem;
+      background: var(--soft);
+      padding: 0.85rem;
+      display: grid; gap: 0.5rem;
+    }
+    .prompt-label {
+      font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .prompt-text {
+      font-size: 0.92rem; line-height: 1.45; color: var(--plum);
+      font-style: italic;
+    }
+    .prompt-btn {
+      align-self: start; border: none; border-radius: 0.55rem;
+      background: var(--ink); color: white;
+      padding: 0.55rem 0.85rem;
+      font: inherit; font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: opacity 140ms;
+    }
+    .prompt-btn:hover { opacity: 0.85; }
+
+    /* ─── MATCHES GRID ─── */
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .mini-card {
+      border-radius: 1rem;
+      overflow: hidden;
+      background: white;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+    .mini-card:active { transform: scale(0.96); }
+    .mini-card img {
+      width: 100%; aspect-ratio: 3/4; object-fit: cover;
+      display: block;
+    }
+    .mini-card-info {
+      padding: 0.65rem 0.7rem;
+    }
+    .mini-card-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 800;
+    }
+    .mini-card-sub {
+      font-size: 0.78rem; color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    /* ─── MESSAGES ─── */
+    .convo-list { display: grid; gap: 0.35rem; }
+
+    .convo-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 0.85rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: background 140ms ease;
+      border: none; text-align: left; width: 100%;
+    }
+    .convo-row.active { background: rgba(230,83,106,0.06); }
+    .convo-row:active { transform: scale(0.98); }
+
+    .convo-avatar {
+      width: 3rem; height: 3rem; border-radius: 0.75rem;
+      object-fit: cover; flex-shrink: 0;
+    }
+
+    .convo-text { flex: 1; min-width: 0; }
+    .convo-name { font-size: 0.95rem; font-weight: 700; }
+    .convo-preview {
+      font-size: 0.82rem; color: var(--muted);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* Chat */
+    .chat-view {
+      display: flex; flex-direction: column;
+      height: calc(100dvh - 4rem - var(--nav-h) - env(safe-area-inset-top));
+    }
+
+    .chat-head {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.6rem 0 0.75rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 0.75rem;
+    }
+    .chat-head-img {
+      width: 2.8rem; height: 2.8rem; border-radius: 0.65rem;
+      object-fit: cover;
+    }
+    .chat-head-name { font-weight: 800; font-size: 0.95rem; }
+    .chat-head-sub { font-size: 0.78rem; color: var(--muted); }
+
+    .chat-thread {
+      flex: 1 1 0; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      scrollbar-width: none;
+    }
+    .chat-thread::-webkit-scrollbar { display: none; }
+
+    .bubble {
+      max-width: 78%; padding: 0.65rem 0.85rem;
+      border-radius: 1rem; line-height: 1.42;
+      font-size: 0.9rem;
+    }
+    .bubble.them {
+      align-self: flex-start;
+      background: white; border: 1px solid var(--line);
+      border-bottom-left-radius: 0.25rem;
+    }
+    .bubble.me {
+      align-self: flex-end;
+      background: var(--grad); color: white;
+      border-bottom-right-radius: 0.25rem;
+    }
+
+    .composer {
+      display: flex; gap: 0.5rem;
+      padding: 0.7rem 0 0;
+      border-top: 1px solid var(--line);
+    }
+    .composer-input {
+      flex: 1; border: 1.5px solid var(--line);
+      border-radius: 999px;
+      background: white; color: var(--ink);
+      padding: 0.65rem 1rem;
+      font: inherit; font-size: 0.9rem;
+    }
+    .composer-input:focus { outline: none; border-color: var(--rose); }
+    .composer-send {
+      width: 2.8rem; height: 2.8rem; border-radius: 50%;
+      border: none; background: var(--grad); color: white;
+      font-size: 1.1rem; cursor: pointer;
+      display: grid; place-items: center;
+      transition: opacity 140ms;
+    }
+    .composer-send:hover { opacity: 0.88; }
+
+    /* ─── VIRAL LAB ─── */
+    .viral-card {
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      background: white;
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 0.85rem;
+    }
+    .viral-eyebrow {
+      font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--rose); margin-bottom: 0.3rem;
+    }
+    .viral-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 800;
+      margin-bottom: 0.6rem;
+    }
+    .viral-desc { font-size: 0.87rem; color: var(--muted); line-height: 1.5; margin-bottom: 0.85rem; }
+
+    .vote-grid { display: grid; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .vote-bar { display: grid; gap: 0.28rem; }
+    .vote-label-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+    .vote-track { height: 0.45rem; border-radius: 999px; background: var(--soft); overflow: hidden; }
+    .vote-fill { height: 100%; border-radius: inherit; background: var(--grad); transition: width 0.7s ease; }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .ghost-btn {
+      border: 1.5px solid var(--line); border-radius: 0.65rem;
+      background: white; color: var(--ink);
+      padding: 0.6rem 0.85rem;
+      font: inherit; font-size: 0.83rem; font-weight: 700;
+      cursor: pointer; transition: all 140ms;
+    }
+    .ghost-btn:active { background: var(--soft); }
+    .ghost-btn.selected { border-color: var(--mint); background: rgba(28,156,131,0.08); color: var(--mint); }
+
+    .prim-btn {
+      border: none; border-radius: 0.65rem;
+      background: var(--grad); color: white;
+      padding: 0.6rem 0.85rem;
+      font: inherit; font-size: 0.83rem; font-weight: 700;
+      cursor: pointer; transition: opacity 140ms;
+    }
+    .prim-btn:hover { opacity: 0.9; }
+
+    .invite-code-box {
+      border-radius: 0.75rem; background: var(--ink);
+      color: white; text-align: center;
+      padding: 0.9rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem; font-weight: 900;
+      letter-spacing: 0.1em; margin: 0.75rem 0;
+    }
+
+    /* ─── ABOUT ─── */
+    .about-hero-block {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--plum);
+      color: white; padding: 1.5rem;
+      margin-bottom: 0.85rem;
+      position: relative;
+    }
+    .about-hero-mark {
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem; font-weight: 900;
+      opacity: 0.15; position: absolute;
+      bottom: -0.5rem; right: 0.75rem;
+      line-height: 1;
+    }
+    .about-eyebrow {
+      font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.55); margin-bottom: 0.35rem;
+    }
+    .about-heading {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; font-weight: 800; margin-bottom: 0.65rem;
+    }
+    .about-body { font-size: 0.88rem; line-height: 1.58; color: rgba(255,255,255,0.78); }
+
+    .about-card {
+      border: 1px solid var(--line);
+      border-radius: 1rem; background: white;
+      padding: 1rem; box-shadow: var(--shadow-sm);
+      margin-bottom: 0.75rem;
+    }
+    .about-card-label {
+      font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--rose); margin-bottom: 0.3rem;
+    }
+    .about-card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 800; margin-bottom: 0.4rem;
+    }
+    .about-card-body { font-size: 0.86rem; color: var(--muted); line-height: 1.5; }
+    .about-quote { color: var(--plum); font-size: 0.9rem; line-height: 1.52; font-style: italic; }
+    .about-list { padding-left: 1rem; color: var(--muted); font-size: 0.86rem; line-height: 1.6; }
+    .contact-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%;
+      border: none; border-radius: 0.75rem;
+      background: var(--ink); color: white;
+      padding: 0.75rem; font: inherit; font-weight: 700;
+      font-size: 0.9rem; text-decoration: none;
+      cursor: pointer; margin-top: 0.4rem;
+    }
+
+    /* ─── AUTH CARD ─── */
+    .auth-card {
+      border: 1px solid var(--line);
+      border-radius: 1rem; background: white;
+      padding: 1rem; box-shadow: var(--shadow-sm);
+      margin-bottom: 0.85rem;
+    }
+    .auth-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 800; margin-bottom: 0.3rem;
+    }
+    .auth-status { font-size: 0.83rem; color: var(--muted); margin-bottom: 0.75rem; }
+    .auth-fields { display: grid; gap: 0.45rem; margin-bottom: 0.55rem; }
+    .auth-input {
+      width: 100%; border: 1.5px solid var(--line);
+      border-radius: 0.65rem; background: var(--soft); color: var(--ink);
+      padding: 0.65rem 0.85rem; font: inherit; font-size: 0.88rem;
+    }
+    .auth-input:focus { outline: none; border-color: var(--rose); }
+    .auth-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
+    .auth-btns button {
+      border: none; border-radius: 0.65rem;
+      padding: 0.65rem; font: inherit; font-size: 0.85rem; font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-login { background: var(--ink); color: white; }
+    .btn-signup { background: var(--grad); color: white; }
+    .gender-row { display: flex; gap: 0.45rem; margin-bottom: 0.55rem; }
+    .gender-label {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+      border: 1.5px solid var(--line); border-radius: 0.65rem;
+      background: white; padding: 0.55rem; cursor: pointer;
+      font-size: 0.85rem; font-weight: 600; transition: all 140ms;
+    }
+    .gender-label:has(input:checked) { border-color: var(--rose); background: rgba(230,83,106,0.07); color: var(--rose); }
+    .gender-label input { display: none; }
+
+    /* ─── BOTTOM NAV ─── */
+    #bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      padding-bottom: env(safe-area-inset-bottom);
+      background: rgba(250,248,255,0.9);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--line);
+      display: flex; z-index: 20;
+    }
+
+    .nav-tab {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.2rem; border: none; background: transparent;
+      cursor: pointer; padding: 0.4rem 0.25rem;
+      transition: all 150ms ease;
+      position: relative;
+    }
+
+    .nav-icon {
+      font-size: 1.35rem; transition: transform 200ms cubic-bezier(0.34,1.56,0.64,1);
+      display: grid; place-items: center;
+    }
+
+    .nav-label {
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--muted); transition: color 150ms ease;
+    }
+
+    .nav-tab.active .nav-icon { transform: scale(1.18) translateY(-1px); }
+    .nav-tab.active .nav-label { color: var(--rose); }
+    .nav-tab.active::after {
+      content: ''; position: absolute; bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+      width: 1.4rem; height: 0.18rem; border-radius: 999px;
+      background: var(--rose);
+    }
+
+    .nav-badge {
+      position: absolute; top: 0.35rem; right: calc(50% - 1.35rem);
+      min-width: 1.1rem; height: 1.1rem;
+      border-radius: 999px; padding: 0 0.25rem;
+      background: var(--rose); color: white;
+      font-size: 0.62rem; font-weight: 800;
+      display: grid; place-items: center;
+      border: 2px solid rgba(250,248,255,0.9);
+    }
+
+    /* ─── TOAST ─── */
+    #toast {
+      position: fixed; bottom: calc(var(--nav-h) + 1rem); left: 50%;
+      transform: translate(-50%, 140%); z-index: 30;
+      border-radius: 999px; background: var(--ink); color: white;
+      padding: 0.7rem 1.1rem; font-size: 0.88rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      opacity: 0; transition: opacity 200ms ease, transform 200ms ease;
+      max-width: calc(100vw - 2rem); text-align: center;
+      pointer-events: none; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* ─── SECTION TITLE ─── */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 900;
+      margin-bottom: 0.85rem;
+    }
+    .section-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; margin-bottom: 1rem; }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      text-align: center; padding: 2.5rem 1rem;
+      color: var(--muted); font-size: 0.9rem; line-height: 1.6;
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+
+    /* ─── PROGRESS ─── */
+    .progress-row { display: grid; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .progress-label-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+    .progress-track { height: 0.42rem; border-radius: 999px; background: var(--soft); overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: inherit; background: var(--grad); }
+
+    /* supabase status indicator */
+    .status-dot {
+      display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%;
+      margin-right: 0.4rem;
+    }
+    .status-dot.ok { background: var(--mint); }
+    .status-dot.err { background: var(--rose); }
+    .status-dot.idle { background: var(--muted); }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- HEADER -->
+  <header id="header">
+    <div class="header-left">
+      <div class="brand-mark">m</div>
+      <div class="header-title">
+        <span class="header-eyebrow" id="headerEyebrow">Aujourd'hui</span>
+        <span class="header-h1" id="headerTitle">Découvrir</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="safeModeBtn" title="Mode respect" type="button">✓</button>
+    </div>
+  </header>
+
+  <!-- SCROLL WRAPPER -->
+  <div id="scroll">
+
+    <!-- DISCOVER PANEL -->
+    <div class="panel active" id="panelDiscover">
+      <!-- Filter chips -->
+      <div class="filter-row">
+        <button class="chip active" data-filter="all" type="button">Tous</button>
+        <button class="chip" data-filter="serious" type="button">Sérieux</button>
+        <button class="chip" data-filter="creative" type="button">Créatif</button>
+        <button class="chip" data-filter="nearby" type="button">Près</button>
+        <button class="chip" data-filter="verified" type="button">Vérifié</button>
+      </div>
+
+      <!-- Card stack -->
+      <div class="card-stack">
+        <div class="profile-card" id="profileCard">
+          <div class="swipe-stamp stamp-like" id="stampLike">OOUAIS</div>
+          <div class="swipe-stamp stamp-pass" id="stampPass">PASSE</div>
+          <img class="card-photo" id="cardPhoto" src="" alt="" />
+          <div class="card-wash"></div>
+          <div class="card-body">
+            <div class="card-top">
+              <div id="cardBadges" style="display:flex;gap:0.4rem;flex-wrap:wrap;"></div>
+              <span class="card-dist" id="cardDist"></span>
+            </div>
+            <div class="card-name-row">
+              <span class="card-name" id="cardName"></span>
+              <span class="card-age" id="cardAge"></span>
+            </div>
+            <p class="card-bio" id="cardBio"></p>
+            <div class="card-intent">
+              <span class="card-intent-label">Cherche</span>
+              <span class="card-intent-text" id="cardIntent"></span>
+            </div>
           </div>
         </div>
+      </div>
 
-        <nav class="side-nav" aria-label="Sections">
-          <button class="nav-item active" data-panel="discover" type="button">
-            <span>Découvrir</span>
-            <strong id="discoverCount">6</strong>
-          </button>
-          <button class="nav-item" data-panel="profile" type="button">
-            <span>Mon profil</span>
-            <strong id="profileCount">0</strong>
-          </button>
-          <button class="nav-item" data-panel="matches" type="button">
-            <span>Matches</span>
-            <strong id="matchCount">0</strong>
-          </button>
-          <button class="nav-item" data-panel="messages" type="button">
-            <span>Messages</span>
-            <strong id="messageCount">3</strong>
-          </button>
-          <button class="nav-item" data-panel="viral" type="button">
-            <span>Viral Lab</span>
-            <strong id="viralCount">4</strong>
-          </button>
-          <button class="nav-item" data-panel="about" type="button">
-            <span>À propos</span>
-            <strong id="aboutCount">1</strong>
-          </button>
-        </nav>
+      <!-- Action bar -->
+      <div class="action-bar">
+        <button class="act-btn sm" id="undoBtn" title="Annuler" type="button">↶</button>
+        <button class="act-btn lg pass" id="passBtn" title="Passer" type="button">✕</button>
+        <button class="act-btn lg spark" id="sparkBtn" title="Spark" type="button">⚡</button>
+        <button class="act-btn lg like" id="likeBtn" title="Aimer" type="button">♥</button>
+        <button class="act-btn sm" id="reportBtn" title="Signaler" type="button">⋯</button>
+      </div>
 
-        <section class="quality-panel" aria-labelledby="qualityTitle">
-          <h2 id="qualityTitle">Qualité avant quantité</h2>
-          <div class="quality-meter">
-            <span style="width: 84%"></span>
+      <!-- Insight card -->
+      <div class="insight-card" id="insightCard">
+        <div class="insight-header">
+          <span class="insight-name" id="insightName">—</span>
+          <div class="score-pill">
+            <span>✦</span>
+            <span id="scoreValue">—</span>%
           </div>
-          <p>mbifê privilégie les intentions, la compatibilité et des conversations qui démarrent sans malaise.</p>
-        </section>
-
-        <section class="auth-panel" aria-labelledby="authTitle">
-          <div>
-            <h2 id="authTitle">Compte mbifê</h2>
-            <p id="authStatus">Backend non configuré</p>
-          </div>
-          <form id="authForm" class="auth-form">
-            <input id="authName" name="name" type="text" autocomplete="name" placeholder="Nom public" />
-            <input id="authEmail" name="email" type="email" autocomplete="email" placeholder="Email" />
-            <input id="authPassword" name="password" type="password" autocomplete="current-password" placeholder="Mot de passe" />
-            <div class="gender-select" id="genderField">
-              <label class="gender-label">
-                <input type="radio" name="signup_gender" value="male" />
-                <span>👨 Homme</span>
-              </label>
-              <label class="gender-label">
-                <input type="radio" name="signup_gender" value="female" checked />
-                <span>👩 Femme</span>
-              </label>
-            </div>
-            <div class="auth-actions">
-              <button id="loginButton" type="button">Connexion</button>
-              <button id="signupButton" type="button">Inscription</button>
-            </div>
-          </form>
-          <!-- Widget utilisateur connecté -->
-          <div class="user-widget" id="userWidget" hidden>
-            <div class="user-avatar-row">
-              <div class="user-avatar" id="userAvatar">👤</div>
-              <div>
-                <strong id="userDisplayName">Membre mbifê</strong>
-                <span id="userEmail" class="user-email"></span>
-              </div>
-            </div>
-            <div class="user-theme-badge" id="userThemeBadge"></div>
-          </div>
-        </section>
-      </aside>
-
-      <main class="workspace">
-        <header class="topbar">
-          <div>
-            <p class="eyebrow">Aujourd'hui</p>
-            <h1>Découvre des profils vraiment alignés.</h1>
-          </div>
-          <button class="icon-button" id="safeModeButton" type="button" aria-pressed="false" title="Activer le mode respect">
-            <span aria-hidden="true">✓</span>
-          </button>
-        </header>
-
-        <section class="filters" aria-label="Filtres de découverte">
-          <button class="filter-chip active" data-filter="all" type="button">Tous</button>
-          <button class="filter-chip" data-filter="serious" type="button">Sérieux</button>
-          <button class="filter-chip" data-filter="creative" type="button">Créatif</button>
-          <button class="filter-chip" data-filter="nearby" type="button">Près de moi</button>
-          <button class="filter-chip" data-filter="verified" type="button">Vérifié</button>
-        </section>
-
-        <section class="panel active" id="discoverPanel" aria-label="Découvrir">
-          <div class="deck-area">
-            <article class="profile-card" id="profileCard" aria-live="polite"></article>
-
-            <div class="actions" aria-label="Actions sur le profil">
-              <button class="action-button secondary" id="undoButton" type="button" title="Revenir au profil précédent">
-                <span aria-hidden="true">↶</span>
-              </button>
-              <button class="action-button pass" id="passButton" type="button" title="Passer">
-                <span aria-hidden="true">×</span>
-              </button>
-              <button class="action-button like" id="likeButton" type="button" title="Aimer">
-                <span aria-hidden="true">♥</span>
-              </button>
-              <button class="action-button spark" id="sparkButton" type="button" title="Super like : montrer un intérêt plus fort">
-                <span aria-hidden="true">✦</span>
-              </button>
-              <button class="action-button report" id="reportButton" type="button" title="Signaler ce profil">
-                <span aria-hidden="true">!</span>
-              </button>
-            </div>
-          </div>
-
-          <aside class="insight-panel" aria-label="Détails de compatibilité">
-            <div class="insight-header">
-              <p class="eyebrow">Signal mbifê</p>
-              <h2 id="insightName">Compatibilité</h2>
-            </div>
-            <div class="score-ring" id="scoreRing">
-              <strong id="scoreValue">0%</strong>
-              <span>match</span>
-            </div>
-            <div class="trait-list" id="traitList"></div>
-            <div class="prompt-box">
-              <p>Phrase d'ouverture</p>
-              <button id="promptButton" type="button">Voir une idée</button>
-              <blockquote id="promptText"></blockquote>
-            </div>
-          </aside>
-        </section>
-
-        <section class="panel profile-layout" id="profilePanel" aria-label="Mon profil">
-          <article class="profile-editor">
-            <div class="section-heading">
-              <p class="eyebrow">Profil public</p>
-              <h2>Crée un profil complet pour apparaître dans la découverte.</h2>
-            </div>
-            <form id="profileForm" class="profile-form">
-              <div class="avatar-editor">
-                <img id="profilePreview" alt="Aperçu du profil" />
-                <label for="profilePhoto">Photo de profil</label>
-                <input id="profilePhoto" name="photo" type="file" accept="image/png,image/jpeg,image/webp" />
-              </div>
-              <div class="form-grid">
-                <label>
-                  Nom public
-                  <input id="profileName" name="display_name" type="text" maxlength="80" placeholder="Ton nom public" />
-                </label>
-                <label>
-                  Age
-                  <input id="profileAge" name="age" type="number" min="18" max="99" placeholder="18+" />
-                </label>
-                <label>
-                  Ville
-                  <input id="profileCity" name="city" type="text" maxlength="80" placeholder="Ta ville" />
-                </label>
-                <label>
-                  Distance affichée
-                  <input id="profileDistance" name="distance_km" type="number" min="0" max="999" placeholder="0" />
-                </label>
-              </div>
-              <label>
-                Bio
-                <textarea id="profileBio" name="bio" rows="4" maxlength="360" placeholder="Présente-toi avec sincérité."></textarea>
-              </label>
-              <label>
-                Intention
-                <textarea id="profileIntent" name="intent" rows="3" maxlength="220" placeholder="Ce que tu recherches sur mbifê."></textarea>
-              </label>
-              <label>
-                Centres d'intérêt
-                <input id="profileInterests" name="interests" type="text" placeholder="musique, sport, lecture" />
-              </label>
-              <div class="profile-actions">
-                <button class="primary-button" id="saveProfileButton" type="submit">Enregistrer</button>
-                <button class="ghost-button" id="refreshBackendButton" type="button">Rafraîchir</button>
-              </div>
-            </form>
-          </article>
-
-          <aside class="profile-status-stack">
-            <article class="about-card">
-              <p class="eyebrow">Statut</p>
-              <h2 id="profileStatusTitle">Profil local</h2>
-              <p class="muted-copy" id="profileStatusText">Connecte-toi pour synchroniser ton profil avec Supabase.</p>
-              <button class="ghost-button profile-logout" id="profileLogoutButton" type="button" hidden>🚪 Se déconnecter</button>
-            </article>
-            <article class="about-card">
-              <p class="eyebrow">Production</p>
-              <h2>À vérifier avant lancement public</h2>
-              <ul class="about-list">
-                <li>Photo réelle et bio complète</li>
-                <li>Signalement disponible sur chaque profil</li>
-                <li>Messages limités pour éviter le spam</li>
-                <li>Politiques Supabase RLS actives</li>
-              </ul>
-            </article>
-          </aside>
-        </section>
-
-        <section class="panel two-column" id="matchesPanel" aria-label="Matches">
-          <div>
-            <h2>Matches récents</h2>
-            <div class="match-grid" id="matchGrid"></div>
-          </div>
-          <div class="date-lab">
-            <p class="eyebrow">Date Lab</p>
-            <h2>Propose un rendez-vous qui colle aux deux personnes.</h2>
-            <div class="date-card" id="dateCard"></div>
-          </div>
-        </section>
-
-        <section class="panel two-column" id="messagesPanel" aria-label="Messages">
-          <div class="conversation-list" id="conversationList"></div>
-          <div class="chat-window">
-            <div class="chat-header" id="chatHeader"></div>
-            <div class="chat-thread" id="chatThread"></div>
-            <form class="composer" id="composer">
-              <input id="messageInput" name="message" type="text" autocomplete="off" placeholder="Écris une réponse simple..." />
-              <button type="submit">Envoyer</button>
-            </form>
-          </div>
-        </section>
-
-        <section class="panel viral-layout" id="viralPanel" aria-label="Viral Lab">
-          <div class="share-studio">
-            <div class="section-heading">
-              <p class="eyebrow">Boucle de partage</p>
-              <h2>Transforme un match en contenu que les gens ont envie d'envoyer.</h2>
-            </div>
-
-            <canvas class="share-canvas" id="shareCanvas" width="720" height="900" aria-label="Carte de compatibilité partageable"></canvas>
-
-            <div class="share-copy">
-              <label for="shareText">Texte partageable</label>
-              <textarea id="shareText" readonly rows="4"></textarea>
-            </div>
-
-            <div class="viral-actions">
-              <button class="primary-button" id="copyShareButton" type="button">Copier</button>
-              <button class="ghost-button" id="nativeShareButton" type="button">Partager</button>
-              <button class="ghost-button" id="downloadShareButton" type="button">Image</button>
-              <button class="ghost-button" id="refreshShareButton" type="button">Changer profil</button>
-            </div>
-          </div>
-
-          <div class="viral-stack">
-            <article class="viral-card invite-card">
-              <div class="section-heading">
-                <p class="eyebrow">Invite loop</p>
-                <h2>Code VIP</h2>
-              </div>
-              <p class="invite-code" id="inviteCode"></p>
-              <p class="muted-copy">Chaque invitation débloque un bonus visible : plus de prompts, plus de votes amis, plus de cartes partageables.</p>
-              <button class="primary-button" id="copyInviteButton" type="button">Copier l'invitation</button>
-              <div class="progress-row">
-                <span id="inviteProgressText">0 invitation</span>
-                <div class="progress-track"><span id="inviteProgressBar"></span></div>
-              </div>
-            </article>
-
-            <article class="viral-card wing-card">
-              <div class="section-heading">
-                <p class="eyebrow">Wing mode</p>
-                <h2>Fais voter tes amis</h2>
-              </div>
-              <p class="muted-copy">Un profil devient une mini-discussion de groupe: go, pause ou non. C'est social, leger, et ca ramene les amis dans l'app.</p>
-              <div class="wing-actions" id="wingActions">
-                <button data-vote="go" type="button">Go</button>
-                <button data-vote="maybe" type="button">Pause</button>
-                <button data-vote="pass" type="button">Non</button>
-              </div>
-              <div class="vote-list" id="voteList"></div>
-            </article>
-
-            <article class="viral-card challenge-card">
-              <div class="section-heading">
-                <p class="eyebrow">Défi du jour</p>
-                <h2 id="challengeTitle">Question partageable</h2>
-              </div>
-              <p class="muted-copy" id="challengeCopy"></p>
-              <div class="challenge-options" id="challengeOptions"></div>
-              <button class="ghost-button" id="copyChallengeButton" type="button">Inviter un ami à répondre</button>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel about-layout" id="aboutPanel" aria-label="À propos de mbifê">
-          <article class="about-hero">
-            <div class="about-mark">mbifê</div>
-            <div class="section-heading">
-              <p class="eyebrow">À propos</p>
-              <h2>Je suis Zala Aziz Farick, étudiant en 2e année d'informatique appliquée à l'IFOAD.</h2>
-            </div>
-            <p>
-              Avec mbifê, je veux créer une application de rencontre plus claire, plus humaine et plus respectueuse. Mon idée
-              est de dépasser le simple swipe pour mettre en avant les intentions, la compatibilité, la conversation et la
-              confiance entre les utilisateurs.
-            </p>
-            <p>
-              Ce projet me permet aussi de mettre en pratique mes compétences en développement web, design d'interface,
-              expérience utilisateur et connexion à une base de données moderne. mbifê est pensé comme un produit évolutif :
-              d'abord un prototype solide, puis une vraie plateforme avec comptes, profils, matches et messages réels.
-            </p>
-          </article>
-
-          <aside class="about-stack">
-            <article class="about-card">
-              <p class="eyebrow">Profil</p>
-              <h2>Zala Aziz Farick</h2>
-              <ul class="about-list">
-                <li>Étudiant en 2e année d'informatique appliquée à l'IFOAD</li>
-                <li>Créateur du projet mbifê</li>
-                <li>Intéressé par les applications web, les produits numériques et l'expérience utilisateur</li>
-              </ul>
-            </article>
-
-            <article class="about-card">
-              <p class="eyebrow">Message du créateur</p>
-              <blockquote>
-                Je veux que mbifê devienne une app où l'on ose se présenter avec vérité, sans pression, sans faux jeu,
-                et avec assez de fun pour donner envie de revenir.
-              </blockquote>
-            </article>
-
-            <article class="about-card">
-              <p class="eyebrow">Contact</p>
-              <h2>Me contacter</h2>
-              <p class="muted-copy">
-                Pour discuter du projet, proposer une collaboration ou suivre l'évolution de mbifê, tu peux m'écrire à :
-              </p>
-              <a class="contact-link" href="mailto:zifacarter@gmail.com">zifacarter@gmail.com</a>
-            </article>
-
-            <article class="about-card">
-              <p class="eyebrow">Supabase</p>
-              <h2 id="supabaseModeLabel">Mode local</h2>
-              <p class="muted-copy" id="supabaseStatusText">
-                Les données sont encore stockées dans le navigateur. La connexion Supabase sera activée dès que l'URL du projet
-                et la clé anon publique seront ajoutées.
-              </p>
-            </article>
-
-            <article class="about-card">
-              <p class="eyebrow">Prochaine évolution</p>
-              <h2>Comptes, matches et messages réels</h2>
-              <p class="muted-copy">
-                La prochaine étape connectera les profils, likes, invitations et conversations à une base partagée pour que
-                plusieurs utilisateurs puissent interagir en même temps.
-              </p>
-            </article>
-
-            <article class="about-card">
-              <p class="eyebrow">Sécurité</p>
-              <h2>Confidentialité et modération</h2>
-              <p class="muted-copy">
-                mbifê limite les messages trop rapides, permet de signaler un profil et utilise les règles Supabase RLS
-                pour protéger les comptes, les matches et les conversations.
-              </p>
-            </article>
-          </aside>
-        </section>
-      </main>
+        </div>
+        <div class="trait-list" id="traitList"></div>
+        <div class="prompt-box">
+          <span class="prompt-label">Question brise-glace</span>
+          <blockquote class="prompt-text" id="promptText">—</blockquote>
+          <button class="prompt-btn" id="promptBtn" type="button">Nouvelle question →</button>
+        </div>
+      </div>
     </div>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <!-- MATCHES PANEL -->
+    <div class="panel" id="panelMatches">
+      <p class="section-title">Matches</p>
+      <p class="section-sub" id="matchSubtitle">Profils qui t'ont aimé en retour</p>
+      <div class="match-grid" id="matchGrid">
+        <div class="empty-state" style="grid-column:1/-1;">
+          <span class="empty-icon">💫</span>
+          Commence à aimer des profils pour créer des matches !
+        </div>
+      </div>
+    </div>
 
-    <script>
+    <!-- MESSAGES PANEL -->
+    <div class="panel" id="panelMessages">
+      <p class="section-title">Messages</p>
+      <div class="convo-list" id="convoList"></div>
+      <div class="chat-view" id="chatView" style="display:none;">
+        <div class="chat-head" id="chatHead"></div>
+        <div class="chat-thread" id="chatThread"></div>
+        <form class="composer" id="composer">
+          <input class="composer-input" id="msgInput" type="text" placeholder="Envoie un message…" autocomplete="off" />
+          <button class="composer-send" type="submit">↑</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIRAL LAB PANEL -->
+    <div class="panel" id="panelViral">
+      <p class="section-title">Viral Lab</p>
+
+      <!-- Invite -->
+      <div class="viral-card">
+        <p class="viral-eyebrow">Code invite</p>
+        <p class="viral-title">Partage mbifê à tes amis</p>
+        <p class="viral-desc">Chaque invitation compte. Quand tu invites quelqu'un, tu améliores la qualité de la communauté.</p>
+        <div class="invite-code-box" id="inviteCodeBox">MBIFE-—</div>
+        <div class="progress-row">
+          <div class="progress-label-row">
+            <span id="inviteProgressText">0 / 5 invitations</span>
+            <span>Objectif : 5</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="inviteProgressBar" style="width:0%"></div></div>
+        </div>
+        <div class="btn-row">
+          <button class="prim-btn" id="copyInviteBtn" type="button">Copier le lien</button>
+        </div>
+      </div>
+
+      <!-- Wing mode -->
+      <div class="viral-card">
+        <p class="viral-eyebrow">Wing mode</p>
+        <p class="viral-title">Fais voter tes amis</p>
+        <p class="viral-desc">Un profil devient une mini-discussion de groupe : go, pause ou non.</p>
+        <div class="vote-grid" id="voteGrid"></div>
+        <div class="btn-row" id="wingActions">
+          <button class="ghost-btn" data-vote="go" type="button">Go</button>
+          <button class="ghost-btn" data-vote="maybe" type="button">Pause</button>
+          <button class="ghost-btn" data-vote="pass" type="button">Non</button>
+        </div>
+      </div>
+
+      <!-- Daily challenge -->
+      <div class="viral-card">
+        <p class="viral-eyebrow">Défi du jour</p>
+        <p class="viral-title" id="challengeTitle">Question partageable</p>
+        <p class="viral-desc" id="challengeDesc"></p>
+        <div class="btn-row" id="challengeOptions"></div>
+        <div style="margin-top:0.5rem;">
+          <button class="ghost-btn" id="copyChallengeBtn" type="button" style="width:100%;">Inviter un ami à répondre</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT PANEL -->
+    <div class="panel" id="panelAbout">
+      <div class="about-hero-block">
+        <div class="about-hero-mark">mbifê</div>
+        <p class="about-eyebrow">À propos</p>
+        <p class="about-heading">Zala Aziz Farick — IFOAD, 2e année informatique</p>
+        <p class="about-body">Avec mbifê, je veux créer une app de rencontre plus claire, humaine et respectueuse — au-delà du simple swipe, avec intentions, compatibilité et conversations sincères.</p>
+      </div>
+
+      <!-- Auth -->
+      <div class="auth-card" id="authCard">
+        <h3>Compte mbifê</h3>
+        <p class="auth-status" id="authStatus">Backend non configuré</p>
+        <form id="authForm">
+          <div class="auth-fields">
+            <input class="auth-input" id="authName" type="text" placeholder="Nom public" autocomplete="name" />
+            <input class="auth-input" id="authEmail" type="email" placeholder="Email" autocomplete="email" />
+            <input class="auth-input" id="authPassword" type="password" placeholder="Mot de passe" autocomplete="current-password" />
+          </div>
+          <div class="gender-row">
+            <label class="gender-label"><input type="radio" name="gender" value="male" /><span>👨 Homme</span></label>
+            <label class="gender-label"><input type="radio" name="gender" value="female" checked /><span>👩 Femme</span></label>
+          </div>
+          <div class="auth-btns">
+            <button class="btn-login" id="loginBtn" type="button">Connexion</button>
+            <button class="btn-signup" id="signupBtn" type="button">Inscription</button>
+          </div>
+        </form>
+        <div id="userWidget" hidden style="margin-top:0.75rem; padding:0.75rem; border-radius:0.75rem; background:var(--soft); display:grid; gap:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.65rem;">
+            <div style="width:2.4rem;height:2.4rem;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:1.1rem;">👤</div>
+            <div>
+              <strong id="userDisplayName" style="font-size:0.95rem;">Membre mbifê</strong>
+              <div id="userEmail" style="font-size:0.78rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:12rem;"></div>
+            </div>
+          </div>
+          <button id="logoutBtn" type="button" style="width:100%;border:1.5px solid var(--line);border-radius:0.65rem;background:white;padding:0.55rem;font:inherit;font-size:0.83rem;font-weight:700;cursor:pointer;">Se déconnecter</button>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <p class="about-card-label">Message du créateur</p>
+        <blockquote class="about-quote">Je veux que mbifê devienne une app où l'on ose se présenter avec vérité, sans pression, sans faux jeu, et avec assez de fun pour donner envie de revenir.</blockquote>
+      </div>
+
+      <div class="about-card">
+        <p class="about-card-label">Profil</p>
+        <p class="about-card-title">Zala Aziz Farick</p>
+        <ul class="about-list">
+          <li>Étudiant en 2e année d'informatique appliquée à l'IFOAD</li>
+          <li>Créateur du projet mbifê</li>
+          <li>Passionné par les apps web, les produits numériques et l'UX</li>
+        </ul>
+      </div>
+
+      <div class="about-card">
+        <p class="about-card-label">Contact</p>
+        <p class="about-card-title">Me contacter</p>
+        <p class="about-card-body" style="margin-bottom:0.5rem;">Pour discuter du projet ou proposer une collaboration :</p>
+        <a class="contact-link" href="mailto:zifacarter@gmail.com">zifacarter@gmail.com</a>
+      </div>
+
+      <div class="about-card">
+        <p class="about-card-label">Supabase</p>
+        <p class="about-card-title" id="supabaseLabel">Mode local</p>
+        <p class="about-card-body" id="supabaseText">Les données sont stockées dans le navigateur. La connexion Supabase sera activée dès que l'URL du projet et la clé anon publique seront ajoutées.</p>
+      </div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- BOTTOM NAV -->
+  <nav id="bottom-nav">
+    <button class="nav-tab active" data-panel="discover" type="button">
+      <span class="nav-icon">🔍</span>
+      <span class="nav-label">Découvrir</span>
+    </button>
+    <button class="nav-tab" data-panel="matches" type="button">
+      <span class="nav-icon">💫</span>
+      <span class="nav-label">Matches</span>
+      <span class="nav-badge" id="badgeMatches" style="display:none">0</span>
+    </button>
+    <button class="nav-tab" data-panel="messages" type="button">
+      <span class="nav-icon">💬</span>
+      <span class="nav-label">Messages</span>
+      <span class="nav-badge" id="badgeMsgs">3</span>
+    </button>
+    <button class="nav-tab" data-panel="viral" type="button">
+      <span class="nav-icon">🚀</span>
+      <span class="nav-label">Viral</span>
+    </button>
+    <button class="nav-tab" data-panel="about" type="button">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Moi</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ─── DATA ─── */
 const profiles = [
-  {
-    id: "naomi",
-    name: "Naomi",
-    age: 28,
-    city: "Lyon",
-    distance: 3,
-    tags: ["serious", "creative", "verified", "nearby"],
-    verified: true,
-    score: 94,
-    photo:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=85",
-    bio: "Designer d'espaces, fan de marchés le dimanche et de films qui donnent envie de débattre après.",
-    intent: "Relation sérieuse, douce, avec beaucoup de curiosité.",
-    interests: ["architecture", "jazz", "cuisine ivoirienne"],
-    traits: [
-      ["Rythme de vie", 88],
-      ["Intentions", 96],
-      ["Humour", 82],
-      ["Valeurs", 93],
-    ],
-    prompts: [
-      "Tu choisirais quel marché pour un premier café tranquille ?",
-      "Quel film t'a fait changer d'avis sur quelque chose ?",
-      "Je vote pour un débat doux autour d'un dessert. Tu prends quoi ?",
-    ],
-    dateIdeas: [
-      ["Café + expo courte", "Une heure légère pour voir si la conversation respire naturellement."],
-      ["Atelier cuisine", "Vous aimez tous les deux apprendre avec les mains et rire des ratés."],
-    ],
-  },
-  {
-    id: "sofia",
-    name: "Sofia",
-    age: 31,
-    city: "Paris",
-    distance: 8,
-    tags: ["serious", "verified"],
-    verified: true,
-    score: 89,
-    photo:
-      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1200&q=85",
-    bio: "Cheffe de projet climat, collectionne les carnets et les adresses où le thé est vraiment bon.",
-    intent: "Construire lentement, sans jeu de pouvoir.",
-    interests: ["randonnée", "lecture", "thé"],
-    traits: [
-      ["Rythme de vie", 80],
-      ["Intentions", 92],
-      ["Humour", 76],
-      ["Valeurs", 97],
-    ],
-    prompts: [
-      "Quel endroit calme à Paris mérite plus d'amour ?",
-      "Tu préfères une grande randonnée ou une longue conversation ?",
-      "Quel livre tu offrirais à quelqu'un que tu veux mieux connaître ?",
-    ],
-    dateIdeas: [
-      ["Salon de thé discret", "Assez calme pour parler, assez court pour rester confortable."],
-      ["Balade végétale", "Un parcours avec de petites pauses et zéro pression."],
-    ],
-  },
-  {
-    id: "malo",
-    name: "Malo",
-    age: 29,
-    city: "Bordeaux",
-    distance: 2,
-    tags: ["creative", "nearby"],
-    verified: false,
-    score: 86,
-    photo:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=85",
-    bio: "Photographe, nageur tôt le matin, très bon pour trouver la meilleure lumière d'une rue.",
-    intent: "Rencontrer quelqu'un de sincère, sans script pré-écrit.",
-    interests: ["photo argentique", "océan", "ramen"],
-    traits: [
-      ["Rythme de vie", 91],
-      ["Intentions", 78],
-      ["Humour", 88],
-      ["Valeurs", 84],
-    ],
-    prompts: [
-      "Tu choisirais quel quartier pour une mini session photo ?",
-      "Mer au lever du soleil ou dîner improvisé ?",
-      "Quelle odeur te rappelle instantanément une bonne journée ?",
-    ],
-    dateIdeas: [
-      ["Balade photo", "Un rendez-vous actif, facile, avec de quoi parler sans forcer."],
-      ["Ramen comptoir", "Ambiance simple, conversation proche et sortie facile."],
-    ],
-  },
-  {
-    id: "ines",
-    name: "Inès",
-    age: 27,
-    city: "Nantes",
-    distance: 5,
-    tags: ["serious", "creative", "nearby", "verified"],
-    verified: true,
-    score: 91,
-    photo:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85",
-    bio: "Développeuse produit, danseuse salsa débutante et spécialiste des playlists pour cuisiner.",
-    intent: "Une relation complice, stable, avec de l'espace pour chacun.",
-    interests: ["salsa", "produit", "playlists"],
-    traits: [
-      ["Rythme de vie", 85],
-      ["Intentions", 90],
-      ["Humour", 94],
-      ["Valeurs", 86],
-    ],
-    prompts: [
-      "Quelle chanson sauve toujours une soirée cuisine ?",
-      "Tu es plutôt projet du dimanche ou improvisation totale ?",
-      "On teste un cours de salsa débutant sans se juger ?",
-    ],
-    dateIdeas: [
-      ["Cours de danse débutant", "Un brise-glace vivant avec beaucoup de place pour rire."],
-      ["Dîner playlist", "Chacun ajoute trois titres, puis vous comparez les histoires derrière."],
-    ],
-  },
-  {
-    id: "adam",
-    name: "Adam",
-    age: 33,
-    city: "Marseille",
-    distance: 14,
-    tags: ["verified"],
-    verified: true,
-    score: 82,
-    photo:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=85",
-    bio: "Kinésithérapeute, adore cuisiner pour les autres et partir sans trop planifier le week-end.",
-    intent: "Rencontre sérieuse, mais pas austère.",
-    interests: ["sport doux", "cuisine", "road trips"],
-    traits: [
-      ["Rythme de vie", 78],
-      ["Intentions", 87],
-      ["Humour", 90],
-      ["Valeurs", 80],
-    ],
-    prompts: [
-      "Quel plat mérite de devenir un test de compatibilité ?",
-      "Week-end planifié ou sac léger et départ tôt ?",
-      "Quelle petite habitude te rend la vie meilleure ?",
-    ],
-    dateIdeas: [
-      ["Marché + cuisine", "Choisir trois ingrédients ensemble, simple et très révélateur."],
-      ["Promenade en bord de mer", "Facile à interrompre, facile à prolonger."],
-    ],
-  },
-  {
-    id: "lea",
-    name: "Léa",
-    age: 26,
-    city: "Lille",
-    distance: 1,
-    tags: ["creative", "nearby", "verified"],
-    verified: true,
-    score: 88,
-    photo:
-      "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=1200&q=85",
-    bio: "Illustratrice, café serré, longues marches, et opinions très précises sur les croissants.",
-    intent: "Créer une vraie connexion, avec légèreté et franchise.",
-    interests: ["illustration", "cafés", "balades"],
-    traits: [
-      ["Rythme de vie", 92],
-      ["Intentions", 83],
-      ["Humour", 89],
-      ["Valeurs", 87],
-    ],
-    prompts: [
-      "Quel café mérite officiellement le titre de meilleur croissant ?",
-      "Tu dessinerais quoi pour résumer ta semaine ?",
-      "Une balade parfaite commence par quelle rue ?",
-    ],
-    dateIdeas: [
-      ["Carnet croquis + café", "Un rendez-vous calme, créatif, sans silence gênant."],
-      ["Balade vitrine", "Regarder la ville ensemble donne vite matière à parler."],
-    ],
-  },
+  { id:"naomi", name:"Naomi", age:28, city:"Lyon", distance:3, tags:["serious","creative","verified","nearby"], verified:true, score:94, photo:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85", bio:"Designer d'espaces, fan de marchés le dimanche et de films qui donnent envie de débattre après.", intent:"Relation sérieuse, douce, avec beaucoup de curiosité.", interests:["architecture","jazz","cuisine ivoirienne"], traits:[["Rythme de vie",88],["Intentions",96],["Humour",82],["Valeurs",93]], prompts:["Tu choisirais quel marché pour un premier café tranquille ?","Quel film t'a fait changer d'avis sur quelque chose ?","Je vote pour un débat doux autour d'un dessert. Tu prends quoi ?"] },
+  { id:"sofia", name:"Sofia", age:31, city:"Paris", distance:8, tags:["serious","verified"], verified:true, score:89, photo:"https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=85", bio:"Cheffe de projet climat, collectionne les carnets et les adresses où le thé est vraiment bon.", intent:"Construire lentement, sans jeu de pouvoir.", interests:["randonnée","lecture","thé"], traits:[["Rythme de vie",80],["Intentions",92],["Humour",76],["Valeurs",97]], prompts:["Quel endroit calme à Paris mérite plus d'amour ?","Tu préfères une grande randonnée ou une longue conversation ?","Quel livre tu offrirais à quelqu'un que tu veux mieux connaître ?"] },
+  { id:"malo", name:"Malo", age:29, city:"Bordeaux", distance:2, tags:["creative","nearby"], verified:false, score:86, photo:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85", bio:"Photographe, nageur tôt le matin, très bon pour trouver la meilleure lumière d'une rue.", intent:"Rencontrer quelqu'un de sincère, sans script pré-écrit.", interests:["photo argentique","océan","ramen"], traits:[["Rythme de vie",91],["Intentions",78],["Humour",88],["Valeurs",84]], prompts:["Tu choisirais quel quartier pour une mini session photo ?","Mer au lever du soleil ou dîner improvisé ?","Quelle odeur te rappelle instantanément une bonne journée ?"] },
+  { id:"ines", name:"Inès", age:27, city:"Nantes", distance:5, tags:["serious","creative","nearby","verified"], verified:true, score:91, photo:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85", bio:"Développeuse produit, danseuse salsa débutante et spécialiste des playlists pour cuisiner.", intent:"Une relation complice, stable, avec de l'espace pour chacun.", interests:["salsa","produit","playlists"], traits:[["Rythme de vie",85],["Intentions",90],["Humour",94],["Valeurs",86]], prompts:["Quelle chanson sauve toujours une soirée cuisine ?","Tu es plutôt projet du dimanche ou improvisation totale ?","On teste un cours de salsa débutant sans se juger ?"] },
+  { id:"adam", name:"Adam", age:33, city:"Marseille", distance:14, tags:["verified"], verified:true, score:82, photo:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=85", bio:"Kinésithérapeute, adore cuisiner pour les autres et partir sans trop planifier le week-end.", intent:"Rencontre sérieuse, mais pas austère.", interests:["sport doux","cuisine","road trips"], traits:[["Rythme de vie",78],["Intentions",87],["Humour",90],["Valeurs",80]], prompts:["Quel plat mérite de devenir un test de compatibilité ?","Week-end planifié ou sac léger et départ tôt ?","Quelle petite habitude te rend la vie meilleure ?"] },
+  { id:"lea", name:"Léa", age:26, city:"Lille", distance:1, tags:["creative","nearby","verified"], verified:true, score:88, photo:"https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=900&q=85", bio:"Illustratrice, café serré, longues marches, et opinions très précises sur les croissants.", intent:"Créer une vraie connexion, avec légèreté et franchise.", interests:["illustration","cafés","balades"], traits:[["Rythme de vie",92],["Intentions",83],["Humour",89],["Valeurs",87]], prompts:["Quel café mérite officiellement le titre de meilleur croissant ?","Tu dessinerais quoi pour résumer ta semaine ?","Une balade parfaite commence par quelle rue ?"] }
 ];
 
 const conversations = [
-  {
-    id: "ines",
-    messages: [
-      ["them", "J'ai vu que tu aimais les playlists de cuisine. Très important."],
-      ["me", "Absolument. Une mauvaise playlist peut ruiner des pâtes."],
-      ["them", "Alors premier test : soul, afrobeats ou électro douce ?"],
-    ],
-  },
-  {
-    id: "malo",
-    messages: [
-      ["them", "Je peux défendre le lever de soleil même avant café."],
-      ["me", "C'est courageux. Je demande des preuves photographiques."],
-    ],
-  },
-  {
-    id: "sofia",
-    messages: [
-      ["them", "Je connais un salon de thé minuscule où personne ne crie."],
-      ["me", "Ça ressemble déjà à une excellente technologie sociale."],
-    ],
-  },
+  { id:"ines", messages:[["them","J'ai vu que tu aimais les playlists de cuisine. Très important."],["me","Absolument. Une mauvaise playlist peut ruiner des pâtes."],["them","Alors premier test : soul, afrobeats ou électro douce ?"]] },
+  { id:"malo", messages:[["them","Je peux défendre le lever de soleil même avant café."],["me","C'est courageux. Je demande des preuves photographiques."]] },
+  { id:"sofia", messages:[["them","Je connais un salon de thé minuscule où personne ne crie."],["me","Ça ressemble déjà à une excellente technologie sociale."]] }
 ];
 
 const dailyChallenge = {
-  title: "Premier message: tu choisis quelle vibe ?",
-  copy:
-    "Compare ta réponse avec un ami et vois si vous cherchez la même énergie dans une rencontre.",
-  options: [
-    { id: "sincere", label: "Sincère", votes: 68 },
-    { id: "funny", label: "Drôle", votes: 46 },
-    { id: "bold", label: "Direct", votes: 31 },
-  ],
+  title:"Premier message: tu choisis quelle vibe ?",
+  copy:"Compare ta réponse avec un ami et vois si vous cherchez la même énergie dans une rencontre.",
+  options:[{id:"sincere",label:"Sincère",votes:68},{id:"funny",label:"Drôle",votes:46},{id:"bold",label:"Direct",votes:31}]
 };
 
 const supabaseConfig = {
   url: localStorage.getItem("mbifeSupabaseUrl") || "https://mmsrozfrrzyyxwpebnxb.supabase.co",
-  anonKey:
-    localStorage.getItem("mbifeSupabaseAnonKey") ||
-    "sb_publishable_EarW8QPA9w_c_euHaI9RCQ_0__No0le",
+  anonKey: localStorage.getItem("mbifeSupabaseAnonKey") || "sb_publishable_EarW8QPA9w_c_euHaI9RCQ_0__No0le"
 };
 
+/* ─── STATE ─── */
 const state = {
   activePanel: "discover",
   activeFilter: "all",
@@ -2317,1898 +1082,472 @@ const state = {
   matches: [],
   safeMode: false,
   activeConversation: conversations[0].id,
-  shareProfileIndex: 0,
-  inviteCode: getStoredInviteCode(),
+  inviteCode: getInviteCode(),
   invitesSent: Number(localStorage.getItem("mbifeInvitesSent") || "0"),
-  wingVotes: readStoredJson("mbifeWingVotes", { go: 16, maybe: 7, pass: 3 }),
+  wingVotes: readJson("mbifeWingVotes", {go:16,maybe:7,pass:3}),
   challengeChoice: localStorage.getItem("mbifeChallengeChoice") || "",
-  challengeVotes: readStoredJson(
-    "mbifeChallengeVotes",
-    Object.fromEntries(dailyChallenge.options.map((option) => [option.id, option.votes])),
-  ),
-  supabase: {
-    connected: false,
-    checked: false,
-    lastError: "",
-  },
-  auth: readStoredJson("mbifeAuthSession", null),
-  remoteProfiles: [],
-  remoteMatches: [],
-  remoteMessages: {},
-  currentProfileRecord: readStoredJson("mbifeLocalProfileDraft", null),
-  remoteLikes: [],
+  challengeVotes: readJson("mbifeChallengeVotes", Object.fromEntries(dailyChallenge.options.map(o=>[o.id,o.votes]))),
+  supabase: {connected:false, checked:false, lastError:""},
+  auth: readJson("mbifeAuthSession", null),
+  remoteMatches: [], remoteMessages: {},
   messageCooldownUntil: 0,
-  refreshTimer: null,
+  promptIndex: 0,
+  prevPanel: null,
 };
 
-const profileCard = document.querySelector("#profileCard");
-const insightName = document.querySelector("#insightName");
-const scoreValue = document.querySelector("#scoreValue");
-const scoreRing = document.querySelector("#scoreRing");
-const traitList = document.querySelector("#traitList");
-const promptText = document.querySelector("#promptText");
-const promptButton = document.querySelector("#promptButton");
-const matchGrid = document.querySelector("#matchGrid");
-const dateCard = document.querySelector("#dateCard");
-const conversationList = document.querySelector("#conversationList");
-const chatHeader = document.querySelector("#chatHeader");
-const chatThread = document.querySelector("#chatThread");
-const composer = document.querySelector("#composer");
-const messageInput = document.querySelector("#messageInput");
-const toast = document.querySelector("#toast");
-const shareCanvas = document.querySelector("#shareCanvas");
-const shareText = document.querySelector("#shareText");
-const inviteCode = document.querySelector("#inviteCode");
-const inviteProgressText = document.querySelector("#inviteProgressText");
-const inviteProgressBar = document.querySelector("#inviteProgressBar");
-const wingActions = document.querySelector("#wingActions");
-const voteList = document.querySelector("#voteList");
-const challengeTitle = document.querySelector("#challengeTitle");
-const challengeCopy = document.querySelector("#challengeCopy");
-const challengeOptions = document.querySelector("#challengeOptions");
-const supabaseModeLabel = document.querySelector("#supabaseModeLabel");
-const supabaseStatusText = document.querySelector("#supabaseStatusText");
-const authPanel = document.querySelector(".auth-panel");
-const authStatus = document.querySelector("#authStatus");
-const authForm = document.querySelector("#authForm");
-const authName = document.querySelector("#authName");
-const authEmail = document.querySelector("#authEmail");
-const authPassword = document.querySelector("#authPassword");
-const loginButton = document.querySelector("#loginButton");
-const signupButton = document.querySelector("#signupButton");
-const logoutButton = document.querySelector("#logoutButton"); // peut être null
-const profileLogoutButton = document.querySelector("#profileLogoutButton");
-const profileForm = document.querySelector("#profileForm");
-const profilePreview = document.querySelector("#profilePreview");
-const profilePhoto = document.querySelector("#profilePhoto");
-const profileName = document.querySelector("#profileName");
-const profileAge = document.querySelector("#profileAge");
-const profileCity = document.querySelector("#profileCity");
-const profileDistance = document.querySelector("#profileDistance");
-const profileBio = document.querySelector("#profileBio");
-const profileIntent = document.querySelector("#profileIntent");
-const profileInterests = document.querySelector("#profileInterests");
-const profileStatusTitle = document.querySelector("#profileStatusTitle");
-const profileStatusText = document.querySelector("#profileStatusText");
-const refreshBackendButton = document.querySelector("#refreshBackendButton");
+/* ─── HELPERS ─── */
+function readJson(k, fb) { try { return JSON.parse(localStorage.getItem(k)||"") || fb; } catch { return fb; } }
+function getInviteCode() {
+  const ex = localStorage.getItem("mbifeInviteCode"); if(ex) return ex;
+  const alpha="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s=""; for(let i=0;i<5;i++) s+=alpha[Math.floor(Math.random()*alpha.length)];
+  const code=`MBIFE-${s}`; localStorage.setItem("mbifeInviteCode",code); return code;
+}
+function esc(v) { return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
+function hasSupabase() { return !!(supabaseConfig.url && supabaseConfig.anonKey && !supabaseConfig.url.includes("YOUR_")); }
+function currentUser() { return state.auth?.user || null; }
 
-function readStoredJson(key, fallback) {
-  try {
-    return JSON.parse(localStorage.getItem(key) || "") || fallback;
-  } catch {
-    return fallback;
-  }
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
 }
 
-function getStoredInviteCode() {
-  const existing = localStorage.getItem("mbifeInviteCode");
-
-  if (existing) {
-    return existing;
-  }
-
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let suffix = "";
-
-  for (let i = 0; i < 5; i += 1) {
-    suffix += alphabet[Math.floor(Math.random() * alphabet.length)];
-  }
-
-  const code = `MBIFE-${suffix}`;
-  localStorage.setItem("mbifeInviteCode", code);
-  return code;
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function hasSupabaseConfig() {
-  return supabaseConfig.url.startsWith("https://") && supabaseConfig.anonKey.length > 20;
-}
-
-function currentUser() {
-  return state.auth?.user || null;
-}
-
-function currentToken() {
-  return state.auth?.access_token || "";
-}
-
-function authHeaders({ prefer, useUserToken = true } = {}) {
-  const token = useUserToken && currentToken() ? currentToken() : supabaseConfig.anonKey;
-  const headers = {
-    apikey: supabaseConfig.anonKey,
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-
-  if (prefer) {
-    headers.Prefer = prefer;
-  }
-
-  return headers;
-}
-
-function saveAuthSession(session) {
-  state.auth = session;
-
-  if (session) {
-    localStorage.setItem("mbifeAuthSession", JSON.stringify(session));
-  } else {
-    localStorage.removeItem("mbifeAuthSession");
-  }
-
-  renderAuthState();
-}
-
-async function supabaseFetch(path, { method = "GET", body, prefer, useUserToken = true } = {}) {
-  if (!hasSupabaseConfig()) {
-    throw new Error("Supabase n'est pas configuré");
-  }
-
-  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}${path}`;
-  const response = await fetch(endpoint, {
-    method,
-    headers: authHeaders({ prefer, useUserToken }),
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    let message = text;
-
-    try {
-      const payload = JSON.parse(text);
-      message = payload.msg || payload.message || payload.error_description || payload.error || text;
-    } catch {
-      message = text;
-    }
-
-    const error = new Error(`Supabase ${response.status}${message ? `: ${String(message).slice(0, 180)}` : ""}`);
-    error.status = response.status;
-    throw error;
-  }
-
-  return response;
-}
-
-async function supabaseJson(path, options) {
-  const response = await supabaseFetch(path, options);
-  return response.status === 204 ? null : response.json();
-}
-
-function readableAuthError(error, fallback) {
-  const rawMessage = String(error?.message || "").replace(/^Supabase\s+\d+:\s*/i, "").trim();
-  const normalized = rawMessage.toLowerCase();
-
-  if (normalized.includes("user already registered") || normalized.includes("already been registered")) {
-    return "Cet email est déjà inscrit. Clique sur Connexion ou utilise un autre email.";
-  }
-
-  if (normalized.includes("signup is disabled") || normalized.includes("signups not allowed")) {
-    return "Les inscriptions sont désactivées dans Supabase Auth.";
-  }
-
-  if (normalized.includes("email not confirmed")) {
-    return "Ton email n'est pas encore confirmé. Ouvre le lien reçu par email, puis connecte-toi.";
-  }
-
-  if (normalized.includes("invalid login credentials")) {
-    return "Email ou mot de passe incorrect.";
-  }
-
-  if (normalized.includes("password")) {
-    return "Mot de passe refusé. Utilise au moins 6 caractères, avec une combinaison plus solide.";
-  }
-
-  if (normalized.includes("email") && (normalized.includes("invalid") || normalized.includes("validate"))) {
-    return "Adresse email invalide. Vérifie l'orthographe de ton email.";
-  }
-
-  if (normalized.includes("rate limit") || normalized.includes("too many")) {
-    return "Trop de tentatives pour le moment. Attends une minute, puis réessaie.";
-  }
-
-  if (normalized.includes("database error")) {
-    return "Supabase a refusé l'écriture en base. Réexécute le fichier supabase-schema.sql dans Supabase.";
-  }
-
-  return rawMessage ? `${fallback}: ${rawMessage.slice(0, 180)}` : fallback;
-}
-
-function showAuthError(error, fallback) {
-  const message = readableAuthError(error, fallback);
-  authStatus.textContent = message;
-  showToast(message);
-}
-
-function readableBackendError(error, fallback) {
-  const rawMessage = String(error?.message || "").replace(/^Supabase\s+\d+:\s*/i, "").trim();
-  const normalized = rawMessage.toLowerCase();
-
-  if (normalized.includes("row-level security") && normalized.includes("likes")) {
-    return "Supabase bloque encore les likes. Lance supabase-production-fix.sql dans SQL Editor.";
-  }
-
-  if (normalized.includes("row-level security") && normalized.includes("matches")) {
-    return "Supabase bloque encore la création de match. Relance supabase-production-fix.sql.";
-  }
-
-  if (normalized.includes("row-level security") && normalized.includes("messages")) {
-    return "Supabase bloque encore les messages. Relance supabase-production-fix.sql puis redéploie l'app.";
-  }
-
-  if (normalized.includes("could not find the function") || normalized.includes("send_match_message")) {
-    return "La fonction d'envoi de message manque dans Supabase. Relance supabase-production-fix.sql.";
-  }
-
-  if (normalized.includes("trop de messages")) {
-    return "Trop de messages envoyés trop vite. Attends quelques secondes.";
-  }
-
-  if (normalized.includes("partie de ce match") || normalized.includes("match introuvable")) {
-    return "Ce match n'est pas accessible pour ton compte. Recharge l'app puis réessaie.";
-  }
-
-  if (normalized.includes("foreign key")) {
-    return "Le profil ciblé n'existe plus dans Supabase. Recharge l'app puis réessaie.";
-  }
-
-  if (normalized.includes("relation") && normalized.includes("does not exist")) {
-    return "Une table Supabase manque. Exécute supabase-schema.sql puis supabase-production-fix.sql.";
-  }
-
-  return rawMessage ? `${fallback}: ${rawMessage.slice(0, 180)}` : fallback;
-}
-
-function signupRedirectPath() {
-  if (!window.location.origin.startsWith("http")) {
-    return "/auth/v1/signup";
-  }
-
-  return `/auth/v1/signup?redirect_to=${encodeURIComponent(window.location.origin)}`;
-}
-
-async function supabaseRequest(table, { method = "GET", body, query = "", prefer = "return=minimal" } = {}) {
-  return supabaseFetch(`/rest/v1/${table}${query}`, { method, body, prefer });
-}
-
-async function recordRemoteEvent(eventType, payload = {}) {
-  if (!hasSupabaseConfig()) {
-    return;
-  }
-
-  try {
-    await supabaseRequest("mbife_events", {
-      method: "POST",
-      body: {
-        user_id: currentUser()?.id || null,
-        event_type: eventType,
-        payload,
-      },
-    });
-    state.supabase.connected = true;
-    state.supabase.lastError = "";
-  } catch (error) {
-    state.supabase.connected = false;
-    state.supabase.lastError = error.message;
-  }
-
-  renderSupabaseStatus();
-}
-
-async function checkSupabaseStatus() {
-  state.supabase.checked = true;
-
-  if (!hasSupabaseConfig()) {
-    renderSupabaseStatus();
-    return;
-  }
-
-  await recordRemoteEvent("app_opened", {
-    source: "mbife_web",
-    at: new Date().toISOString(),
-  });
-}
-
-function renderSupabaseStatus() {
-  if (!supabaseModeLabel || !supabaseStatusText) {
-    return;
-  }
-
-  if (!hasSupabaseConfig()) {
-    supabaseModeLabel.textContent = "Mode local";
-    supabaseStatusText.textContent =
-      "Les données sont encore stockées dans le navigateur. Envoie-moi l'URL Supabase et la clé anon publique pour activer la base partagée.";
-    return;
-  }
-
-  if (state.supabase.connected) {
-    supabaseModeLabel.textContent = "Supabase connecté";
-    supabaseStatusText.textContent =
-      "La base partagée répond. Les prochains likes, votes et invitations peuvent être envoyés dans Supabase.";
-    return;
-  }
-
-  supabaseModeLabel.textContent = "Supabase à vérifier";
-  supabaseStatusText.textContent = state.supabase.lastError
-    ? `La configuration est présente, mais la table ou la policy doit être vérifiée: ${state.supabase.lastError}.`
-    : "La configuration Supabase est présente. Recharge l'app pour vérifier la connexion.";
-}
-
-function applyThemeFromStorage() {
-  const gender = localStorage.getItem("mbifeUserGender");
-  document.body.classList.remove("theme-male", "theme-female");
-  if (gender === "male") document.body.classList.add("theme-male");
-  else if (gender === "female") document.body.classList.add("theme-female");
-}
-
-function getSelectedGender() {
-  const checked = document.querySelector('input[name="signup_gender"]:checked');
-  return checked ? checked.value : "female";
-}
-
-function renderAuthState() {
-  if (!authStatus || !authForm) {
-    return;
-  }
-
-  const user = currentUser();
-  document.body.classList.toggle("is-authenticated", Boolean(user));
-
-  if (profileLogoutButton) {
-    profileLogoutButton.hidden = !user;
-  }
-
-  // Appliquer le thème selon le genre sauvegardé
-  applyThemeFromStorage();
-
-  const userWidget = document.querySelector("#userWidget");
-  const genderField = document.querySelector("#genderField");
-
-  if (!hasSupabaseConfig()) {
-    if (authPanel) authPanel.hidden = false;
-    authStatus.textContent = "Ajoute l'URL Supabase et la clé anon public pour activer les comptes.";
-    authForm.querySelectorAll("input, button").forEach((element) => {
-      element.disabled = true;
-    });
-    if (userWidget) userWidget.hidden = true;
-    return;
-  }
-
-  authForm.querySelectorAll("input, button").forEach((element) => {
-    element.disabled = false;
-  });
-
-  if (user) {
-    // Connecté : cacher le formulaire, montrer le widget
-    authStatus.textContent = `Connecté`;
-    authForm.hidden = true;
-    if (genderField) genderField.style.display = "none";
-    if (userWidget) {
-      userWidget.hidden = false;
-      const gender = localStorage.getItem("mbifeUserGender") || "";
-      document.querySelector("#userDisplayName").textContent =
-        user.user_metadata?.display_name || user.email?.split("@")[0] || "Membre mbifê";
-      document.querySelector("#userEmail").textContent = user.email || "";
-      const badge = document.querySelector("#userThemeBadge");
-      if (badge) {
-        badge.textContent = gender === "male" ? "👨 Thème masculin" : gender === "female" ? "👩 Thème féminin" : "";
-        badge.style.display = gender ? "" : "none";
-      }
-    }
-    if (authPanel) authPanel.hidden = false; // garder le panel visible pour le widget
-    return;
-  }
-
-  // Non connecté : formulaire visible
-  authStatus.textContent = "Connecte-toi pour synchroniser likes, matches et messages.";
-  authForm.hidden = false;
-  if (genderField) genderField.style.display = "";
-  if (userWidget) userWidget.hidden = true;
-  if (authPanel) authPanel.hidden = false;
-}
-
-function readAuthFields() {
-  return {
-    name: authName.value.trim() || "Nouveau membre mbifê",
-    email: authEmail.value.trim(),
-    password: authPassword.value,
-  };
-}
-
-async function signupWithSupabase() {
-  const { name, email, password } = readAuthFields();
-  const gender = getSelectedGender();
-
-  if (!email || password.length < 6) {
-    const message = "Email et mot de passe de 6 caractères minimum.";
-    authStatus.textContent = message;
-    showToast(message);
-    return;
-  }
-
-  try {
-    authStatus.textContent = "Création du compte en cours...";
-
-    const data = await supabaseJson(signupRedirectPath(), {
-      method: "POST",
-      body: {
-        email,
-        password,
-        data: { display_name: name, gender },
-      },
-      useUserToken: false,
-    });
-
-    const session = data?.session
-      ? { ...data.session, user: data.user }
-      : data?.access_token
-        ? data
-        : null;
-
-    if (session) {
-      localStorage.setItem("mbifeUserGender", gender);
-      applyThemeFromStorage();
-      saveAuthSession(session);
-      await ensureRemoteProfile(name);
-      await syncRemoteData();
-      startRemoteRefresh();
-      showToast("Compte créé et connecté");
-    } else {
-      authStatus.textContent = "Compte créé. Vérifie ton email, puis reviens cliquer sur Connexion.";
-      showToast("Vérifie ton email pour activer le compte");
-    }
-
-    recordRemoteEvent("auth_signup", { email, gender });
-  } catch (error) {
-    showAuthError(error, "Inscription refusée");
-    state.supabase.lastError = error.message;
-    renderSupabaseStatus();
-  }
-}
-
-async function loginWithSupabase() {
-  const { email, password } = readAuthFields();
-
-  if (!email || !password) {
-    const message = "Entre ton email et ton mot de passe.";
-    authStatus.textContent = message;
-    showToast(message);
-    return;
-  }
-
-  try {
-    authStatus.textContent = "Connexion en cours...";
-
-    const data = await supabaseJson("/auth/v1/token?grant_type=password", {
-      method: "POST",
-      body: { email, password },
-      useUserToken: false,
-    });
-
-    // Récupérer le genre depuis les métadonnées utilisateur
-    const gender = data?.user?.user_metadata?.gender || localStorage.getItem("mbifeUserGender") || "";
-    if (gender) {
-      localStorage.setItem("mbifeUserGender", gender);
-      applyThemeFromStorage();
-    }
-
-    saveAuthSession(data);
-    const profileReady = await tryEnsureRemoteProfile(
-      authName.value.trim() || data.user?.user_metadata?.display_name || "Membre mbifê",
-    );
-    await syncRemoteData();
-    startRemoteRefresh();
-    showToast(profileReady ? "Connexion réussie" : "Connexion réussie, profil à configurer");
-    recordRemoteEvent("auth_login", { email });
-  } catch (error) {
-    showAuthError(error, "Connexion refusée");
-    state.supabase.lastError = error.message;
-    renderSupabaseStatus();
-  }
-}
-
-async function logoutFromSupabase() {
-  try {
-    if (hasSupabaseConfig() && currentToken()) {
-      await supabaseFetch("/auth/v1/logout", { method: "POST" });
-    }
-  } catch {
-    // Le token peut déjà être expiré; on nettoie quand même la session locale.
-  }
-
-  saveAuthSession(null);
-  state.remoteProfiles = [];
-  state.remoteMatches = [];
-  state.remoteMessages = {};
-  state.remoteLikes = [];
-  state.currentProfileRecord = null;
-  window.clearInterval(state.refreshTimer);
-  // Ne pas effacer le genre: l'utilisateur peut se reconnecter
-  document.body.classList.remove("theme-male", "theme-female");
-  renderAll();
-  renderProfileForm();
-  showToast("Déconnecté");
-}
-
-async function restoreAuthSession() {
-  renderAuthState();
-
-  if (!hasSupabaseConfig() || !currentToken()) {
-    return;
-  }
-
-  let user = null;
-
-  try {
-    user = await supabaseJson("/auth/v1/user");
-    saveAuthSession({ ...state.auth, user });
-    // Restaurer le genre depuis les métadonnées
-    const gender = user?.user_metadata?.gender;
-    if (gender) {
-      localStorage.setItem("mbifeUserGender", gender);
-      applyThemeFromStorage();
-    }
-  } catch {
-    saveAuthSession(null);
-    return;
-  }
-
-  await tryEnsureRemoteProfile(user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Membre mbifê");
-  await syncRemoteData();
-  startRemoteRefresh();
-}
-
-async function ensureRemoteProfile(displayName) {
-  const user = currentUser();
-
-  if (!user) {
-    return null;
-  }
-
-  const existing = await supabaseJson(`/rest/v1/profiles?user_id=eq.${user.id}&select=*&limit=1`, {
-    prefer: "return=representation",
-  });
-
-  if (existing?.[0]) {
-    state.currentProfileRecord = existing[0];
-    localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(existing[0]));
-    renderProfileForm();
-    return existing[0];
-  }
-
-  const [created] = await supabaseJson("/rest/v1/profiles", {
-    method: "POST",
-    prefer: "return=representation",
-    body: [
-      {
-        user_id: user.id,
-        display_name: displayName,
-        bio: "Je découvre mbifê et je cherche une vraie connexion.",
-        intent: "Rencontrer quelqu'un avec sincérité et respect.",
-        city: "À compléter",
-        interests: ["discussion", "respect", "découverte"],
-        tags: ["serious", "verified"],
-        compatibility_score: 82,
-        is_verified: true,
-        gender: user.user_metadata?.gender || localStorage.getItem("mbifeUserGender") || null,
-      },
-    ],
-  });
-
-  state.currentProfileRecord = created;
-  localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(created));
-  renderProfileForm();
-  return created;
-}
-
-async function tryEnsureRemoteProfile(displayName) {
-  try {
-    await ensureRemoteProfile(displayName);
-    return true;
-  } catch (error) {
-    state.supabase.lastError = error.message;
-    renderSupabaseStatus();
-
-    if (profileStatusTitle && profileStatusText) {
-      profileStatusTitle.textContent = "Profil à configurer";
-      profileStatusText.textContent =
-        "Tu es connecté, mais Supabase bloque encore la création du profil. Lance le correctif RLS dans Supabase.";
-    }
-
-    authStatus.textContent =
-      "Connecté. Le profil public attend la correction RLS dans Supabase.";
-    return false;
-  }
-}
-
-function parseList(value) {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .slice(0, 8);
-}
-
-function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url || "") {
-  const user = currentUser();
-  const gender = user?.user_metadata?.gender || localStorage.getItem("mbifeUserGender") || "";
-  return {
-    display_name: profileName.value.trim() || authName.value.trim() || "Membre mbifê",
-    age: profileAge.value ? Number(profileAge.value) : null,
-    city: profileCity.value.trim() || "À compléter",
-    distance_km: profileDistance.value ? Number(profileDistance.value) : 0,
-    bio: profileBio.value.trim() || "Je découvre mbifê et je cherche une vraie connexion.",
-    intent: profileIntent.value.trim() || "Rencontrer quelqu'un avec sincérité et respect.",
-    interests: parseList(profileInterests.value || "discussion, respect, découverte"),
-    tags: ["serious", "verified"],
-    photo_url: photoUrl,
-    compatibility_score: state.currentProfileRecord?.compatibility_score || 84,
-    is_verified: true,
-    is_active: true,
-    gender: gender || null,
-  };
-}
-
-function renderProfileForm() {
-  if (!profileForm) {
-    return;
-  }
-
-  const record = state.currentProfileRecord || {};
-  const user = currentUser();
-
-  profileName.value = record.display_name || authName.value || "";
-  profileAge.value = record.age || "";
-  profileCity.value = record.city || "";
-  profileDistance.value = record.distance_km ?? "";
-  profileBio.value = record.bio || "";
-  profileIntent.value = record.intent || "";
-  profileInterests.value = Array.isArray(record.interests) ? record.interests.join(", ") : "";
-  profilePreview.src =
-    record.photo_url ||
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85";
-
-  const disabled = !hasSupabaseConfig() || !user;
-  profileForm.querySelectorAll("input, textarea, button").forEach((element) => {
-    element.disabled = disabled;
-  });
-
-  if (profileStatusTitle && profileStatusText) {
-    if (!hasSupabaseConfig()) {
-      profileStatusTitle.textContent = "Backend non configuré";
-      profileStatusText.textContent = "Ajoute Supabase pour enregistrer ton profil en ligne.";
-    } else if (!user) {
-      profileStatusTitle.textContent = "Connexion requise";
-      profileStatusText.textContent = "Connecte-toi pour créer ou modifier ton profil public.";
-    } else if (record.id) {
-      profileStatusTitle.textContent = "Profil synchronisé";
-      profileStatusText.textContent = "Tes informations peuvent apparaître dans la découverte Supabase.";
-    } else {
-      profileStatusTitle.textContent = "Profil à compléter";
-      profileStatusText.textContent = "Remplis le formulaire pour créer ton profil public.";
-    }
-  }
-
-  document.querySelector("#profileCount").textContent = record.id ? "1" : "0";
-}
-
-async function uploadProfilePhoto(file) {
-  const user = currentUser();
-
-  if (!file || !user) {
-    return state.currentProfileRecord?.photo_url || "";
-  }
-
-  if (file.size > 5 * 1024 * 1024) {
-    throw new Error("Photo trop lourde. Limite: 5 Mo.");
-  }
-
-  const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const safeExtension = ["jpg", "jpeg", "png", "webp"].includes(extension) ? extension : "jpg";
-  const storagePath = `${user.id}/avatar.${safeExtension}`;
-  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/avatars/${storagePath}`;
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      apikey: supabaseConfig.anonKey,
-      Authorization: `Bearer ${currentToken()}`,
-      "Content-Type": file.type || "image/jpeg",
-      "x-upsert": "true",
-    },
-    body: file,
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Upload photo ${response.status}: ${text.slice(0, 140)}`);
-  }
-
-  return `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/public/avatars/${storagePath}`;
-}
-
-function readableStorageError(error) {
-  const message = String(error?.message || "");
-  const normalized = message.toLowerCase();
-
-  if (normalized.includes("bucket not found")) {
-    return "Profil sauvegardé, mais la photo attend le bucket Supabase Storage avatars.";
-  }
-
-  if (normalized.includes("photo trop lourde")) {
-    return "Profil sauvegardé, mais la photo dépasse la limite de 5 Mo.";
-  }
-
-  if (normalized.includes("403") || normalized.includes("row-level security")) {
-    return "Profil sauvegardé, mais la policy Storage bloque encore l'upload photo.";
-  }
-
-  return "Profil sauvegardé, mais la photo n'a pas encore pu être envoyée.";
-}
-
-async function saveProfile(event) {
-  event.preventDefault();
-
-  const user = currentUser();
-
-  if (!user || !hasSupabaseConfig()) {
-    showToast("Connecte-toi pour sauvegarder ton profil");
-    return;
-  }
-
-  try {
-    let photoUrl = state.currentProfileRecord?.photo_url || "";
-    let photoWarning = "";
-
-    try {
-      photoUrl = await uploadProfilePhoto(profilePhoto.files?.[0]);
-    } catch (photoError) {
-      photoWarning = readableStorageError(photoError);
-      state.supabase.lastError = photoError.message;
-    }
-
-    const draft = profileDraftFromForm(photoUrl);
-    const existingId = state.currentProfileRecord?.id;
-    const [saved] = await supabaseJson("/rest/v1/profiles?on_conflict=user_id", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=representation",
-      body: [
-        {
-          id: existingId,
-          user_id: user.id,
-          ...draft,
-        },
-      ],
-    });
-
-    state.currentProfileRecord = saved;
-    localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(saved));
-    renderProfileForm();
-    await syncRemoteData();
-
-    if (photoWarning) {
-      renderSupabaseStatus();
-      if (profileStatusTitle && profileStatusText) {
-        profileStatusTitle.textContent = "Profil sauvegardé sans photo";
-        profileStatusText.textContent = photoWarning;
-      }
-      showToast(photoWarning);
-    } else {
-      showToast("Profil sauvegardé");
-    }
-  } catch (error) {
-    state.supabase.lastError = error.message;
-    renderSupabaseStatus();
-    showToast("Profil non sauvegardé");
-  }
-}
-
-function normalizeRemoteProfile(row) {
-  return {
-    id: row.id,
-    remote: true,
-    name: row.display_name || "Membre mbifê",
-    age: row.age || 24,
-    city: row.city || "Ville à compléter",
-    distance: row.distance_km || 0,
-    tags: row.tags?.length ? row.tags : ["serious"],
-    verified: Boolean(row.is_verified),
-    score: row.compatibility_score || 80,
-    photo:
-      row.photo_url ||
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
-    bio: row.bio || "Profil mbifê connecté à Supabase.",
-    intent: row.intent || "Rencontrer quelqu'un avec sincérité.",
-    interests: row.interests?.length ? row.interests : ["discussion", "respect", "découverte"],
-    traits: [
-      ["Rythme de vie", Math.max(62, (row.compatibility_score || 80) - 5)],
-      ["Intentions", row.compatibility_score || 80],
-      ["Humour", Math.min(96, (row.compatibility_score || 80) + 4)],
-      ["Valeurs", Math.min(98, (row.compatibility_score || 80) + 7)],
-    ],
-    prompts: [
-      `Qu'est-ce qui t'a donné envie de tester mbifê ?`,
-      "Quel type de conversation te met vite à l'aise ?",
-      "Quel rendez-vous simple te ressemble le plus ?",
-    ],
-    dateIdeas: [
-      ["Café sans pression", "Un premier échange court, simple et facile à prolonger."],
-      ["Balade tranquille", "Un rendez-vous léger pour découvrir l'autre sans forcer."],
-    ],
-  };
-}
-
-function allProfiles() {
-  const localIds = new Set(profiles.map((profile) => profile.id));
-  const remote = state.remoteProfiles.filter((profile) => !localIds.has(profile.id));
-  return remote.length ? [...remote, ...profiles] : profiles;
-}
-
-async function loadRemoteProfiles() {
-  if (!hasSupabaseConfig() || !currentUser()) {
-    state.remoteProfiles = [];
-    return;
-  }
-
-  try {
-    const rows = await supabaseJson(
-      `/rest/v1/profiles?select=*&is_active=eq.true&order=created_at.desc&limit=40`,
-    );
-    const myGender = localStorage.getItem("mbifeUserGender") || "";
-    const oppositeGender = myGender === "male" ? "female" : myGender === "female" ? "male" : "";
-
-    state.remoteProfiles = (rows || [])
-      .filter((row) => {
-        if (row.user_id === currentUser().id) return false;
-        // Filtre par genre opposé si le genre est défini
-        if (oppositeGender && row.gender && row.gender !== oppositeGender) return false;
-        return true;
-      })
-      .map(normalizeRemoteProfile);
-    state.supabase.connected = true;
-    state.supabase.lastError = "";
-  } catch (error) {
-    state.remoteProfiles = [];
-    state.supabase.connected = false;
-    state.supabase.lastError = error.message;
-  }
-}
-
-async function loadRemoteLikes() {
-  const user = currentUser();
-
-  if (!hasSupabaseConfig() || !user) {
-    state.remoteLikes = [];
-    return;
-  }
-
-  try {
-    state.remoteLikes = await supabaseJson(
-      `/rest/v1/likes?liker_user_id=eq.${user.id}&select=target_profile_id,action,created_at`,
-    );
-  } catch {
-    state.remoteLikes = [];
-  }
-}
-
-async function loadRemoteMatches() {
-  const user = currentUser();
-
-  if (!hasSupabaseConfig() || !user) {
-    state.remoteMatches = [];
-    state.remoteMessages = {};
-    return;
-  }
-
-  try {
-    const matches = await supabaseJson(
-      `/rest/v1/matches?or=(user_a_id.eq.${user.id},user_b_id.eq.${user.id})&order=created_at.desc`,
-    );
-    const profileIds = [
-      ...new Set((matches || []).flatMap((match) => [match.profile_a_id, match.profile_b_id]).filter(Boolean)),
-    ];
-    const profilesById = {};
-
-    if (profileIds.length) {
-      const remoteProfileRows = await supabaseJson(
-        `/rest/v1/profiles?id=in.(${profileIds.join(",")})&select=*`,
-      );
-      (remoteProfileRows || []).forEach((profile) => {
-        profilesById[profile.id] = normalizeRemoteProfile(profile);
-      });
-    }
-
-    state.remoteMatches = (matches || []).map((match) => {
-      const otherProfileId = match.user_a_id === user.id ? match.profile_b_id : match.profile_a_id;
-      return {
-        ...match,
-        otherProfile: profilesById[otherProfileId] || null,
-      };
-    });
-
-    await loadRemoteMessages();
-  } catch (error) {
-    state.remoteMatches = [];
-    state.remoteMessages = {};
-    state.supabase.lastError = error.message;
-  }
-}
-
-async function loadRemoteMessages() {
-  const matchIds = state.remoteMatches.map((match) => match.id);
-
-  if (!matchIds.length) {
-    state.remoteMessages = {};
-    return;
-  }
-
-  const rows = await supabaseJson(
-    `/rest/v1/messages?match_id=in.(${matchIds.join(",")})&select=*&order=created_at.asc`,
-  );
-  const grouped = {};
-
-  (rows || []).forEach((message) => {
-    grouped[message.match_id] ||= [];
-    grouped[message.match_id].push(message);
-  });
-
-  state.remoteMessages = grouped;
-}
-
-async function sendRemoteMessage(matchId, body) {
-  return supabaseJson("/rest/v1/rpc/send_match_message", {
-    method: "POST",
-    body: {
-      p_match_id: matchId,
-      p_body: body,
-    },
-  });
-}
-
-async function syncRemoteData() {
-  if (!hasSupabaseConfig() || !currentUser()) {
-    renderAll();
-    return;
-  }
-
-  await loadRemoteProfiles();
-  await loadRemoteLikes();
-  await loadRemoteMatches();
-  renderAll();
-}
-
-async function refreshBackendData() {
-  if (!hasSupabaseConfig() || !currentUser()) {
-    showToast("Connecte-toi pour synchroniser");
-    return;
-  }
-
-  await syncRemoteData();
-  showToast("Données synchronisées");
-}
-
-function startRemoteRefresh() {
-  window.clearInterval(state.refreshTimer);
-
-  if (!hasSupabaseConfig() || !currentUser()) {
-    return;
-  }
-
-  state.refreshTimer = window.setInterval(() => {
-    loadRemoteMessages()
-      .then(() => {
-        renderConversations();
-      })
-      .catch(() => {
-        // La prochaine action utilisateur affichera l'erreur si nécessaire.
-      });
-  }, 10000);
-}
-
+/* ─── FILTER ─── */
 function filteredProfiles() {
-  const availableProfiles = allProfiles();
-
-  if (state.activeFilter === "all") {
-    return availableProfiles;
-  }
-
-  return availableProfiles.filter((profile) => profile.tags.includes(state.activeFilter));
+  if (state.activeFilter === "all") return profiles;
+  return profiles.filter(p => p.tags.includes(state.activeFilter));
 }
-
 function currentProfile() {
-  const list = filteredProfiles();
-  return list[state.index % list.length];
+  const fp = filteredProfiles();
+  return fp[state.index % fp.length] || null;
 }
 
-function profileBackendBadge(profile) {
-  if (!profile.remote) {
-    return '<span class="profile-badge">Démo</span>';
-  }
+/* ─── RENDER CARD ─── */
+function renderCard() {
+  const p = currentProfile(); if (!p) return;
+  document.getElementById("cardPhoto").src = p.photo;
+  document.getElementById("cardPhoto").alt = `Portrait de ${p.name}`;
+  document.getElementById("cardName").textContent = p.name;
+  document.getElementById("cardAge").textContent = p.age;
+  document.getElementById("cardBio").textContent = p.bio;
+  document.getElementById("cardIntent").textContent = p.intent;
+  document.getElementById("cardDist").textContent = `${p.distance} km`;
 
-  const liked = state.remoteLikes.find((like) => like.target_profile_id === profile.id);
-  const matched = state.remoteMatches.some((match) => match.otherProfile?.id === profile.id);
+  const badges = document.getElementById("cardBadges");
+  badges.innerHTML = "";
+  if (p.verified) badges.innerHTML += `<span class="card-badge verified">✓ Vérifié</span>`;
+  p.interests.slice(0,2).forEach(i => badges.innerHTML += `<span class="card-badge">${esc(i)}</span>`);
 
-  if (matched) {
-    return '<span class="profile-badge">Match réel</span>';
-  }
+  // insight
+  document.getElementById("insightName").textContent = p.name;
+  document.getElementById("scoreValue").textContent = p.score;
+  const tl = document.getElementById("traitList");
+  tl.innerHTML = p.traits.map(([label,val]) =>
+    `<div class="trait">
+      <div class="trait-label"><span>${esc(label)}</span><span>${val}%</span></div>
+      <div class="trait-bar"><div class="trait-fill" style="width:${val}%"></div></div>
+    </div>`
+  ).join("");
+  renderPrompt();
 
-  if (liked?.action === "spark") {
-    return '<span class="profile-badge">Super like envoyé</span>';
-  }
-
-  if (liked?.action === "like") {
-    return '<span class="profile-badge">Déjà liké</span>';
-  }
-
-  if (liked?.action === "pass") {
-    return '<span class="profile-badge">Déjà passé</span>';
-  }
-
-  return '<span class="profile-badge">Profil réel</span>';
+  const card = document.getElementById("profileCard");
+  card.classList.remove("fly-left","fly-right","fly-up");
+  void card.offsetWidth;
+  card.classList.add("appear");
+  setTimeout(() => card.classList.remove("appear"), 400);
 }
 
-function renderProfile() {
-  const list = filteredProfiles();
-
-  if (list.length === 0) {
-    profileCard.innerHTML = `
-      <div class="profile-content">
-        <div class="intent-card">
-          <span>Aucun profil</span>
-          <strong>Essaie un autre filtre.</strong>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  const profile = currentProfile();
-  profileCard.innerHTML = `
-    <img class="profile-photo" src="${profile.photo}" alt="Portrait de ${profile.name}" />
-    <div class="photo-wash"></div>
-    <div class="profile-content">
-      <div class="profile-topline">
-        <div class="badge-row">
-          ${profile.verified ? '<span class="badge verified">Profil vérifié</span>' : ""}
-          ${profileBackendBadge(profile)}
-          <span class="badge">${profile.city}</span>
-          <span class="badge">${profile.score}% compatible</span>
-        </div>
-        <span class="distance">${profile.distance} km</span>
-      </div>
-      <div class="profile-title">
-        <h2>${profile.name}</h2>
-        <span>${profile.age}</span>
-      </div>
-      <p class="profile-bio">${profile.bio}</p>
-      <div class="interest-row">
-        ${profile.interests.map((interest) => `<span class="interest">${interest}</span>`).join("")}
-      </div>
-      <div class="intent-card">
-        <span>Intention claire</span>
-        <strong>${profile.intent}</strong>
-      </div>
-    </div>
-  `;
-
-  renderInsights(profile);
-  document.querySelector("#discoverCount").textContent = list.length;
+function renderPrompt() {
+  const p = currentProfile(); if(!p) return;
+  const idx = state.promptIndex % p.prompts.length;
+  document.getElementById("promptText").textContent = p.prompts[idx];
 }
 
-function renderInsights(profile) {
-  insightName.textContent = `${profile.name}, ${profile.city}`;
-  scoreValue.textContent = `${profile.score}%`;
-  scoreRing.style.background = `
-    radial-gradient(circle at center, white 58%, transparent 59%),
-    conic-gradient(var(--rose) 0deg, var(--gold) ${profile.score * 2.3}deg, var(--mint) ${profile.score * 3.2}deg, #ded6ca ${profile.score * 3.2}deg)
-  `;
-  traitList.innerHTML = profile.traits
-    .map(
-      ([label, value]) => `
-        <div class="trait">
-          <div class="trait-label"><span>${label}</span><strong>${value}%</strong></div>
-          <div class="trait-bar"><span style="width: ${value}%"></span></div>
-        </div>
-      `,
-    )
-    .join("");
-  promptText.textContent = profile.prompts[0];
-  renderDateIdeas(profile);
-}
+/* ─── SWIPE LOGIC ─── */
+let startX = 0, startY = 0, dragging = false;
+const card = document.getElementById("profileCard");
 
-function nextPrompt() {
-  const profile = currentProfile();
-  const currentIndex = profile.prompts.indexOf(promptText.textContent);
-  const nextIndex = (currentIndex + 1) % profile.prompts.length;
-  promptText.textContent = profile.prompts[nextIndex];
-}
+card.addEventListener("pointerdown", e => {
+  startX = e.clientX; startY = e.clientY;
+  dragging = true;
+  card.setPointerCapture(e.pointerId);
+  card.classList.add("swiping");
+});
 
-async function saveProfileAction(action, profile) {
-  const user = currentUser();
+card.addEventListener("pointermove", e => {
+  if (!dragging) return;
+  const dx = e.clientX - startX;
+  const dy = e.clientY - startY;
+  const rot = dx * 0.04;
+  card.style.transform = `translateX(${dx}px) translateY(${dy * 0.3}px) rotate(${rot}deg)`;
+  const likeEl = document.getElementById("stampLike");
+  const passEl = document.getElementById("stampPass");
+  if (dx > 40) { likeEl.style.opacity = Math.min((dx-40)/80, 1); passEl.style.opacity = 0; }
+  else if (dx < -40) { passEl.style.opacity = Math.min((-dx-40)/80, 1); likeEl.style.opacity = 0; }
+  else { likeEl.style.opacity = 0; passEl.style.opacity = 0; }
+});
 
-  if (!hasSupabaseConfig() || !user || !profile?.remote) {
-    await recordRemoteEvent("profile_action", {
-      action,
-      profile_id: profile.id,
-      profile_name: profile.name,
-      score: profile.score,
-      mode: "local_or_demo",
-    });
-    return;
-  }
+card.addEventListener("pointerup", e => {
+  if (!dragging) return;
+  dragging = false;
+  card.classList.remove("swiping");
+  card.style.transform = "";
+  document.getElementById("stampLike").style.opacity = 0;
+  document.getElementById("stampPass").style.opacity = 0;
+  const dx = e.clientX - startX;
+  if (dx > 80) advance("like");
+  else if (dx < -80) advance("pass");
+});
 
-  try {
-    await supabaseFetch("/rest/v1/likes?on_conflict=liker_user_id,target_profile_id", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=minimal",
-      body: [
-        {
-          liker_user_id: user.id,
-          target_profile_id: profile.id,
-          action,
-        },
-      ],
-    });
-    await loadRemoteMatches();
-    renderMatches();
-    renderConversations();
-    await recordRemoteEvent("profile_action", {
-      action,
-      profile_id: profile.id,
-      profile_name: profile.name,
-      score: profile.score,
-      mode: "supabase",
-    });
-  } catch (error) {
-    state.supabase.lastError = error.message;
-    renderSupabaseStatus();
-    showToast(readableBackendError(error, "Action gardée en local"));
-  }
-}
-
-async function reportCurrentProfile() {
-  const profile = currentProfile();
-  const user = currentUser();
-  const reason = window.prompt("Pourquoi veux-tu signaler ce profil ?")?.trim();
-
-  if (!reason) {
-    return;
-  }
-
-  if (!hasSupabaseConfig() || !user || !profile.remote) {
-    showToast("Signalement noté localement");
-    await recordRemoteEvent("profile_reported", {
-      profile_id: profile.id,
-      profile_name: profile.name,
-      reason,
-      mode: "local_or_demo",
-    });
-    return;
-  }
-
-  try {
-    await supabaseFetch("/rest/v1/profile_reports", {
-      method: "POST",
-      prefer: "return=minimal",
-      body: [
-        {
-          reporter_user_id: user.id,
-          target_profile_id: profile.id,
-          reason,
-        },
-      ],
-    });
-    showToast("Signalement envoyé");
-  } catch (error) {
-    state.supabase.lastError = error.message;
-    renderSupabaseStatus();
-    showToast("Signalement non envoyé");
-  }
-}
-
-function advanceProfile(action) {
-  const profile = currentProfile();
-  state.history.push({ index: state.index, filter: state.activeFilter });
-
-  if (action === "like" || action === "spark") {
-    if (!profile.remote && !state.matches.includes(profile.id)) {
-      state.matches.push(profile.id);
+function advance(action) {
+  const p = currentProfile(); if (!p) return;
+  state.history.push({index: state.index, action});
+  const card = document.getElementById("profileCard");
+  if (action === "like") {
+    card.classList.add("fly-right");
+    if (!state.matches.find(m=>m.id===p.id)) {
+      state.matches.push(p);
+      setTimeout(() => { showToast(`Match avec ${p.name} ! 💫`); updateBadges(); }, 300);
     }
-    showToast(
-      profile.remote
-        ? action === "spark"
-          ? `Super like envoyé à ${profile.name}`
-          : `Like réel envoyé à ${profile.name}`
-        : action === "spark"
-          ? `Super like envoyé à ${profile.name}`
-          : `Match potentiel avec ${profile.name}`,
-    );
-  } else {
-    showToast(`${profile.name} passé pour l'instant`);
+  } else if (action === "pass") {
+    card.classList.add("fly-left");
+  } else if (action === "spark") {
+    card.classList.add("fly-up");
+    showToast(`Spark envoyé à ${p.name} ⚡`);
   }
-
-  state.index += 1;
-  renderAll();
-  saveProfileAction(action, profile);
+  setTimeout(() => {
+    state.index = (state.index + 1) % filteredProfiles().length;
+    renderCard();
+  }, 420);
 }
 
-function undoProfile() {
-  const previous = state.history.pop();
-  if (!previous) {
-    showToast("Aucun profil précédent");
-    return;
-  }
-
-  state.index = previous.index;
-  state.activeFilter = previous.filter;
-  syncFilterButtons();
-  renderAll();
-  showToast("Retour au profil précédent");
+function undo() {
+  if (!state.history.length) { showToast("Rien à annuler"); return; }
+  const last = state.history.pop();
+  state.index = last.index;
+  if (last.action === "like") state.matches = state.matches.filter(m => m.id !== filteredProfiles()[last.index]?.id);
+  renderCard(); updateBadges();
+  showToast("Profil restauré");
 }
 
+/* ─── MATCHES ─── */
 function renderMatches() {
-  const localMatchedProfiles = state.matches
-    .map((id) => allProfiles().find((profile) => profile.id === id))
-    .filter(Boolean);
-  const remoteMatchedProfiles = state.remoteMatches
-    .map((match) => match.otherProfile)
-    .filter(Boolean);
-  const matchedProfiles = [...remoteMatchedProfiles, ...localMatchedProfiles];
-
-  document.querySelector("#matchCount").textContent = matchedProfiles.length;
-
-  if (matchedProfiles.length === 0) {
-    matchGrid.innerHTML = `<div class="empty-state">Tes matches apparaîtront ici. Avec Supabase, un match réel se crée quand deux utilisateurs se likent mutuellement.</div>`;
-    dateCard.innerHTML = `<div class="empty-state">Like un profil pour générer des idées de rendez-vous adaptées.</div>`;
+  const grid = document.getElementById("matchGrid");
+  const all = [...state.matches, ...state.remoteMatches.map(m=>m.otherProfile||{name:"Match",photo:"https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",id:m.id})];
+  document.getElementById("matchSubtitle").textContent = all.length ? `${all.length} match${all.length>1?"es":""} en attente` : "Profils qui t'ont aimé en retour";
+  if (!all.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">💫</span>Commence à aimer des profils pour créer des matches !</div>`;
     return;
   }
-
-  matchGrid.innerHTML = matchedProfiles
-    .map(
-      (profile) => `
-        <article class="mini-card">
-          <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-          <div>
-            <strong>${profile.name}, ${profile.age}</strong>
-            <span>${profile.score}% compatible · ${profile.city}</span>
-          </div>
-        </article>
-      `,
-    )
-    .join("");
-
-  renderDateIdeas(matchedProfiles[matchedProfiles.length - 1]);
+  grid.innerHTML = all.map(p =>
+    `<div class="mini-card" data-id="${esc(p.id)}">
+      <img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" />
+      <div class="mini-card-info">
+        <div class="mini-card-name">${esc(p.name)}${p.age?`, ${p.age}`:""}</div>
+        <div class="mini-card-sub">${esc(p.city||"")}</div>
+      </div>
+    </div>`
+  ).join("");
 }
 
-function renderDateIdeas(profile = currentProfile()) {
-  dateCard.innerHTML = profile.dateIdeas
-    .map(
-      ([title, description]) => `
-        <div class="date-option">
-          <strong>${title}</strong>
-          <span>${description}</span>
-        </div>
-      `,
-    )
-    .join("");
-}
-
-function shareProfile() {
-  const availableProfiles = allProfiles();
-  return availableProfiles[state.shareProfileIndex % availableProfiles.length];
-}
-
-function buildShareText(profile) {
-  return `J'ai ${profile.score}% de compatibilité avec ${profile.name} sur mbifê. Mon code VIP : ${state.inviteCode}. Tu testes ton signal et le défi du jour ?`;
-}
-
-function renderViralLab() {
-  const profile = shareProfile();
-  shareText.value = buildShareText(profile);
-  inviteCode.textContent = state.inviteCode;
-  renderInviteProgress();
-  renderWingVotes();
-  renderChallenge();
-  drawShareCanvas(profile);
-}
-
-function renderInviteProgress() {
-  const target = 5;
-  const progress = Math.min(100, (state.invitesSent / target) * 100);
-  inviteProgressText.textContent = `${state.invitesSent} invitation${state.invitesSent > 1 ? "s" : ""} envoyée${state.invitesSent > 1 ? "s" : ""} / ${target}`;
-  inviteProgressBar.style.width = `${progress}%`;
-}
-
-function renderWingVotes() {
-  const labels = {
-    go: "Go",
-    maybe: "Pause",
-    pass: "Non",
-  };
-  const total = Object.values(state.wingVotes).reduce((sum, value) => sum + value, 0) || 1;
-
-  voteList.innerHTML = Object.entries(labels)
-    .map(([key, label]) => {
-      const votes = state.wingVotes[key] || 0;
-      const percent = Math.round((votes / total) * 100);
-
-      return `
-        <div class="vote-item">
-          <div class="vote-label"><span>${label}</span><strong>${percent}%</strong></div>
-          <div class="vote-track"><span style="width: ${percent}%"></span></div>
-        </div>
-      `;
-    })
-    .join("");
-}
-
-function renderChallenge() {
-  const total = Object.values(state.challengeVotes).reduce((sum, value) => sum + value, 0) || 1;
-
-  challengeTitle.textContent = dailyChallenge.title;
-  challengeCopy.textContent = dailyChallenge.copy;
-  challengeOptions.innerHTML = dailyChallenge.options
-    .map((option) => {
-      const votes = state.challengeVotes[option.id] || 0;
-      const percent = Math.round((votes / total) * 100);
-      const selected = state.challengeChoice === option.id ? "selected" : "";
-
-      return `<button class="${selected}" data-option="${option.id}" type="button">${option.label} · ${percent}%</button>`;
-    })
-    .join("");
-}
-
-function drawShareCanvas(profile) {
-  const canvas = shareCanvas;
-  const ctx = canvas.getContext("2d");
-  const { width, height } = canvas;
-  const gradient = ctx.createLinearGradient(0, 0, width, height);
-
-  gradient.addColorStop(0, "#e6536a");
-  gradient.addColorStop(0.46, "#c6812e");
-  gradient.addColorStop(1, "#1c9c83");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
-
-  ctx.fillStyle = "rgba(255, 250, 243, 0.92)";
-  roundedRect(ctx, 48, 54, width - 96, height - 108, 26);
-  ctx.fill();
-
-  ctx.fillStyle = "#1c1b22";
-  ctx.font = "900 54px Inter, system-ui, sans-serif";
-  ctx.fillText("mbifê", 86, 132);
-  ctx.font = "700 24px Inter, system-ui, sans-serif";
-  ctx.fillStyle = "#696675";
-  ctx.fillText("Carte de compatibilité à partager", 88, 170);
-
-  ctx.fillStyle = "#1c1b22";
-  roundedRect(ctx, 88, 214, 172, 172, 22);
-  ctx.fill();
-  ctx.fillStyle = "#fffaf3";
-  ctx.font = "900 72px Inter, system-ui, sans-serif";
-  ctx.fillText(profile.name.slice(0, 1).toUpperCase(), 140, 326);
-
-  ctx.fillStyle = "#1c1b22";
-  ctx.font = "900 54px Inter, system-ui, sans-serif";
-  ctx.fillText(`${profile.name}, ${profile.age}`, 292, 270);
-  ctx.font = "800 26px Inter, system-ui, sans-serif";
-  ctx.fillStyle = "#e6536a";
-  ctx.fillText(`${profile.score}% compatible`, 294, 314);
-  ctx.fillStyle = "#696675";
-  ctx.font = "700 24px Inter, system-ui, sans-serif";
-  ctx.fillText(`${profile.city} · ${profile.distance} km`, 294, 354);
-
-  ctx.fillStyle = "#583456";
-  ctx.font = "800 33px Inter, system-ui, sans-serif";
-  wrapCanvasText(ctx, profile.intent, 88, 465, width - 176, 44);
-
-  ctx.fillStyle = "#1c1b22";
-  roundedRect(ctx, 88, 606, width - 176, 118, 18);
-  ctx.fill();
-  ctx.fillStyle = "#fffaf3";
-  ctx.font = "850 27px Inter, system-ui, sans-serif";
-  wrapCanvasText(ctx, profile.prompts[0], 116, 657, width - 232, 36);
-
-  ctx.fillStyle = "#696675";
-  ctx.font = "750 23px Inter, system-ui, sans-serif";
-  ctx.fillText(`Code VIP ${state.inviteCode}`, 88, 792);
-  ctx.fillText("Swipe moins. Rencontre mieux.", 88, 832);
-}
-
-function roundedRect(ctx, x, y, width, height, radius) {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.arcTo(x + width, y, x + width, y + height, radius);
-  ctx.arcTo(x + width, y + height, x, y + height, radius);
-  ctx.arcTo(x, y + height, x, y, radius);
-  ctx.arcTo(x, y, x + width, y, radius);
-  ctx.closePath();
-}
-
-function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(" ");
-  let line = "";
-  let lineY = y;
-
-  words.forEach((word, index) => {
-    const testLine = line ? `${line} ${word}` : word;
-    const shouldWrap = ctx.measureText(testLine).width > maxWidth && line;
-
-    if (shouldWrap) {
-      ctx.fillText(line, x, lineY);
-      line = word;
-      lineY += lineHeight;
-    } else {
-      line = testLine;
-    }
-
-    if (index === words.length - 1) {
-      ctx.fillText(line, x, lineY);
-    }
-  });
-}
-
-async function copyToClipboard(text, successMessage) {
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast(successMessage);
-  } catch {
-    shareText.value = text;
-    shareText.focus();
-    shareText.select();
-    document.execCommand("copy");
-    showToast(successMessage);
-  }
-}
-
-async function shareNative() {
-  const profile = shareProfile();
-  const text = buildShareText(profile);
-
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: "mbifê",
-        text,
-        url: window.location.href,
-      });
-      showToast("Partage ouvert");
-      return;
-    } catch {
-      showToast("Partage annulé");
-      return;
-    }
-  }
-
-  await copyToClipboard(text, "Texte copié pour partage");
-}
-
-function downloadShareCard() {
-  const profile = shareProfile();
-  const link = document.createElement("a");
-  link.download = `mbife-${profile.id}.png`;
-  link.href = shareCanvas.toDataURL("image/png");
-  link.click();
-  showToast("Image de partage générée");
-  recordRemoteEvent("share_card_downloaded", {
-    profile_id: profile.id,
-    score: profile.score,
-  });
-}
-
-function copyInvite() {
-  state.invitesSent += 1;
-  localStorage.setItem("mbifeInvitesSent", String(state.invitesSent));
-  renderInviteProgress();
-  copyToClipboard(
-    `Rejoins mbifê avec mon code ${state.inviteCode}. On compare nos signaux de compatibilité.`,
-    "Invitation copiée",
-  );
-  recordRemoteEvent("invite_copied", {
-    code: state.inviteCode,
-    invites_sent: state.invitesSent,
-  });
-
-  const user = currentUser();
-  if (hasSupabaseConfig() && user) {
-    supabaseFetch("/rest/v1/invitations?on_conflict=code", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=minimal",
-      body: [
-        {
-          owner_user_id: user.id,
-          code: state.inviteCode,
-          uses_count: state.invitesSent,
-        },
-      ],
-    }).catch((error) => {
-      state.supabase.lastError = error.message;
-      renderSupabaseStatus();
-    });
-  }
-}
-
-function voteWing(choice) {
-  const profile = currentProfile();
-  state.wingVotes[choice] = (state.wingVotes[choice] || 0) + 1;
-  localStorage.setItem("mbifeWingVotes", JSON.stringify(state.wingVotes));
-  renderWingVotes();
-  showToast("Vote ami ajouté");
-  recordRemoteEvent("wing_vote", {
-    choice,
-    votes: state.wingVotes,
-  });
-
-  const user = currentUser();
-  if (hasSupabaseConfig() && user && profile.remote) {
-    supabaseFetch("/rest/v1/wing_votes?on_conflict=voter_user_id,target_profile_id", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=minimal",
-      body: [
-        {
-          voter_user_id: user.id,
-          target_profile_id: profile.id,
-          vote: choice,
-        },
-      ],
-    }).catch((error) => {
-      state.supabase.lastError = error.message;
-      renderSupabaseStatus();
-    });
-  }
-}
-
-function chooseChallenge(optionId) {
-  if (state.challengeChoice !== optionId) {
-    state.challengeVotes[optionId] = (state.challengeVotes[optionId] || 0) + 1;
-    state.challengeChoice = optionId;
-    localStorage.setItem("mbifeChallengeChoice", optionId);
-    localStorage.setItem("mbifeChallengeVotes", JSON.stringify(state.challengeVotes));
-  }
-
-  renderChallenge();
-  showToast("Réponse enregistrée");
-  recordRemoteEvent("challenge_answered", {
-    choice: optionId,
-    votes: state.challengeVotes,
-  });
-
-  const user = currentUser();
-  if (hasSupabaseConfig() && user) {
-    supabaseFetch("/rest/v1/challenge_answers?on_conflict=user_id,challenge_id", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=minimal",
-      body: [
-        {
-          user_id: user.id,
-          challenge_id: "daily-first-message-vibe",
-          choice: optionId,
-        },
-      ],
-    }).catch((error) => {
-      state.supabase.lastError = error.message;
-      renderSupabaseStatus();
-    });
-  }
-}
-
-function renderConversations() {
-  const sortedRemoteMatches = [...state.remoteMatches].sort((a, b) => {
-    const aMessages = state.remoteMessages[a.id] || [];
-    const bMessages = state.remoteMessages[b.id] || [];
-    const aTime = aMessages[aMessages.length - 1]?.created_at || a.created_at || "";
-    const bTime = bMessages[bMessages.length - 1]?.created_at || b.created_at || "";
-    return bTime.localeCompare(aTime);
-  });
-
-  const remoteRows = sortedRemoteMatches.map((match) => {
-    const profile = match.otherProfile || {
-      name: "Match mbifê",
-      photo:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
-    };
-    const messages = state.remoteMessages[match.id] || [];
-    const lastMessage = messages.length
-      ? messages[messages.length - 1].body
-      : "Nouveau match Supabase. Envoie le premier message.";
-    const active = state.activeConversation === `remote:${match.id}` ? "active" : "";
-
-    return `
-      <button class="conversation ${active}" data-conversation="remote:${match.id}" type="button">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-        <span>
-          <strong>${profile.name}</strong>
-          <span>${escapeHtml(lastMessage)}</span>
-        </span>
-      </button>
-    `;
-  });
-
-  const localRows = conversations.map((conversation) => {
-    const profile = profiles.find((item) => item.id === conversation.id);
-    const lastMessage = conversation.messages[conversation.messages.length - 1][1];
-    const active = conversation.id === state.activeConversation ? "active" : "";
-
-    return `
-      <button class="conversation ${active}" data-conversation="${conversation.id}" type="button">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-        <span>
-          <strong>${profile.name}</strong>
-          <span>${lastMessage}</span>
-        </span>
-      </button>
-    `;
-  });
-
-  conversationList.innerHTML = [...remoteRows, ...localRows].join("");
-  document.querySelector("#messageCount").textContent = state.remoteMatches.length + conversations.length;
-  renderChat();
+/* ─── CONVERSATIONS ─── */
+function renderConvoList() {
+  const list = document.getElementById("convoList");
+  list.innerHTML = conversations.map(c => {
+    const p = profiles.find(pr=>pr.id===c.id)||{name:c.id,photo:"",city:""};
+    const last = c.messages[c.messages.length-1][1];
+    const active = c.id === state.activeConversation ? "active" : "";
+    return `<button class="convo-row ${active}" data-convo="${esc(c.id)}" type="button">
+      <img class="convo-avatar" src="${esc(p.photo)}" alt="${esc(p.name)}" />
+      <div class="convo-text">
+        <div class="convo-name">${esc(p.name)}</div>
+        <div class="convo-preview">${esc(last)}</div>
+      </div>
+    </button>`;
+  }).join("");
 }
 
 function renderChat() {
-  if (state.activeConversation.startsWith("remote:")) {
-    const matchId = state.activeConversation.replace("remote:", "");
-    const match = state.remoteMatches.find((item) => item.id === matchId);
-    const profile = match?.otherProfile || {
-      name: "Match mbifê",
-      intent: "Conversation Supabase",
-      photo:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
-    };
-    const user = currentUser();
-    const messages = state.remoteMessages[matchId] || [];
+  const c = conversations.find(c=>c.id===state.activeConversation);
+  const p = profiles.find(pr=>pr.id===state.activeConversation)||{name:"—",photo:"",intent:""};
+  if (!c) return;
 
-    chatHeader.innerHTML = `
-      <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-      <div>
-        <strong>${profile.name}</strong>
-        <p>${profile.intent}</p>
-      </div>
-    `;
-    chatThread.innerHTML = messages.length
-      ? messages
-          .map(
-            (message) =>
-              `<div class="bubble ${message.sender_id === user?.id ? "me" : "them"}">${escapeHtml(message.body)}</div>`,
-          )
-          .join("")
-      : `<div class="bubble them">Vous avez matché. Lance une conversation simple et respectueuse.</div>`;
-    chatThread.scrollTop = chatThread.scrollHeight;
-    return;
-  }
+  const head = document.getElementById("chatHead");
+  head.innerHTML = `
+    <img class="chat-head-img" src="${esc(p.photo)}" alt="${esc(p.name)}" />
+    <div><div class="chat-head-name">${esc(p.name)}</div><div class="chat-head-sub">${esc(p.intent)}</div></div>`;
 
-  const conversation = conversations.find((item) => item.id === state.activeConversation);
-  const profile = profiles.find((item) => item.id === conversation.id);
-
-  chatHeader.innerHTML = `
-    <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-    <div>
-      <strong>${profile.name}</strong>
-      <p>${profile.intent}</p>
-    </div>
-  `;
-  chatThread.innerHTML = conversation.messages
-    .map(([side, text]) => `<div class="bubble ${side}">${escapeHtml(text)}</div>`)
-    .join("");
-  chatThread.scrollTop = chatThread.scrollHeight;
+  const thread = document.getElementById("chatThread");
+  thread.innerHTML = c.messages.map(([side,text]) =>
+    `<div class="bubble ${side}">${esc(text)}</div>`
+  ).join("");
+  thread.scrollTop = thread.scrollHeight;
 }
 
-async function submitMessage(event) {
-  event.preventDefault();
-  const value = messageInput.value.trim();
+/* ─── VIRAL LAB ─── */
+function renderViral() {
+  // invite code
+  document.getElementById("inviteCodeBox").textContent = state.inviteCode;
+  document.getElementById("inviteProgressText").textContent = `${state.invitesSent} / 5 invitations`;
+  document.getElementById("inviteProgressBar").style.width = `${Math.min(state.invitesSent/5*100,100)}%`;
 
-  if (!value) {
-    return;
-  }
+  // wing votes
+  const total = Object.values(state.wingVotes).reduce((a,b)=>a+b,0);
+  const labels = {go:"Go 🟢",maybe:"Pause 🟡",pass:"Non 🔴"};
+  document.getElementById("voteGrid").innerHTML = Object.entries(state.wingVotes).map(([k,v]) =>
+    `<div class="vote-bar">
+      <div class="vote-label-row"><span>${labels[k]}</span><span>${v} votes (${Math.round(v/total*100)}%)</span></div>
+      <div class="vote-track"><div class="vote-fill" style="width:${Math.round(v/total*100)}%"></div></div>
+    </div>`
+  ).join("");
 
-  if (Date.now() < state.messageCooldownUntil) {
-    showToast("Attends quelques secondes avant le prochain message");
-    return;
-  }
-
-  if (state.activeConversation.startsWith("remote:")) {
-    const user = currentUser();
-    const matchId = state.activeConversation.replace("remote:", "");
-
-    if (!user || !hasSupabaseConfig()) {
-      showToast("Connecte-toi pour envoyer un message réel");
-      return;
-    }
-
-    try {
-      await sendRemoteMessage(matchId, value);
-      state.messageCooldownUntil = Date.now() + 5000;
-      messageInput.value = "";
-      await loadRemoteMessages();
-      renderConversations();
-      showToast("Message envoyé");
-      recordRemoteEvent("message_created", {
-        conversation_id: matchId,
-        length: value.length,
-      });
-    } catch (error) {
-      state.supabase.lastError = error.message;
-      renderSupabaseStatus();
-      showToast(readableBackendError(error, "Message non envoyé"));
-    }
-    return;
-  }
-
-  const conversation = conversations.find((item) => item.id === state.activeConversation);
-  conversation.messages.push(["me", value]);
-  messageInput.value = "";
-  renderConversations();
-  showToast("Message ajouté à la conversation");
-  recordRemoteEvent("message_created", {
-    conversation_id: conversation.id,
-    length: value.length,
-  });
+  // challenge
+  document.getElementById("challengeTitle").textContent = dailyChallenge.title;
+  document.getElementById("challengeDesc").textContent = dailyChallenge.copy;
+  const totalC = Object.values(state.challengeVotes).reduce((a,b)=>a+b,0);
+  document.getElementById("challengeOptions").innerHTML = dailyChallenge.options.map(o =>
+    `<button class="ghost-btn ${state.challengeChoice===o.id?'selected':''}" data-option="${o.id}" type="button">${esc(o.label)} · ${Math.round((state.challengeVotes[o.id]||0)/totalC*100)}%</button>`
+  ).join("");
 }
 
+function voteWing(v) {
+  state.wingVotes[v] = (state.wingVotes[v]||0)+1;
+  localStorage.setItem("mbifeWingVotes",JSON.stringify(state.wingVotes));
+  renderViral(); showToast("Vote enregistré !");
+}
+
+function chooseChallenge(id) {
+  state.challengeChoice = id; localStorage.setItem("mbifeChallengeChoice",id);
+  state.challengeVotes[id] = (state.challengeVotes[id]||0)+1;
+  localStorage.setItem("mbifeChallengeVotes",JSON.stringify(state.challengeVotes));
+  renderViral(); showToast("Réponse enregistrée !");
+}
+
+/* ─── HEADER TITLES ─── */
+const panelMeta = {
+  discover: { eyebrow:"Aujourd'hui", title:"Découvrir" },
+  matches:  { eyebrow:"Vos connexions", title:"Matches" },
+  messages: { eyebrow:"Conversations", title:"Messages" },
+  viral:    { eyebrow:"Communauté", title:"Viral Lab" },
+  about:    { eyebrow:"mbifê", title:"À propos" },
+};
+
+function updateHeader(panel) {
+  const m = panelMeta[panel] || panelMeta.discover;
+  document.getElementById("headerEyebrow").textContent = m.eyebrow;
+  document.getElementById("headerTitle").textContent = m.title;
+}
+
+/* ─── NAVIGATION ─── */
 function setPanel(panel) {
+  if (panel === state.activePanel) return;
+  const prev = document.getElementById(`panel${cap(state.activePanel)}`);
+  const next = document.getElementById(`panel${cap(panel)}`);
+  if (prev) { prev.classList.remove("active"); prev.classList.add("exit-left"); setTimeout(() => prev.classList.remove("exit-left"), 320); }
+  if (next) { next.classList.add("active"); }
   state.activePanel = panel;
-  document.querySelectorAll(".nav-item").forEach((button) => {
-    button.classList.toggle("active", button.dataset.panel === panel);
+  updateHeader(panel);
+
+  document.querySelectorAll(".nav-tab").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.panel === panel);
   });
-  document.querySelectorAll(".panel").forEach((section) => {
-    section.classList.toggle("active", section.id === `${panel}Panel`);
-  });
+
+  if (panel === "matches") renderMatches();
+  if (panel === "messages") { renderConvoList(); showConvoList(); }
+  if (panel === "viral") renderViral();
+  if (panel === "about") renderAuthState();
 }
 
-function syncFilterButtons() {
-  document.querySelectorAll(".filter-chip").forEach((button) => {
-    button.classList.toggle("active", button.dataset.filter === state.activeFilter);
-  });
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function showConvoList() {
+  document.getElementById("convoList").style.display = "grid";
+  document.getElementById("chatView").style.display = "none";
 }
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  window.clearTimeout(showToast.timer);
-  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1900);
+function showChat(id) {
+  state.activeConversation = id;
+  renderConvoList();
+  renderChat();
+  document.getElementById("convoList").style.display = "none";
+  document.getElementById("chatView").style.display = "flex";
 }
 
-function renderAll() {
-  renderProfile();
-  renderProfileForm();
-  renderMatches();
-  renderConversations();
-  renderViralLab();
+function updateBadges() {
+  const mb = document.getElementById("badgeMatches");
+  const c = state.matches.length + state.remoteMatches.length;
+  mb.style.display = c ? "grid" : "none";
+  mb.textContent = c;
+}
+
+/* ─── AUTH ─── */
+function renderAuthState() {
+  const user = currentUser();
+  document.getElementById("authForm").style.display = user ? "none" : "block";
+  document.getElementById("userWidget").hidden = !user;
+  if (user) {
+    document.getElementById("userDisplayName").textContent = user.user_metadata?.name || "Membre mbifê";
+    document.getElementById("userEmail").textContent = user.email || "";
+  }
   renderSupabaseStatus();
-  renderAuthState();
 }
 
-document.querySelectorAll(".nav-item").forEach((button) => {
-  button.addEventListener("click", () => setPanel(button.dataset.panel));
+function renderSupabaseStatus() {
+  const label = document.getElementById("supabaseLabel");
+  const text = document.getElementById("supabaseText");
+  if (!label) return;
+  if (!hasSupabase()) {
+    label.textContent = "Mode local";
+    text.textContent = "Les données sont stockées dans le navigateur.";
+  } else if (state.supabase.connected) {
+    label.textContent = "Supabase connecté ✓";
+    text.textContent = "La base partagée répond correctement.";
+  } else {
+    label.textContent = "Supabase à vérifier";
+    text.textContent = state.supabase.lastError || "Configuration présente. Recharge pour vérifier.";
+  }
+  if (document.getElementById("authStatus")) {
+    document.getElementById("authStatus").textContent = hasSupabase()
+      ? (currentUser() ? `Connecté en tant que ${currentUser().email}` : "Connecte-toi pour accéder à toutes les fonctionnalités")
+      : "Ajoute l'URL Supabase et la clé anon public pour activer les comptes.";
+  }
+}
+
+async function supabaseFetch(path, {method="GET",body,prefer="return=minimal",useUserToken=false}={}) {
+  const headers = { "apikey": supabaseConfig.anonKey, "Content-Type": "application/json" };
+  if (prefer) headers["Prefer"] = prefer;
+  const token = useUserToken ? state.auth?.access_token : null;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  else headers["Authorization"] = `Bearer ${supabaseConfig.anonKey}`;
+  const res = await fetch(`${supabaseConfig.url}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  if (!res.ok) { const txt = await res.text(); throw new Error(`Supabase ${res.status}: ${txt.slice(0,200)}`); }
+  return res;
+}
+
+async function loginWithSupabase() {
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  if (!email || !password) { showToast("Email et mot de passe requis"); return; }
+  try {
+    const res = await supabaseFetch("/auth/v1/token?grant_type=password", { method:"POST", body:{email,password} });
+    state.auth = await res.json();
+    localStorage.setItem("mbifeAuthSession", JSON.stringify(state.auth));
+    const gender = document.querySelector('input[name="gender"]:checked')?.value || "female";
+    document.body.classList.remove("theme-male","theme-female");
+    if (gender==="male") document.body.classList.add("theme-male");
+    renderAuthState(); showToast("Bienvenue !");
+  } catch(e) { showToast("Connexion échouée : " + e.message.slice(0,80)); }
+}
+
+async function signupWithSupabase() {
+  const name = document.getElementById("authName").value.trim();
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  if (!name || !email || !password) { showToast("Remplis tous les champs"); return; }
+  try {
+    const res = await supabaseFetch("/auth/v1/signup", { method:"POST", body:{email,password,data:{name}} });
+    const data = await res.json();
+    if (data.user) {
+      state.auth = data; localStorage.setItem("mbifeAuthSession", JSON.stringify(data));
+      renderAuthState(); showToast("Compte créé ! Vérifie ton email.");
+    } else { showToast(data.msg || "Inscription échouée"); }
+  } catch(e) { showToast("Inscription échouée : " + e.message.slice(0,80)); }
+}
+
+function logoutFromSupabase() {
+  state.auth = null; localStorage.removeItem("mbifeAuthSession");
+  document.body.classList.remove("theme-male","theme-female");
+  renderAuthState(); showToast("Déconnecté");
+}
+
+/* ─── EVENTS ─── */
+document.querySelectorAll(".nav-tab").forEach(btn => {
+  btn.addEventListener("click", () => setPanel(btn.dataset.panel));
 });
 
-document.querySelectorAll(".filter-chip").forEach((button) => {
-  button.addEventListener("click", () => {
-    state.activeFilter = button.dataset.filter;
+document.querySelectorAll(".chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+    btn.classList.add("active");
+    state.activeFilter = btn.dataset.filter;
     state.index = 0;
-    syncFilterButtons();
-    renderAll();
+    renderCard();
   });
 });
 
-document.querySelector("#passButton").addEventListener("click", () => advanceProfile("pass"));
-document.querySelector("#likeButton").addEventListener("click", () => advanceProfile("like"));
-document.querySelector("#sparkButton").addEventListener("click", () => advanceProfile("spark"));
-document.querySelector("#undoButton").addEventListener("click", undoProfile);
-document.querySelector("#reportButton").addEventListener("click", reportCurrentProfile);
-promptButton.addEventListener("click", nextPrompt);
-composer.addEventListener("submit", submitMessage);
-loginButton.addEventListener("click", loginWithSupabase);
-signupButton.addEventListener("click", signupWithSupabase);
-logoutButton?.addEventListener("click", logoutFromSupabase);
-profileLogoutButton?.addEventListener("click", logoutFromSupabase);
-profileForm.addEventListener("submit", saveProfile);
-refreshBackendButton.addEventListener("click", refreshBackendData);
-profilePhoto.addEventListener("change", () => {
-  const file = profilePhoto.files?.[0];
+document.getElementById("passBtn").addEventListener("click", () => advance("pass"));
+document.getElementById("likeBtn").addEventListener("click", () => advance("like"));
+document.getElementById("sparkBtn").addEventListener("click", () => advance("spark"));
+document.getElementById("undoBtn").addEventListener("click", undo);
+document.getElementById("reportBtn").addEventListener("click", () => showToast("Profil signalé"));
+document.getElementById("promptBtn").addEventListener("click", () => { state.promptIndex++; renderPrompt(); });
 
-  if (file) {
-    profilePreview.src = URL.createObjectURL(file);
-  }
-});
-authForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  loginWithSupabase();
-});
-document.querySelector("#copyShareButton").addEventListener("click", () => {
-  copyToClipboard(shareText.value, "Carte partageable copiée");
-});
-document.querySelector("#nativeShareButton").addEventListener("click", shareNative);
-document.querySelector("#downloadShareButton").addEventListener("click", downloadShareCard);
-document.querySelector("#refreshShareButton").addEventListener("click", () => {
-  state.shareProfileIndex = (state.shareProfileIndex + 1) % allProfiles().length;
-  renderViralLab();
-  showToast("Carte actualisée");
-});
-document.querySelector("#copyInviteButton").addEventListener("click", copyInvite);
-document.querySelector("#copyChallengeButton").addEventListener("click", () => {
-  copyToClipboard(
-    `Défi mbifê: ${dailyChallenge.title} Mon code VIP: ${state.inviteCode}. Tu réponds quoi ?`,
-    "Défi copié",
-  );
-});
-
-conversationList.addEventListener("click", (event) => {
-  const button = event.target.closest(".conversation");
-  if (!button) {
-    return;
-  }
-
-  state.activeConversation = button.dataset.conversation;
-  renderConversations();
-});
-
-wingActions.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-vote]");
-  if (!button) {
-    return;
-  }
-
-  voteWing(button.dataset.vote);
-});
-
-challengeOptions.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-option]");
-  if (!button) {
-    return;
-  }
-
-  chooseChallenge(button.dataset.option);
-});
-
-document.querySelector("#safeModeButton").addEventListener("click", (event) => {
+document.getElementById("safeModeBtn").addEventListener("click", e => {
   state.safeMode = !state.safeMode;
-  event.currentTarget.setAttribute("aria-pressed", String(state.safeMode));
-  showToast(state.safeMode ? "Mode respect activé" : "Mode respect désactivé");
+  e.currentTarget.classList.toggle("active", state.safeMode);
+  showToast(state.safeMode ? "Mode respect activé ✓" : "Mode respect désactivé");
 });
 
-window.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowRight") {
-    advanceProfile("like");
-  }
-
-  if (event.key === "ArrowLeft") {
-    advanceProfile("pass");
-  }
+document.getElementById("convoList").addEventListener("click", e => {
+  const btn = e.target.closest("[data-convo]");
+  if (btn) showChat(btn.dataset.convo);
 });
 
-renderAll();
-applyThemeFromStorage();
-restoreAuthSession();
-checkSupabaseStatus();
+document.getElementById("composer").addEventListener("submit", e => {
+  e.preventDefault();
+  const input = document.getElementById("msgInput");
+  const val = input.value.trim();
+  if (!val) return;
+  if (Date.now() < state.messageCooldownUntil) { showToast("Attends quelques secondes"); return; }
+  const c = conversations.find(c=>c.id===state.activeConversation);
+  if (c) { c.messages.push(["me",val]); input.value=""; state.messageCooldownUntil=Date.now()+3000; renderChat(); showToast("Message envoyé"); }
+});
 
+document.getElementById("wingActions").addEventListener("click", e => {
+  const btn = e.target.closest("[data-vote]"); if (btn) voteWing(btn.dataset.vote);
+});
+
+document.getElementById("challengeOptions").addEventListener("click", e => {
+  const btn = e.target.closest("[data-option]"); if (btn) chooseChallenge(btn.dataset.option);
+});
+
+document.getElementById("copyInviteBtn").addEventListener("click", () => {
+  const txt = `Rejoins mbifê avec mon code : ${state.inviteCode} — rencontres sincères`;
+  navigator.clipboard?.writeText(txt).then(() => showToast("Lien copié !")).catch(() => showToast("Copie indisponible"));
+  state.invitesSent++; localStorage.setItem("mbifeInvitesSent", state.invitesSent);
+  renderViral();
+});
+
+document.getElementById("copyChallengeBtn").addEventListener("click", () => {
+  navigator.clipboard?.writeText(`Défi mbifê: ${dailyChallenge.title} Mon code : ${state.inviteCode}. Tu réponds quoi ?`).then(() => showToast("Défi copié !")).catch(() => showToast("Copie indisponible"));
+});
+
+document.getElementById("loginBtn").addEventListener("click", loginWithSupabase);
+document.getElementById("signupBtn").addEventListener("click", signupWithSupabase);
+document.getElementById("logoutBtn").addEventListener("click", logoutFromSupabase);
+
+document.getElementById("authForm").addEventListener("submit", e => { e.preventDefault(); loginWithSupabase(); });
+
+window.addEventListener("keydown", e => {
+  if (state.activePanel !== "discover") return;
+  if (e.key === "ArrowRight") advance("like");
+  if (e.key === "ArrowLeft") advance("pass");
+});
+
+/* ─── INIT ─── */
+renderCard();
+renderConvoList();
+updateBadges();
+updateHeader("discover");
+if (state.auth) {
+  document.body.classList.remove("theme-male","theme-female");
+  const g = localStorage.getItem("mbifeUserGender");
+  if (g==="male") document.body.classList.add("theme-male");
+  else if (g==="female") document.body.classList.add("theme-female");
+}
 </script>
-  </body>
+</body>
 </html>
