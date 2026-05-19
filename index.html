@@ -1612,6 +1612,120 @@ blockquote {
   }
 }
 
+
+#imageButton,
+#audioButton{
+  border:0;
+  border-radius:.5rem;
+  background:#fff0f2;
+  color:#e6536a;
+  padding:.7rem .85rem;
+  font-size:1rem;
+  font-weight:800;
+}
+
+.composer{
+  grid-template-columns:auto auto 1fr auto !important;
+  align-items:center;
+}
+
+
+/* ===== WHATSAPP STYLE MEDIA ===== */
+
+.composer{
+  display:flex !important;
+  align-items:center;
+  gap:.5rem;
+  padding:.7rem;
+  background:#f0f2f5;
+}
+
+#imageButton,
+#audioButton{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:none;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+#imageButton:hover,
+#audioButton:hover{
+  transform:scale(1.05);
+}
+
+#messageInput{
+  flex:1;
+  border:none !important;
+  border-radius:999px !important;
+  background:white !important;
+  padding:.9rem 1rem !important;
+}
+
+.composer button[type="submit"]{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#25d366 !important;
+  font-size:0;
+  position:relative;
+}
+
+.composer button[type="submit"]::before{
+  content:"➤";
+  font-size:1.2rem;
+  color:white;
+}
+
+.message-image{
+  width:260px;
+  max-width:100%;
+  border-radius:1rem;
+  display:block;
+}
+
+.bubble audio{
+  width:260px;
+  max-width:100%;
+  height:42px;
+  border-radius:999px;
+}
+
+.bubble{
+  padding:.45rem !important;
+}
+
+.bubble.me{
+  background:#dcf8c6 !important;
+  color:#111 !important;
+}
+
+.bubble.them{
+  background:white !important;
+}
+
+.message-time{
+  text-align:right;
+  padding-right:.4rem;
+  color:#667781;
+}
+
+.chat-thread{
+  background:#efeae2 !important;
+  background-image:
+    radial-gradient(rgba(0,0,0,.03) 1px, transparent 1px);
+  background-size:20px 20px;
+}
+
 </style>
   </head>
   <body>
@@ -3879,6 +3993,158 @@ restoreAuthSession();
 checkSupabaseStatus();
 
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+// ===== FIX IMAGE/AUDIO BUTTONS =====
+
+window.addEventListener("DOMContentLoaded",()=>{
+
+  const imageInput = document.querySelector("#imageInput");
+  const imageButton = document.querySelector("#imageButton");
+  const audioButton = document.querySelector("#audioButton");
+
+  if(imageButton && imageInput){
+
+    imageButton.onclick = ()=>{
+      imageInput.click();
+    };
+
+  }
+
+  if(imageInput){
+
+    imageInput.onchange = async ()=>{
+
+      try{
+
+        const file = imageInput.files[0];
+
+        if(!file){
+          alert("Aucune image sélectionnée");
+          return;
+        }
+
+        const filename =
+        Date.now() + "-" + file.name;
+
+        const upload =
+        await supabaseClient
+        .storage
+        .from("chat-images")
+        .upload(filename,file);
+
+        if(upload.error){
+          console.error(upload.error);
+          alert("Erreur upload image");
+          return;
+        }
+
+        const { data } =
+        supabaseClient
+        .storage
+        .from("chat-images")
+        .getPublicUrl(filename);
+
+        await supabaseClient
+        .from("messages")
+        .insert({
+          match_id: state.activeConversation,
+          sender_id: currentUser()?.id,
+          image_url: data.publicUrl,
+          message_type:"image"
+        });
+
+        alert("Image envoyée");
+
+      }catch(err){
+        console.error(err);
+        alert("Erreur image");
+      }
+
+    };
+
+  }
+
+  if(audioButton){
+
+    audioButton.onclick = async ()=>{
+
+      try{
+
+        const stream =
+        await navigator.mediaDevices.getUserMedia({
+          audio:true
+        });
+
+        const recorder =
+        new MediaRecorder(stream);
+
+        let chunks = [];
+
+        recorder.ondataavailable = e=>{
+          chunks.push(e.data);
+        };
+
+        recorder.onstop = async ()=>{
+
+          const blob =
+          new Blob(chunks,{
+            type:"audio/webm"
+          });
+
+          const filename =
+          Date.now()+".webm";
+
+          const upload =
+          await supabaseClient
+          .storage
+          .from("chat-audio")
+          .upload(filename,blob);
+
+          if(upload.error){
+            console.error(upload.error);
+            alert("Erreur audio");
+            return;
+          }
+
+          const { data } =
+          supabaseClient
+          .storage
+          .from("chat-audio")
+          .getPublicUrl(filename);
+
+          await supabaseClient
+          .from("messages")
+          .insert({
+            match_id: state.activeConversation,
+            sender_id: currentUser()?.id,
+            audio_url:data.publicUrl,
+            message_type:"audio"
+          });
+
+          alert("Audio envoyé");
+
+        };
+
+        recorder.start();
+
+        audioButton.textContent = "⏺️ REC";
+
+        setTimeout(()=>{
+          recorder.stop();
+          audioButton.textContent = "🎤";
+        },5000);
+
+      }catch(err){
+        console.error(err);
+        alert("Microphone refusé");
+      }
+
+    };
+
+  }
+
+});
+
+</script>
 </body>
 </html>
