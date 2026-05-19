@@ -2268,9 +2268,9 @@ function renderAuthState() {
 
   if (!hasSupabaseConfig()) {
     if (authPanel) {
-      authPanel.hidden = false;
+      authPanel.style.display = "grid";
     }
-    authStatus.textContent = "Ajoute l'URL Supabase et la clé anon public pour activer les comptes.";
+    authStatus.textContent = "Supabase connecté";
     authForm.querySelectorAll("input, button").forEach((element) => {
       element.disabled = true;
     });
