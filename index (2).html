@@ -1,0 +1,5096 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mbifê - rencontres sincères</title>
+    <style>
+:root {
+  color-scheme: light;
+  --ink: #1c1b22;
+  --muted: #696675;
+  --soft: #f5f1ea;
+  --surface: #fffaf3;
+  --panel: #ffffff;
+  --line: rgba(28, 27, 34, 0.12);
+  --rose: #e6536a;
+  --plum: #583456;
+  --mint: #1c9c83;
+  --gold: #c6812e;
+  --blue: #3a72db;
+  --shadow: 0 18px 55px rgba(32, 26, 20, 0.16);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(230, 83, 106, 0.14), transparent 32rem),
+    linear-gradient(135deg, #fbf7ef 0%, #f7fbf7 45%, #eef4ff 100%);
+  color: var(--ink);
+}
+
+button,
+input,
+textarea {
+  max-width: 100%;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+canvas {
+  max-width: 100%;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 18rem minmax(0, 1fr);
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-right: 1px solid var(--line);
+  background: rgba(255, 250, 243, 0.82);
+  padding: 1.4rem;
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brand-mark {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, var(--rose), #f0a642);
+  color: white;
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+
+.brand-name,
+.brand-subtitle,
+.eyebrow,
+.quality-panel p,
+.prompt-box p {
+  margin: 0;
+}
+
+.brand-name {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.brand-subtitle {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.side-nav {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--muted);
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  border-color: var(--line);
+  background: white;
+  color: var(--ink);
+}
+
+.nav-item strong {
+  min-width: 1.65rem;
+  border-radius: 999px;
+  background: var(--soft);
+  padding: 0.2rem 0.45rem;
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.quality-panel {
+  margin-top: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: white;
+  padding: 1rem;
+}
+
+.quality-panel h2,
+.auth-panel h2 {
+  margin: 0 0 0.7rem;
+  font-size: 1rem;
+}
+
+.quality-panel p,
+.auth-panel p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.auth-panel {
+  display: grid;
+  gap: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: white;
+  padding: 1rem;
+}
+
+.auth-panel p {
+  margin: 0;
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.auth-form input {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--soft);
+  padding: 0.68rem 0.75rem;
+}
+
+.auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+}
+
+.auth-actions button,
+.auth-logout {
+  min-height: 2.55rem;
+  border-radius: 0.5rem;
+  font-weight: 850;
+}
+
+.auth-actions button {
+  border: 0;
+  background: var(--ink);
+  color: white;
+}
+
+.auth-actions button:last-child {
+  background: var(--rose);
+}
+
+.quality-meter {
+  height: 0.45rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ece6dc;
+  margin-bottom: 0.75rem;
+}
+
+.quality-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mint), var(--gold), var(--rose));
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.35rem clamp(1rem, 3vw, 2rem);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow {
+  color: var(--rose);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 42rem;
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.7rem, 3vw, 3.15rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  letter-spacing: 0;
+}
+
+.icon-button {
+  display: grid;
+  flex: 0 0 auto;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: white;
+  color: var(--mint);
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.icon-button[aria-pressed="true"] {
+  background: #e8fff7;
+  border-color: rgba(28, 156, 131, 0.35);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1.25rem 0;
+}
+
+.filter-chip {
+  min-height: 2.45rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
+  padding: 0.55rem 0.9rem;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+  border-color: rgba(230, 83, 106, 0.34);
+  background: #fff0f2;
+  color: var(--rose);
+}
+
+.panel {
+  display: none;
+  min-height: 0;
+  min-width: 0;
+}
+
+.panel.active {
+  display: grid;
+  min-width: 0;
+}
+
+#discoverPanel {
+  grid-template-columns: minmax(18rem, 31rem) minmax(17rem, 24rem);
+  align-items: start;
+  justify-content: center;
+  gap: clamp(1rem, 4vw, 2rem);
+}
+
+.deck-area {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.profile-card {
+  position: relative;
+  min-height: clamp(32rem, 72vh, 39rem);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 0.7rem;
+  background: #222;
+  box-shadow: var(--shadow);
+  isolation: isolate;
+}
+
+.profile-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.photo-wash {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(20, 18, 24, 0.08) 15%, rgba(20, 18, 24, 0.15) 45%, rgba(13, 10, 12, 0.88) 100%),
+    linear-gradient(45deg, rgba(230, 83, 106, 0.24), transparent 42%);
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  color: white;
+  padding: 1.1rem;
+  min-width: 0;
+}
+
+.profile-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: auto;
+}
+
+.badge-row,
+.interest-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.badge,
+.interest {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(18, 17, 23, 0.34);
+  padding: 0.32rem 0.58rem;
+  color: white;
+  font-size: 0.78rem;
+  backdrop-filter: blur(10px);
+}
+
+.badge.verified {
+  background: rgba(28, 156, 131, 0.72);
+}
+
+.distance {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  padding: 0.32rem 0.58rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.profile-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin-top: clamp(7rem, 24vh, 13rem);
+}
+
+.profile-title h2 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 0.95;
+}
+
+.profile-title span {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.profile-bio {
+  max-width: 32rem;
+  margin: 0.65rem 0 0.8rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.45;
+}
+
+.intent-card {
+  display: grid;
+  gap: 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.75rem;
+  backdrop-filter: blur(12px);
+}
+
+.intent-card span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.intent-card strong {
+  font-size: 1rem;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(3rem, 1fr));
+  gap: 0.75rem;
+}
+
+.action-button {
+  display: grid;
+  min-height: 3.6rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: white;
+  box-shadow: 0 10px 24px rgba(32, 26, 20, 0.08);
+  font-size: 1.55rem;
+  font-weight: 900;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(32, 26, 20, 0.12);
+}
+
+.action-button.secondary {
+  color: var(--blue);
+}
+
+.action-button.pass {
+  color: #d4473f;
+}
+
+.action-button.like {
+  color: var(--rose);
+}
+
+.action-button.spark {
+  color: var(--gold);
+}
+
+.action-button.report {
+  color: var(--muted);
+}
+
+.profile-layout {
+  grid-template-columns: minmax(19rem, 1fr) minmax(18rem, 25rem);
+  gap: 1rem;
+  align-items: start;
+}
+
+.profile-editor,
+.profile-status-stack .about-card {
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
+}
+
+.profile-editor {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.profile-form,
+.profile-status-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.avatar-editor {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.avatar-editor img {
+  width: 100%;
+  max-height: 20rem;
+  border-radius: 0.6rem;
+  background: var(--soft);
+  object-fit: cover;
+}
+
+.profile-form label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.profile-form input,
+.profile-form textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: white;
+  color: var(--ink);
+  padding: 0.72rem 0.85rem;
+  font-weight: 500;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.profile-logout {
+  width: fit-content;
+}
+
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.85rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink);
+  padding: 0.32rem 0.58rem;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.insight-panel,
+.date-lab,
+.chat-window,
+.conversation-list {
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
+}
+
+.insight-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.insight-header h2 {
+  margin-top: 0.25rem;
+}
+
+.score-ring {
+  display: grid;
+  width: 10rem;
+  height: 10rem;
+  place-items: center;
+  justify-self: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, white 58%, transparent 59%),
+    conic-gradient(var(--rose) 0deg, var(--gold) 120deg, var(--mint) 220deg, #ded6ca 220deg);
+}
+
+.score-ring strong {
+  align-self: end;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.score-ring span {
+  align-self: start;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.trait-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.trait {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.trait-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.trait-bar {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ece6dc;
+}
+
+.trait-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mint), var(--gold));
+}
+
+.prompt-box {
+  display: grid;
+  gap: 0.65rem;
+  border-radius: 0.5rem;
+  background: var(--soft);
+  padding: 0.85rem;
+}
+
+.prompt-box p {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.prompt-box button,
+.composer button {
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--ink);
+  color: white;
+  padding: 0.7rem 0.85rem;
+  font-weight: 800;
+}
+
+blockquote {
+  margin: 0;
+  color: var(--plum);
+  line-height: 1.45;
+}
+
+.two-column {
+  grid-template-columns: minmax(16rem, 1fr) minmax(17rem, 27rem);
+  gap: 1rem;
+  align-items: start;
+}
+
+.match-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.9rem;
+}
+
+.like-requests {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.like-request-card {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  border: 1px solid rgba(230, 83, 106, 0.18);
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, #fff0f2, rgba(255, 255, 255, 0.94));
+  padding: 0.7rem;
+  box-shadow: 0 16px 36px rgba(230, 83, 106, 0.1);
+}
+
+.like-request-card img {
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 0.6rem;
+  object-fit: cover;
+}
+
+.like-request-body {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.like-request-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.like-request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.like-request-actions button {
+  min-height: 2.35rem;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  font-weight: 850;
+}
+
+.accept-like-button {
+  border: 0;
+  background: var(--rose);
+  color: white;
+}
+
+.decline-like-button {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+}
+
+.mini-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: white;
+}
+
+.mini-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.mini-card div {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem;
+}
+
+.mini-card strong {
+  font-size: 1rem;
+}
+
+.mini-card span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.empty-state {
+  border: 1px dashed rgba(28, 27, 34, 0.25);
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 1rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.date-lab {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.date-lab h2 {
+  line-height: 1.2;
+}
+
+.date-card {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.date-option {
+  border-left: 4px solid var(--mint);
+  border-radius: 0.4rem;
+  background: var(--soft);
+  padding: 0.75rem;
+}
+
+.date-option strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.date-option span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.conversation-list {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.5rem;
+}
+
+.message-sidebar {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.message-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.message-section-head h2 {
+  margin-top: 0.2rem;
+}
+
+.notify-button {
+  min-height: 2.4rem;
+  padding-inline: 0.7rem;
+}
+
+.message-notice {
+  border: 1px solid rgba(28, 156, 131, 0.2);
+  border-radius: 0.55rem;
+  background: #e8fff7;
+  color: #12715f;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.86rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.conversation {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  padding: 0.55rem;
+  text-align: left;
+  min-width: 0;
+}
+
+.conversation::after {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.conversation.has-unread::after {
+  background: var(--rose);
+  box-shadow: 0 0 0 0.25rem rgba(230, 83, 106, 0.12);
+}
+
+.conversation.active,
+.conversation:hover {
+  background: var(--soft);
+}
+
+.conversation img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+/* Avatar fallback for broken/missing photos */
+.avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: white;
+  background: linear-gradient(135deg, var(--rose), var(--plum));
+  flex-shrink: 0;
+}
+
+.conversation strong,
+.conversation span {
+  display: block;
+}
+
+.conversation span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.conversation-preview em {
+  flex: 1 1 auto;
+  overflow: hidden;
+  color: var(--muted);
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unread-badge {
+  display: inline-grid;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--rose);
+  color: white;
+  padding: 0 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.chat-window {
+  display: grid;
+  min-height: 31rem;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  border-bottom: 1px solid var(--line);
+  padding: 0.85rem;
+}
+
+.chat-person {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.chat-header img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.chat-header p {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.chat-status {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #e8fff7;
+  color: #12715f;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.bubble {
+  max-width: 82%;
+  border-radius: 0.7rem;
+  padding: 0.65rem 0.8rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.bubble.them {
+  align-self: flex-start;
+  background: var(--soft);
+}
+
+.bubble.me {
+  align-self: flex-end;
+  background: var(--rose);
+  color: white;
+}
+
+.bubble img {
+  display: block;
+  width: min(16rem, 72vw);
+  max-height: 19rem;
+  border-radius: 0.55rem;
+  object-fit: cover;
+}
+
+.bubble audio {
+  width: min(15rem, 70vw);
+}
+
+.media-caption {
+  display: block;
+  margin-top: 0.45rem;
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  align-items: end;
+  border-top: 1px solid var(--line);
+  padding: 0.75rem;
+}
+
+.composer-tools {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.composer-tool,
+.send-button {
+  border: 0;
+  border-radius: 0.5rem;
+  font-weight: 850;
+}
+
+.composer-tool {
+  min-height: 2.7rem;
+  background: var(--soft);
+  color: var(--ink);
+  padding: 0.55rem 0.65rem;
+}
+
+.composer-tool.recording {
+  background: #fff0f2;
+  color: var(--rose);
+  box-shadow: inset 0 0 0 1px rgba(230, 83, 106, 0.25);
+}
+
+.composer-main {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.composer input {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: white;
+  padding: 0.72rem 0.85rem;
+}
+
+.attachment-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  border: 1px solid rgba(28, 156, 131, 0.2);
+  border-radius: 0.55rem;
+  background: #e8fff7;
+  color: #12715f;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.attachment-preview button {
+  min-height: 2rem;
+  border: 0;
+  border-radius: 0.45rem;
+  background: white;
+  color: var(--ink);
+  padding: 0.3rem 0.55rem;
+  font-weight: 850;
+}
+
+.viral-layout {
+  grid-template-columns: minmax(19rem, 34rem) minmax(18rem, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.share-studio,
+.viral-card {
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
+}
+
+.share-studio {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.section-heading {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.section-heading h2 {
+  line-height: 1.18;
+}
+
+.share-canvas {
+  width: 100%;
+  max-height: 34rem;
+  border-radius: 0.6rem;
+  background: #1c1b22;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.share-copy {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.share-copy label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.share-copy textarea {
+  width: 100%;
+  min-height: 6rem;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--soft);
+  color: var(--ink);
+  padding: 0.75rem;
+  line-height: 1.45;
+}
+
+.viral-actions,
+.wing-actions,
+.challenge-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.primary-button,
+.ghost-button,
+.wing-actions button,
+.challenge-options button {
+  min-height: 2.75rem;
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  font-weight: 850;
+}
+
+.primary-button {
+  border: 0;
+  background: var(--rose);
+  color: white;
+}
+
+.ghost-button,
+.wing-actions button,
+.challenge-options button {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+}
+
+.ghost-button:hover,
+.wing-actions button:hover,
+.challenge-options button:hover {
+  border-color: rgba(230, 83, 106, 0.34);
+  background: #fff0f2;
+}
+
+.viral-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.viral-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.invite-code {
+  margin: 0;
+  border-radius: 0.5rem;
+  background: var(--ink);
+  color: white;
+  padding: 0.8rem;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.muted-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.48;
+}
+
+.progress-row,
+.vote-item {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.progress-row span,
+.vote-label {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.progress-track,
+.vote-track {
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ece6dc;
+}
+
+.progress-track span,
+.vote-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--rose), var(--gold), var(--mint));
+}
+
+.vote-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.vote-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.challenge-options button.selected {
+  border-color: rgba(28, 156, 131, 0.45);
+  background: #e8fff7;
+  color: #12715f;
+}
+
+.about-layout {
+  grid-template-columns: minmax(19rem, 1fr) minmax(18rem, 25rem);
+  gap: 1rem;
+  align-items: start;
+}
+
+.about-hero,
+.about-card {
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
+}
+
+.about-hero {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.about-hero p {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.58;
+}
+
+.about-mark {
+  display: grid;
+  min-height: 14rem;
+  place-items: center;
+  border-radius: 0.65rem;
+  background:
+    linear-gradient(135deg, rgba(230, 83, 106, 0.9), rgba(198, 129, 46, 0.88)),
+    #1c1b22;
+  color: white;
+  font-size: clamp(2.8rem, 10vw, 6rem);
+  font-weight: 950;
+}
+
+.about-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.about-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.about-card blockquote {
+  color: var(--plum);
+  font-size: 1rem;
+}
+
+.about-list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  line-height: 1.48;
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  width: fit-content;
+  border-radius: 0.5rem;
+  background: var(--ink);
+  color: white;
+  padding: 0.7rem 0.9rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.contact-link:hover {
+  background: var(--plum);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 20;
+  transform: translate(-50%, 140%);
+  border-radius: 999px;
+  background: var(--ink);
+  color: white;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: relative;
+    top: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.75rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 0.85rem;
+  }
+
+  .brand-subtitle,
+  .quality-panel {
+    display: none;
+  }
+
+  .side-nav {
+    display: flex;
+    grid-column: 2;
+    min-width: 0;
+    margin-left: auto;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+  }
+
+  .side-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-item {
+    flex: 0 0 auto;
+    gap: 0.55rem;
+    white-space: nowrap;
+  }
+
+  .auth-panel {
+    grid-column: 1 / -1;
+    padding: 0.75rem;
+  }
+
+  .auth-panel h2 {
+    margin-bottom: 0.25rem;
+  }
+
+  .auth-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+  }
+
+  .auth-actions {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .auth-logout {
+    width: 100%;
+  }
+
+  #discoverPanel,
+  .profile-layout,
+  .two-column,
+  .viral-layout,
+  .about-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-panel {
+    position: static;
+  }
+
+  .profile-card {
+    min-height: clamp(30rem, 68vh, 38rem);
+  }
+}
+
+@media (max-width: 620px) {
+  body {
+    background: linear-gradient(180deg, #fbf7ef 0%, #f7fbf7 52%, #eef4ff 100%);
+  }
+
+  .sidebar {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    padding: 0.75rem;
+  }
+
+  .brand {
+    justify-content: space-between;
+  }
+
+  .side-nav {
+    grid-column: 1;
+    margin-left: 0;
+    margin-right: -0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .auth-panel {
+    grid-column: 1;
+    gap: 0.45rem;
+    padding: 0.65rem;
+  }
+
+  .auth-panel h2 {
+    margin: 0;
+    font-size: 0.92rem;
+  }
+
+  .auth-panel p {
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+
+  .auth-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.42rem;
+  }
+
+  .auth-form input {
+    min-height: 2.35rem;
+    padding: 0.52rem 0.58rem;
+    font-size: 0.86rem;
+  }
+
+  #authName {
+    grid-column: 1 / -1;
+  }
+
+  .auth-actions {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.42rem;
+  }
+
+  .auth-actions button,
+  .auth-logout {
+    min-height: 2.35rem;
+    font-size: 0.86rem;
+  }
+
+  .workspace {
+    padding: 0.9rem 0.75rem 5rem;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.65rem;
+    line-height: 1.08;
+  }
+
+  .icon-button {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+  }
+
+  .brand-mark {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .nav-item {
+    min-height: 2.45rem;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .nav-item span {
+    max-width: 5.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .filters {
+    flex-wrap: nowrap;
+    margin: 0.9rem -0.75rem 1rem 0;
+    overflow-x: auto;
+    padding-right: 0.75rem;
+    scrollbar-width: none;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-chip {
+    flex: 0 0 auto;
+  }
+
+  #discoverPanel,
+  .panel.active {
+    gap: 0.9rem;
+  }
+
+  .profile-card {
+    min-height: min(31rem, 68dvh);
+    border-radius: 0.65rem;
+  }
+
+  .profile-title {
+    margin-top: 0;
+  }
+
+  .profile-title h2 {
+    font-size: 2rem;
+  }
+
+  .profile-topline {
+    align-items: flex-start;
+  }
+
+  .distance {
+    flex: 0 0 auto;
+  }
+
+  .profile-content {
+    padding: 0.9rem;
+  }
+
+  .badge,
+  .interest,
+  .profile-badge {
+    font-size: 0.72rem;
+  }
+
+  .actions {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.4rem;
+  }
+
+  .action-button {
+    min-height: 3rem;
+    border-radius: 0.5rem;
+    font-size: 1.35rem;
+  }
+
+  .composer {
+    grid-template-columns: 1fr;
+  }
+
+  .composer-tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .composer-tool,
+  .send-button {
+    width: 100%;
+  }
+
+  .message-section-head {
+    align-items: start;
+  }
+
+  .notify-button {
+    max-width: 9rem;
+  }
+
+  .chat-window {
+    min-height: min(34rem, 72dvh);
+  }
+
+  .chat-thread {
+    padding: 0.75rem;
+  }
+
+  .bubble {
+    max-width: 92%;
+  }
+
+  .conversation-list {
+    max-height: 17rem;
+    overflow: auto;
+  }
+
+  .match-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .like-request-card {
+    grid-template-columns: 3.7rem minmax(0, 1fr);
+  }
+
+  .like-request-card img {
+    width: 3.7rem;
+    height: 3.7rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-editor,
+  .profile-status-stack .about-card,
+  .insight-panel,
+  .date-lab,
+  .chat-window,
+  .conversation-list,
+  .share-studio,
+  .viral-card,
+  .about-hero,
+  .about-card {
+    border-radius: 0.55rem;
+  }
+
+  .share-canvas {
+    max-height: none;
+    aspect-ratio: 4 / 5;
+  }
+
+  .contact-link {
+    width: 100%;
+  }
+
+  .profile-logout {
+    width: 100%;
+  }
+
+  .about-mark {
+    min-height: 9rem;
+  }
+
+  .viral-actions,
+  .wing-actions,
+  .challenge-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .viral-actions .primary-button,
+  .viral-actions .ghost-button {
+    width: 100%;
+  }
+
+  .toast {
+    width: calc(100% - 1.5rem);
+    border-radius: 0.6rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 390px) {
+  .workspace {
+    padding-inline: 0.6rem;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+  }
+
+  .nav-item span {
+    max-width: 4.6rem;
+  }
+
+  .profile-card {
+    min-height: min(29rem, 66dvh);
+  }
+
+  .profile-bio,
+  .intent-card strong {
+    font-size: 0.92rem;
+  }
+
+  .actions {
+    gap: 0.32rem;
+  }
+
+  .action-button {
+    min-height: 2.8rem;
+  }
+}
+
+/* Interface refresh */
+.sidebar {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 243, 0.84)),
+    var(--surface);
+  box-shadow: 14px 0 44px rgba(32, 26, 20, 0.06);
+}
+
+.brand-mark {
+  box-shadow: 0 12px 26px rgba(230, 83, 106, 0.28);
+}
+
+.nav-item {
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.nav-item.active {
+  border-color: rgba(230, 83, 106, 0.22);
+  background: linear-gradient(135deg, #fff0f2, #fffaf3);
+  box-shadow: 0 10px 26px rgba(32, 26, 20, 0.08);
+  color: var(--rose);
+}
+
+.nav-item:hover {
+  transform: translateX(2px);
+}
+
+.topbar {
+  position: sticky;
+  top: 1rem;
+  z-index: 6;
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 0.95rem;
+  box-shadow: 0 18px 44px rgba(32, 26, 20, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.topbar-copy {
+  min-width: 0;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.status-pill,
+.hero-kpis span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  border: 1px solid rgba(230, 83, 106, 0.2);
+  border-radius: 999px;
+  background: #fff0f2;
+  color: var(--rose);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 850;
+}
+
+.status-pill {
+  background: #e8fff7;
+  border-color: rgba(28, 156, 131, 0.22);
+  color: #12715f;
+}
+
+.hero-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.filters {
+  align-items: center;
+}
+
+.filter-chip {
+  box-shadow: 0 8px 18px rgba(32, 26, 20, 0.05);
+}
+
+.filter-chip.active {
+  box-shadow: 0 10px 22px rgba(230, 83, 106, 0.13);
+}
+
+.profile-card {
+  border-radius: 1.05rem;
+  box-shadow: 0 26px 74px rgba(32, 26, 20, 0.22);
+}
+
+.profile-content {
+  padding: 1.25rem;
+}
+
+.intent-card,
+.badge,
+.interest,
+.profile-badge {
+  backdrop-filter: blur(14px);
+}
+
+.actions {
+  align-items: stretch;
+}
+
+.action-button {
+  position: relative;
+  align-content: center;
+  gap: 0.1rem;
+  padding: 0.35rem 0.25rem;
+}
+
+.action-button small {
+  display: block;
+  color: currentColor;
+  font-size: 0.66rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.action-button.like,
+.action-button.spark {
+  border-color: rgba(230, 83, 106, 0.18);
+}
+
+.action-button.like:hover,
+.action-button.spark:hover {
+  background: #fff0f2;
+}
+
+.insight-panel,
+.date-lab,
+.chat-window,
+.conversation-list,
+.share-studio,
+.viral-card,
+.about-hero,
+.about-card,
+.profile-editor {
+  border-color: rgba(28, 27, 34, 0.1);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.conversation {
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.conversation:hover {
+  transform: translateX(2px);
+}
+
+.composer button,
+.primary-button {
+  box-shadow: 0 12px 24px rgba(230, 83, 106, 0.18);
+}
+
+@media (max-width: 980px) {
+  .topbar {
+    position: static;
+  }
+
+  .nav-item:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .sidebar {
+    box-shadow: none;
+  }
+
+  .topbar {
+    border-radius: 0.8rem;
+    padding: 0.8rem;
+  }
+
+  body:not(.is-authenticated) .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255, 250, 243, 0.96);
+    box-shadow: 0 12px 34px rgba(32, 26, 20, 0.12);
+  }
+
+  body:not(.is-authenticated) .side-nav {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    justify-content: flex-start;
+    overflow-x: auto;
+    border-radius: 0.85rem;
+    box-shadow: none;
+  }
+
+  body:not(.is-authenticated) .workspace {
+    padding-bottom: 2rem;
+  }
+
+  .topbar-actions {
+    align-items: flex-start;
+  }
+
+  .status-pill {
+    display: none;
+  }
+
+  .hero-kpis {
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+  }
+
+  .hero-kpis span {
+    min-height: 1.75rem;
+    padding: 0.28rem 0.5rem;
+    font-size: 0.68rem;
+  }
+
+  .side-nav {
+    position: fixed;
+    left: 0.6rem;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    z-index: 30;
+    justify-content: space-between;
+    margin: 0;
+    border: 1px solid rgba(28, 27, 34, 0.1);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 0.35rem;
+    box-shadow: 0 18px 50px rgba(32, 26, 20, 0.18);
+    backdrop-filter: blur(18px);
+  }
+
+  .nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 3rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.18rem;
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.25rem;
+    font-size: 0.68rem;
+    text-align: center;
+  }
+
+  .nav-item span {
+    max-width: 100%;
+  }
+
+  .nav-item strong {
+    display: none;
+  }
+
+  .workspace {
+    padding-bottom: 6.6rem;
+  }
+
+  .profile-card {
+    box-shadow: 0 18px 46px rgba(32, 26, 20, 0.2);
+  }
+
+  .actions {
+    position: sticky;
+    bottom: 5.1rem;
+    z-index: 12;
+    border: 1px solid rgba(28, 27, 34, 0.08);
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 0.4rem;
+    box-shadow: 0 18px 42px rgba(32, 26, 20, 0.14);
+    backdrop-filter: blur(16px);
+  }
+
+  .action-button {
+    box-shadow: none;
+  }
+
+  .action-button small {
+    font-size: 0.54rem;
+  }
+}
+
+
+.bubble-time {
+  display:block;
+  margin-top:6px;
+  font-size:11px;
+  opacity:0.72;
+}
+.loading-card {
+  display:grid;
+  gap:1rem;
+  padding:1rem;
+}
+.loading-photo {
+  height:320px;
+  border-radius:1rem;
+  background:#ececec;
+  animation:pulse 1.2s infinite;
+}
+.loading-lines {
+  height:120px;
+  border-radius:1rem;
+  background:#f4f4f4;
+  animation:pulse 1.2s infinite;
+}
+@keyframes pulse {
+  0% { opacity:0.5; }
+  50% { opacity:1; }
+  100% { opacity:0.5; }
+}
+
+</style>
+    <link rel="manifest" href="/manifest.json" />
+</head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navigation mbifê">
+        <div class="brand">
+          <div class="brand-mark">m</div>
+          <div>
+            <p class="brand-name">mbifê</p>
+            <p class="brand-subtitle">rencontres mieux pensées</p>
+          </div>
+        </div>
+
+        <nav class="side-nav" aria-label="Sections">
+          <button class="nav-item active" data-panel="discover" type="button">
+            <span>Découvrir</span>
+            <strong id="discoverCount">6</strong>
+          </button>
+          <button class="nav-item" data-panel="profile" type="button">
+            <span>Mon profil</span>
+            <strong id="profileCount">0</strong>
+          </button>
+          <button class="nav-item" data-panel="matches" type="button">
+            <span>Matches</span>
+            <strong id="matchCount">0</strong>
+          </button>
+          <button class="nav-item" data-panel="messages" type="button">
+            <span>Messages</span>
+            <strong id="messageCount">3</strong>
+          </button>
+          <button class="nav-item" data-panel="viral" type="button">
+            <span>Viral Lab</span>
+            <strong id="viralCount">4</strong>
+          </button>
+          <button class="nav-item" data-panel="about" type="button">
+            <span>À propos</span>
+            <strong id="aboutCount">1</strong>
+          </button>
+        </nav>
+
+        <section class="quality-panel" aria-labelledby="qualityTitle">
+          <h2 id="qualityTitle">Qualité avant quantité</h2>
+          <div class="quality-meter">
+            <span style="width: 84%"></span>
+          </div>
+          <p>mbifê privilégie les intentions, la compatibilité et des conversations qui démarrent sans malaise.</p>
+        </section>
+
+        <section class="auth-panel" aria-labelledby="authTitle">
+          <div>
+            <h2 id="authTitle">Compte mbifê</h2>
+            <p id="authStatus">Supabase connecté</p>
+          </div>
+          <form id="authForm" class="auth-form">
+            <input id="authName" name="name" type="text" autocomplete="name" placeholder="Nom public" />
+            <input id="authEmail" name="email" type="email" autocomplete="email" placeholder="Email" />
+            <input id="authPassword" name="password" type="password" autocomplete="current-password" placeholder="Mot de passe" />
+            <div class="auth-actions">
+              <button id="loginButton" type="button">Connexion</button>
+              <button id="signupButton" type="button">Inscription</button>
+            </div>
+          </form>
+          <button class="ghost-button auth-logout" id="logoutButton" type="button" hidden>Se déconnecter</button>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div class="topbar-copy">
+            <p class="eyebrow">Aujourd'hui</p>
+            <h1>Découvre des profils vraiment alignés.</h1>
+            <div class="hero-kpis" aria-label="Points forts mbifê">
+              <span>Profils réels</span>
+              <span>Matches privés</span>
+              <span>Messages sécurisés</span>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <span class="status-pill">Bêta privée</span>
+            <button class="icon-button" id="safeModeButton" type="button" aria-pressed="false" title="Activer le mode respect">
+              <span aria-hidden="true">✓</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="filters" aria-label="Filtres de découverte">
+          <button class="filter-chip active" data-filter="all" type="button">Tous</button>
+          <button class="filter-chip" data-filter="serious" type="button">Sérieux</button>
+          <button class="filter-chip" data-filter="creative" type="button">Créatif</button>
+          <button class="filter-chip" data-filter="nearby" type="button">Près de moi</button>
+          <button class="filter-chip" data-filter="verified" type="button">Vérifié</button>
+        </section>
+
+        <section class="panel active" id="discoverPanel" aria-label="Découvrir">
+          <div class="deck-area">
+            <article class="profile-card" id="profileCard" aria-live="polite"></article>
+
+            <div class="actions" aria-label="Actions sur le profil">
+              <button class="action-button secondary" id="undoButton" type="button" title="Revenir au profil précédent">
+                <span aria-hidden="true">↶</span>
+                <small>Retour</small>
+              </button>
+              <button class="action-button pass" id="passButton" type="button" title="Passer">
+                <span aria-hidden="true">×</span>
+                <small>Passer</small>
+              </button>
+              <button class="action-button like" id="likeButton" type="button" title="Aimer">
+                <span aria-hidden="true">♥</span>
+                <small>Aimer</small>
+              </button>
+              <button class="action-button spark" id="sparkButton" type="button" title="Super like : montrer un intérêt plus fort">
+                <span aria-hidden="true">✦</span>
+                <small>Super</small>
+              </button>
+              <button class="action-button report" id="reportButton" type="button" title="Signaler ce profil">
+                <span aria-hidden="true">!</span>
+                <small>Signaler</small>
+              </button>
+            </div>
+          </div>
+
+          <aside class="insight-panel" aria-label="Détails de compatibilité">
+            <div class="insight-header">
+              <p class="eyebrow">Signal mbifê</p>
+              <h2 id="insightName">Compatibilité</h2>
+            </div>
+            <div class="score-ring" id="scoreRing">
+              <strong id="scoreValue">0%</strong>
+              <span>match</span>
+            </div>
+            <div class="trait-list" id="traitList"></div>
+            <div class="prompt-box">
+              <p>Phrase d'ouverture</p>
+              <button id="promptButton" type="button">Voir une idée</button>
+              <blockquote id="promptText"></blockquote>
+            </div>
+          </aside>
+        </section>
+
+        <section class="panel profile-layout" id="profilePanel" aria-label="Mon profil">
+          <article class="profile-editor">
+            <div class="section-heading">
+              <p class="eyebrow">Profil public</p>
+              <h2>Crée un profil complet pour apparaître dans la découverte.</h2>
+            </div>
+            <form id="profileForm" class="profile-form">
+              <div class="avatar-editor">
+                <img id="profilePreview" alt="Aperçu du profil" />
+                <label for="profilePhoto">Photo de profil</label>
+                <input id="profilePhoto" name="photo" type="file" accept="image/png,image/jpeg,image/webp" />
+              </div>
+              <div class="form-grid">
+                <label>
+                  Nom public
+                  <input id="profileName" name="display_name" type="text" maxlength="80" placeholder="Ton nom public" />
+                </label>
+                <label>
+                  Age
+                  <input id="profileAge" name="age" type="number" min="18" max="99" placeholder="18+" />
+                </label>
+                <label>
+                  Ville
+                  <input id="profileCity" name="city" type="text" maxlength="80" placeholder="Ta ville" />
+                </label>
+                <label>
+                  Distance affichée
+                  <input id="profileDistance" name="distance_km" type="number" min="0" max="999" placeholder="0" />
+                </label>
+              </div>
+              <label>
+                Bio
+                <textarea id="profileBio" name="bio" rows="4" maxlength="360" placeholder="Présente-toi avec sincérité."></textarea>
+              </label>
+              <label>
+                Intention
+                <textarea id="profileIntent" name="intent" rows="3" maxlength="220" placeholder="Ce que tu recherches sur mbifê."></textarea>
+              </label>
+              <label>
+                Centres d'intérêt
+                <input id="profileInterests" name="interests" type="text" placeholder="musique, sport, lecture" />
+              </label>
+              <div class="profile-actions">
+                <button class="primary-button" id="saveProfileButton" type="submit">Enregistrer</button>
+                <button class="ghost-button" id="refreshBackendButton" type="button">Rafraîchir</button>
+              </div>
+            </form>
+          </article>
+
+          <aside class="profile-status-stack">
+            <article class="about-card">
+              <p class="eyebrow">Statut</p>
+              <h2 id="profileStatusTitle">Profil local</h2>
+              <p class="muted-copy" id="profileStatusText">Connecte-toi pour synchroniser ton profil avec Supabase.</p>
+              <button class="ghost-button profile-logout" id="profileLogoutButton" type="button" hidden>Se déconnecter</button>
+            </article>
+            <article class="about-card">
+              <p class="eyebrow">Production</p>
+              <h2>À vérifier avant lancement public</h2>
+              <ul class="about-list">
+                <li>Photo réelle et bio complète</li>
+                <li>Signalement disponible sur chaque profil</li>
+                <li>Messages limités pour éviter le spam</li>
+                <li>Politiques Supabase RLS actives</li>
+              </ul>
+            </article>
+          </aside>
+        </section>
+
+        <section class="panel two-column" id="matchesPanel" aria-label="Matches">
+          <div>
+            <h2>Matches récents</h2>
+            <div class="like-requests" id="incomingLikeList"></div>
+            <div class="match-grid" id="matchGrid"></div>
+          </div>
+          <div class="date-lab">
+            <p class="eyebrow">Date Lab</p>
+            <h2>Propose un rendez-vous qui colle aux deux personnes.</h2>
+            <div class="date-card" id="dateCard"></div>
+          </div>
+        </section>
+
+        <section class="panel two-column messages-layout" id="messagesPanel" aria-label="Messages">
+          <aside class="message-sidebar">
+            <div class="message-section-head">
+              <div>
+                <p class="eyebrow">Inbox</p>
+                <h2>Messages</h2>
+              </div>
+              <button class="ghost-button notify-button" id="notificationButton" type="button">Notifications</button>
+            </div>
+            <div class="message-notice" id="messageNotice" hidden></div>
+            <div class="conversation-list" id="conversationList"></div>
+          </aside>
+          <div class="chat-window">
+            <div class="chat-header" id="chatHeader"></div>
+            <div class="chat-thread" id="chatThread"></div>
+            <form class="composer" id="composer">
+              <div class="composer-tools" aria-label="Options message">
+                <button class="composer-tool" id="photoMessageButton" type="button" title="Envoyer une photo">Photo</button>
+                <button class="composer-tool" id="voiceMessageButton" type="button" title="Enregistrer un vocal">Vocal</button>
+              </div>
+              <div class="composer-main">
+                <div class="attachment-preview" id="attachmentPreview" hidden></div>
+                <input id="messageInput" name="message" type="text" autocomplete="off" placeholder="Écris une réponse simple..." />
+              </div>
+              <button class="send-button" type="submit">Envoyer</button>
+              <input id="messagePhotoInput" name="messagePhoto" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+            </form>
+          </div>
+        </section>
+
+        <section class="panel viral-layout" id="viralPanel" aria-label="Viral Lab">
+          <div class="share-studio">
+            <div class="section-heading">
+              <p class="eyebrow">Boucle de partage</p>
+              <h2>Transforme un match en contenu que les gens ont envie d'envoyer.</h2>
+            </div>
+
+            <canvas class="share-canvas" id="shareCanvas" width="720" height="900" aria-label="Carte de compatibilité partageable"></canvas>
+
+            <div class="share-copy">
+              <label for="shareText">Texte partageable</label>
+              <textarea id="shareText" readonly rows="4"></textarea>
+            </div>
+
+            <div class="viral-actions">
+              <button class="primary-button" id="copyShareButton" type="button">Copier</button>
+              <button class="ghost-button" id="nativeShareButton" type="button">Partager</button>
+              <button class="ghost-button" id="downloadShareButton" type="button">Image</button>
+              <button class="ghost-button" id="refreshShareButton" type="button">Changer profil</button>
+            </div>
+          </div>
+
+          <div class="viral-stack">
+            <article class="viral-card invite-card">
+              <div class="section-heading">
+                <p class="eyebrow">Invite loop</p>
+                <h2>Code VIP</h2>
+              </div>
+              <p class="invite-code" id="inviteCode"></p>
+              <p class="muted-copy">Chaque invitation débloque un bonus visible : plus de prompts, plus de votes amis, plus de cartes partageables.</p>
+              <button class="primary-button" id="copyInviteButton" type="button">Copier l'invitation</button>
+              <div class="progress-row">
+                <span id="inviteProgressText">0 invitation</span>
+                <div class="progress-track"><span id="inviteProgressBar"></span></div>
+              </div>
+            </article>
+
+            <article class="viral-card wing-card">
+              <div class="section-heading">
+                <p class="eyebrow">Wing mode</p>
+                <h2>Fais voter tes amis</h2>
+              </div>
+              <p class="muted-copy">Un profil devient une mini-discussion de groupe: go, pause ou non. C'est social, leger, et ca ramene les amis dans l'app.</p>
+              <div class="wing-actions" id="wingActions">
+                <button data-vote="go" type="button">Go</button>
+                <button data-vote="maybe" type="button">Pause</button>
+                <button data-vote="pass" type="button">Non</button>
+              </div>
+              <div class="vote-list" id="voteList"></div>
+            </article>
+
+            <article class="viral-card challenge-card">
+              <div class="section-heading">
+                <p class="eyebrow">Défi du jour</p>
+                <h2 id="challengeTitle">Question partageable</h2>
+              </div>
+              <p class="muted-copy" id="challengeCopy"></p>
+              <div class="challenge-options" id="challengeOptions"></div>
+              <button class="ghost-button" id="copyChallengeButton" type="button">Inviter un ami à répondre</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel about-layout" id="aboutPanel" aria-label="À propos de mbifê">
+          <article class="about-hero">
+            <div class="about-mark">mbifê</div>
+            <div class="section-heading">
+              <p class="eyebrow">À propos</p>
+              <h2>Je suis Zala Aziz Farick, étudiant en informatique à l'IFOAD.</h2>
+            </div>
+            <p>
+              Avec mbifê, je veux créer une application de rencontre plus claire, plus humaine et plus respectueuse. Mon idée
+              est de dépasser le simple swipe pour mettre en avant les intentions, la compatibilité, la conversation et la
+              confiance entre les utilisateurs.
+            </p>
+            <p>
+              Ce projet me permet aussi de mettre en pratique mes compétences en développement web, design d'interface,
+              expérience utilisateur et connexion à une base de données moderne. mbifê est pensé comme un produit évolutif :
+              d'abord un prototype solide, puis une vraie plateforme avec comptes, profils, matches et messages réels.
+            </p>
+          </article>
+
+          <aside class="about-stack">
+            <article class="about-card">
+              <p class="eyebrow">Profil</p>
+              <h2>Zala Aziz Farick</h2>
+              <ul class="about-list">
+                <li>Étudiant en informatique à l'IFOAD</li>
+                <li>Créateur du projet mbifê</li>
+                <li>Intéressé par les applications web, les produits numériques et l'expérience utilisateur</li>
+              </ul>
+            </article>
+
+            <article class="about-card">
+              <p class="eyebrow">Message du créateur</p>
+              <blockquote>
+                Je veux que mbifê devienne une app où l'on ose se présenter avec vérité, sans pression, sans faux jeu,
+                et avec assez de fun pour donner envie de revenir.
+              </blockquote>
+            </article>
+
+            <article class="about-card">
+              <p class="eyebrow">Contact</p>
+              <h2>Me contacter</h2>
+              <p class="muted-copy">
+                Pour discuter du projet, proposer une collaboration ou suivre l'évolution de mbifê, tu peux m'écrire à :
+              </p>
+              <a class="contact-link" href="mailto:zifacarter@gmail.com">zifacarter@gmail.com</a>
+            </article>
+
+            <article class="about-card">
+              <p class="eyebrow">Supabase</p>
+              <h2 id="supabaseModeLabel">Mode local</h2>
+              <p class="muted-copy" id="supabaseStatusText">
+                Les données sont encore stockées dans le navigateur. La connexion Supabase sera activée dès que l'URL du projet
+                et la clé anon publique seront ajoutées.
+              </p>
+            </article>
+
+            <article class="about-card">
+              <p class="eyebrow">Prochaine évolution</p>
+              <h2>Comptes, matches et messages réels</h2>
+              <p class="muted-copy">
+                La prochaine étape connectera les profils, likes, invitations et conversations à une base partagée pour que
+                plusieurs utilisateurs puissent interagir en même temps.
+              </p>
+            </article>
+
+            <article class="about-card">
+              <p class="eyebrow">Sécurité</p>
+              <h2>Confidentialité et modération</h2>
+              <p class="muted-copy">
+                mbifê limite les messages trop rapides, permet de signaler un profil et utilise les règles Supabase RLS
+                pour protéger les comptes, les matches et les conversations.
+              </p>
+            </article>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+const profiles = [];
+
+const conversations = [];
+
+const dailyChallenge = {
+  title: "Premier message: tu choisis quelle vibe ?",
+  copy:
+    "Compare ta réponse avec un ami et vois si vous cherchez la même énergie dans une rencontre.",
+  options: [
+    { id: "sincere", label: "Sincère", votes: 68 },
+    { id: "funny", label: "Drôle", votes: 46 },
+    { id: "bold", label: "Direct", votes: 31 },
+  ],
+};
+
+const supabaseConfig = {
+  url: localStorage.getItem("mbifeSupabaseUrl") || "https://mmsrozfrrzyyxwpebnxb.supabase.co",
+  anonKey:
+    localStorage.getItem("mbifeSupabaseAnonKey") ||
+    "sb_publishable_EarW8QPA9w_c_euHaI9RCQ_0__No0le",
+};
+
+const state = {
+  activePanel: "discover",
+  activeFilter: "all",
+  index: 0,
+  history: [],
+  matches: [],
+  safeMode: false,
+  activeConversation: conversations.length ? conversations[0].id : "",
+  shareProfileIndex: 0,
+  inviteCode: getStoredInviteCode(),
+  invitesSent: Number(localStorage.getItem("mbifeInvitesSent") || "0"),
+  wingVotes: readStoredJson("mbifeWingVotes", { go: 16, maybe: 7, pass: 3 }),
+  challengeChoice: localStorage.getItem("mbifeChallengeChoice") || "",
+  challengeVotes: readStoredJson(
+    "mbifeChallengeVotes",
+    Object.fromEntries(dailyChallenge.options.map((option) => [option.id, option.votes])),
+  ),
+  supabase: {
+    connected: false,
+    checked: false,
+    lastError: "",
+  },
+  auth: readStoredJson("mbifeAuthSession", null),
+  remoteProfiles: [],
+  remoteMatches: [],
+  remoteMessages: {},
+  remoteIncomingLikes: [],
+  dismissedIncomingLikes: readStoredJson("mbifeDismissedIncomingLikes", []),
+  unreadThreads: readStoredJson("mbifeUnreadThreads", {}),
+  seenMessageIds: readStoredJson("mbifeSeenMessageIds", {}),
+  seenMatchIds: readStoredJson("mbifeSeenMatchIds", []),
+  notificationsReady: Boolean(localStorage.getItem("mbifeSeenMessageIds")),
+  matchesReady: Boolean(localStorage.getItem("mbifeSeenMatchIds")),
+  likesReady: Boolean(localStorage.getItem("mbifeSeenLikeIds")),
+  pendingAttachment: null,
+  mediaRecorder: null,
+  recordingChunks: [],
+  recordingStartedAt: 0,
+  currentProfileRecord: readStoredJson("mbifeLocalProfileDraft", null),
+  remoteLikes: [],
+  messageCooldownUntil: 0,
+  refreshTimer: null,
+  realtimeChannels: [],
+};
+
+const profileCard = document.querySelector("#profileCard");
+const insightName = document.querySelector("#insightName");
+const scoreValue = document.querySelector("#scoreValue");
+const scoreRing = document.querySelector("#scoreRing");
+const traitList = document.querySelector("#traitList");
+const promptText = document.querySelector("#promptText");
+const promptButton = document.querySelector("#promptButton");
+const matchGrid = document.querySelector("#matchGrid");
+const incomingLikeList = document.querySelector("#incomingLikeList");
+const dateCard = document.querySelector("#dateCard");
+const conversationList = document.querySelector("#conversationList");
+const chatHeader = document.querySelector("#chatHeader");
+const chatThread = document.querySelector("#chatThread");
+const composer = document.querySelector("#composer");
+const messageInput = document.querySelector("#messageInput");
+const messagePhotoInput = document.querySelector("#messagePhotoInput");
+const photoMessageButton = document.querySelector("#photoMessageButton");
+const voiceMessageButton = document.querySelector("#voiceMessageButton");
+const attachmentPreview = document.querySelector("#attachmentPreview");
+const notificationButton = document.querySelector("#notificationButton");
+const messageNotice = document.querySelector("#messageNotice");
+const toast = document.querySelector("#toast");
+const shareCanvas = document.querySelector("#shareCanvas");
+const shareText = document.querySelector("#shareText");
+const inviteCode = document.querySelector("#inviteCode");
+const inviteProgressText = document.querySelector("#inviteProgressText");
+const inviteProgressBar = document.querySelector("#inviteProgressBar");
+const wingActions = document.querySelector("#wingActions");
+const voteList = document.querySelector("#voteList");
+const challengeTitle = document.querySelector("#challengeTitle");
+const challengeCopy = document.querySelector("#challengeCopy");
+const challengeOptions = document.querySelector("#challengeOptions");
+const supabaseModeLabel = document.querySelector("#supabaseModeLabel");
+const supabaseStatusText = document.querySelector("#supabaseStatusText");
+const authPanel = document.querySelector(".auth-panel");
+const authStatus = document.querySelector("#authStatus");
+const authForm = document.querySelector("#authForm");
+const authName = document.querySelector("#authName");
+const authEmail = document.querySelector("#authEmail");
+const authPassword = document.querySelector("#authPassword");
+const loginButton = document.querySelector("#loginButton");
+const signupButton = document.querySelector("#signupButton");
+const logoutButton = document.querySelector("#logoutButton");
+const profileLogoutButton = document.querySelector("#profileLogoutButton");
+const profileForm = document.querySelector("#profileForm");
+const profilePreview = document.querySelector("#profilePreview");
+const profilePhoto = document.querySelector("#profilePhoto");
+const profileName = document.querySelector("#profileName");
+const profileAge = document.querySelector("#profileAge");
+const profileCity = document.querySelector("#profileCity");
+const profileDistance = document.querySelector("#profileDistance");
+const profileBio = document.querySelector("#profileBio");
+const profileIntent = document.querySelector("#profileIntent");
+const profileInterests = document.querySelector("#profileInterests");
+const profileStatusTitle = document.querySelector("#profileStatusTitle");
+const profileStatusText = document.querySelector("#profileStatusText");
+const refreshBackendButton = document.querySelector("#refreshBackendButton");
+
+function readStoredJson(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || "") || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function getStoredInviteCode() {
+  const existing = localStorage.getItem("mbifeInviteCode");
+
+  if (existing) {
+    return existing;
+  }
+
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let suffix = "";
+
+  for (let i = 0; i < 5; i += 1) {
+    suffix += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
+  const code = `MBIFE-${suffix}`;
+  localStorage.setItem("mbifeInviteCode", code);
+  return code;
+}
+
+function initialsFor(name) {
+  const parts = String(name || "?").trim().split(/\s+/);
+  return parts.length >= 2
+    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    : String(name || "?").trim().slice(0, 2).toUpperCase();
+}
+
+function initialsAvatar(name, cssClass = "", style = "") {
+  return `<span class="avatar-fallback ${cssClass}" style="${style}" aria-label="${escapeHtml(name)}">${escapeHtml(initialsFor(name))}</span>`;
+}
+
+function profileImgHtml(photoUrl, name, cssClass = "", style = "") {
+  if (!photoUrl) return initialsAvatar(name, cssClass, style);
+  // On error, swap the img for an initials span via a global helper
+  const fallbackId = `fallback-${Math.random().toString(36).slice(2)}`;
+  return `<img src="${escapeHtml(photoUrl)}" alt="Portrait de ${escapeHtml(name)}" class="${cssClass}" style="${style}" data-fallback-name="${escapeHtml(name)}" data-fallback-class="${escapeHtml(cssClass)}" data-fallback-style="${escapeHtml(style)}" onerror="mbifeFallbackImg(this)" />`;
+}
+
+function mbifeFallbackImg(img) {
+  const name = img.dataset.fallbackName || "";
+  const cssClass = img.dataset.fallbackClass || "";
+  const style = img.dataset.fallbackStyle || "";
+  const span = document.createElement("span");
+  span.className = `avatar-fallback ${cssClass}`;
+  span.setAttribute("style", style);
+  span.textContent = initialsFor(name);
+  img.replaceWith(span);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function hasSupabaseConfig() {
+  return supabaseConfig.url.startsWith("https://") && supabaseConfig.anonKey.length > 20;
+}
+
+function currentUser() {
+  return state.auth?.user || null;
+}
+
+function currentToken() {
+  return state.auth?.access_token || "";
+}
+
+function authHeaders({ prefer, useUserToken = true } = {}) {
+  const token = useUserToken && currentToken() ? currentToken() : supabaseConfig.anonKey;
+  const headers = {
+    apikey: supabaseConfig.anonKey,
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+
+  if (prefer) {
+    headers.Prefer = prefer;
+  }
+
+  return headers;
+}
+
+function saveAuthSession(session) {
+  state.auth = session;
+
+  if (session) {
+    localStorage.setItem("mbifeAuthSession", JSON.stringify(session));
+  } else {
+    localStorage.removeItem("mbifeAuthSession");
+  }
+
+  renderAuthState();
+}
+
+async function tryRefreshToken() {
+  const refreshToken = state.auth?.refresh_token;
+  if (!refreshToken || !hasSupabaseConfig()) return false;
+  try {
+    const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/auth/v1/token?grant_type=refresh_token`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { apikey: supabaseConfig.anonKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!response.ok) return false;
+    const data = await response.json();
+    if (data?.access_token) {
+      saveAuthSession({ ...state.auth, ...data });
+      return true;
+    }
+  } catch { /* silent */ }
+  return false;
+}
+
+async function supabaseFetch(path, { method = "GET", body, prefer, useUserToken = true } = {}) {
+  if (!hasSupabaseConfig()) {
+    throw new Error("Supabase n'est pas configuré");
+  }
+
+  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}${path}`;
+  let response = await fetch(endpoint, {
+    method,
+    headers: authHeaders({ prefer, useUserToken }),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  // Intercept 401: try to refresh token once and retry
+  if (response.status === 401 && useUserToken && state.auth?.refresh_token) {
+    const refreshed = await tryRefreshToken();
+    if (refreshed) {
+      response = await fetch(endpoint, {
+        method,
+        headers: authHeaders({ prefer, useUserToken }),
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } else {
+      saveAuthSession(null);
+      showToast("Session expirée — reconnecte-toi");
+      renderAuthState();
+    }
+  }
+
+  if (!response.ok) {
+    const text = await response.text();
+    let message = text;
+
+    try {
+      const payload = JSON.parse(text);
+      message = payload.msg || payload.message || payload.error_description || payload.error || text;
+    } catch {
+      message = text;
+    }
+
+    const error = new Error(`Supabase ${response.status}${message ? `: ${String(message).slice(0, 180)}` : ""}`);
+    error.status = response.status;
+    throw error;
+  }
+
+  return response;
+}
+
+async function supabaseJson(path, options) {
+  const response = await supabaseFetch(path, options);
+  return response.status === 204 ? null : response.json();
+}
+
+function readableAuthError(error, fallback) {
+  const rawMessage = String(error?.message || "").replace(/^Supabase\s+\d+:\s*/i, "").trim();
+  const normalized = rawMessage.toLowerCase();
+
+  if (normalized.includes("user already registered") || normalized.includes("already been registered")) {
+    return "Cet email est déjà inscrit. Clique sur Connexion ou utilise un autre email.";
+  }
+
+  if (normalized.includes("signup is disabled") || normalized.includes("signups not allowed")) {
+    return "Les inscriptions sont désactivées dans Supabase Auth.";
+  }
+
+  if (normalized.includes("email not confirmed")) {
+    return "Ton email n'est pas encore confirmé. Ouvre le lien reçu par email, puis connecte-toi.";
+  }
+
+  if (normalized.includes("invalid login credentials")) {
+    return "Email ou mot de passe incorrect.";
+  }
+
+  if (normalized.includes("password")) {
+    return "Mot de passe refusé. Utilise au moins 6 caractères, avec une combinaison plus solide.";
+  }
+
+  if (normalized.includes("email") && (normalized.includes("invalid") || normalized.includes("validate"))) {
+    return "Adresse email invalide. Vérifie l'orthographe de ton email.";
+  }
+
+  if (normalized.includes("rate limit") || normalized.includes("too many")) {
+    return "Trop de tentatives pour le moment. Attends une minute, puis réessaie.";
+  }
+
+  if (normalized.includes("database error")) {
+    return "Supabase a refusé l'écriture en base. Réexécute le fichier supabase-schema.sql dans Supabase.";
+  }
+
+  return rawMessage ? `${fallback}: ${rawMessage.slice(0, 180)}` : fallback;
+}
+
+function showAuthError(error, fallback) {
+  const message = readableAuthError(error, fallback);
+  authStatus.textContent = message;
+  showToast(message);
+}
+
+function readableBackendError(error, fallback) {
+  const rawMessage = String(error?.message || "").replace(/^Supabase\s+\d+:\s*/i, "").trim();
+  const normalized = rawMessage.toLowerCase();
+
+  if (normalized.includes("row-level security") && normalized.includes("likes")) {
+    return "Supabase bloque encore les likes. Lance supabase-production-fix.sql dans SQL Editor.";
+  }
+
+  if (normalized.includes("row-level security") && normalized.includes("matches")) {
+    return "Supabase bloque encore la création de match. Relance supabase-production-fix.sql.";
+  }
+
+  if (normalized.includes("row-level security") && normalized.includes("messages")) {
+    return "Supabase bloque encore les messages. Relance supabase-production-fix.sql puis redéploie l'app.";
+  }
+
+  if (normalized.includes("bucket not found") || normalized.includes("chat-images") || normalized.includes("chat-audio")) {
+    return "Le média est prêt, mais les policies Supabase des buckets chat-images/chat-audio doivent être vérifiées.";
+  }
+
+  if (normalized.includes("could not find the function") || normalized.includes("send_match_message")) {
+    return "La fonction d'envoi de message manque dans Supabase. Relance supabase-production-fix.sql.";
+  }
+
+  if (normalized.includes("trop de messages")) {
+    return "Trop de messages envoyés trop vite. Attends quelques secondes.";
+  }
+
+  if (normalized.includes("partie de ce match") || normalized.includes("match introuvable")) {
+    return "Ce match n'est pas accessible pour ton compte. Recharge l'app puis réessaie.";
+  }
+
+  if (normalized.includes("foreign key")) {
+    return "Le profil ciblé n'existe plus dans Supabase. Recharge l'app puis réessaie.";
+  }
+
+  if (normalized.includes("relation") && normalized.includes("does not exist")) {
+    return "Une table Supabase manque. Exécute supabase-schema.sql puis supabase-production-fix.sql.";
+  }
+
+  return rawMessage ? `${fallback}: ${rawMessage.slice(0, 180)}` : fallback;
+}
+
+function signupRedirectPath() {
+  if (!window.location.origin.startsWith("http")) {
+    return "/auth/v1/signup";
+  }
+
+  return `/auth/v1/signup?redirect_to=${encodeURIComponent(window.location.origin)}`;
+}
+
+async function supabaseRequest(table, { method = "GET", body, query = "", prefer = "return=minimal" } = {}) {
+  return supabaseFetch(`/rest/v1/${table}${query}`, { method, body, prefer });
+}
+
+async function recordRemoteEvent(eventType, payload = {}) {
+  if (!hasSupabaseConfig()) {
+    return;
+  }
+
+  try {
+    await supabaseRequest("mbife_events", {
+      method: "POST",
+      body: {
+        user_id: currentUser()?.id || null,
+        event_type: eventType,
+        payload,
+      },
+    });
+    state.supabase.connected = true;
+    state.supabase.lastError = "";
+  } catch (error) {
+    state.supabase.connected = false;
+    state.supabase.lastError = error.message;
+  }
+
+  renderSupabaseStatus();
+}
+
+async function checkSupabaseStatus() {
+  state.supabase.checked = true;
+
+  if (!hasSupabaseConfig()) {
+    renderSupabaseStatus();
+    return;
+  }
+
+  await recordRemoteEvent("app_opened", {
+    source: "mbife_web",
+    at: new Date().toISOString(),
+  });
+}
+
+function renderSupabaseStatus() {
+  if (!supabaseModeLabel || !supabaseStatusText) {
+    return;
+  }
+
+  if (!hasSupabaseConfig()) {
+    supabaseModeLabel.textContent = "Mode local";
+    supabaseStatusText.textContent =
+      "Les données sont encore stockées dans le navigateur. Envoie-moi l'URL Supabase et la clé anon publique pour activer la base partagée.";
+    return;
+  }
+
+  if (state.supabase.connected) {
+    supabaseModeLabel.textContent = "Supabase connecté";
+    supabaseStatusText.textContent =
+      "La base partagée répond. Les prochains likes, votes et invitations peuvent être envoyés dans Supabase.";
+    return;
+  }
+
+  supabaseModeLabel.textContent = "Supabase à vérifier";
+  supabaseStatusText.textContent = state.supabase.lastError
+    ? `La configuration est présente, mais la table ou la policy doit être vérifiée: ${state.supabase.lastError}.`
+    : "La configuration Supabase est présente. Recharge l'app pour vérifier la connexion.";
+}
+
+function renderAuthState() {
+  if (!authStatus || !authForm || !logoutButton) {
+    return;
+  }
+
+  const user = currentUser();
+  document.body.classList.toggle("is-authenticated", Boolean(user));
+
+  if (profileLogoutButton) {
+    profileLogoutButton.hidden = !user;
+  }
+
+  if (!hasSupabaseConfig()) {
+    if (authPanel) {
+      authPanel.hidden = false;
+    }
+    authStatus.textContent = "Supabase connecté";
+    authForm.querySelectorAll("input, button").forEach((element) => {
+      element.disabled = true;
+    });
+    logoutButton.hidden = true;
+    return;
+  }
+
+  if (authPanel) {
+    authPanel.style.display = user ? "none" : "grid";
+  }
+
+  authForm.querySelectorAll("input, button").forEach((element) => {
+    element.disabled = false;
+  });
+
+  if (user) {
+    authStatus.textContent = `Connecté: ${user.email}`;
+    authForm.style.display = "none";
+    logoutButton.style.display = "block";
+    return;
+  }
+
+  authStatus.textContent = "Connecte-toi pour synchroniser likes, matches et messages.";
+  authForm.style.display = "grid";
+  logoutButton.style.display = "none";
+}
+
+function readAuthFields() {
+  return {
+    name: authName.value.trim() || "Nouveau membre mbifê",
+    email: authEmail.value.trim(),
+    password: authPassword.value,
+  };
+}
+
+async function signupWithSupabase() {
+  const { name, email, password } = readAuthFields();
+
+  if (!email || password.length < 6) {
+    const message = "Email et mot de passe de 6 caractères minimum.";
+    authStatus.textContent = message;
+    showToast(message);
+    return;
+  }
+
+  try {
+    authStatus.textContent = "Création du compte en cours...";
+
+    const data = await supabaseJson(signupRedirectPath(), {
+      method: "POST",
+      body: {
+        email,
+        password,
+        data: { display_name: name },
+      },
+      useUserToken: false,
+    });
+
+    const session = data?.session
+      ? { ...data.session, user: data.user }
+      : data?.access_token
+        ? data
+        : null;
+
+    if (session) {
+      saveAuthSession(session);
+      await ensureRemoteProfile(name);
+      await syncRemoteData();
+      startRemoteRefresh();
+      showToast("Compte créé et connecté");
+    } else {
+      authStatus.textContent = "Compte créé. Vérifie ton email, puis reviens cliquer sur Connexion.";
+      showToast("Vérifie ton email pour activer le compte");
+    }
+
+    recordRemoteEvent("auth_signup", { email });
+  } catch (error) {
+    showAuthError(error, "Inscription refusée");
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+  }
+}
+
+async function loginWithSupabase() {
+  const { email, password } = readAuthFields();
+
+  if (!email || !password) {
+    const message = "Entre ton email et ton mot de passe.";
+    authStatus.textContent = message;
+    showToast(message);
+    return;
+  }
+
+  try {
+    authStatus.textContent = "Connexion en cours...";
+
+    const data = await supabaseJson("/auth/v1/token?grant_type=password", {
+      method: "POST",
+      body: { email, password },
+      useUserToken: false,
+    });
+
+    saveAuthSession(data);
+    const profileReady = await tryEnsureRemoteProfile(
+      authName.value.trim() || data.user?.user_metadata?.display_name || "Membre mbifê",
+    );
+    await syncRemoteData();
+    startRemoteRefresh();
+    showToast(profileReady ? "Connexion réussie" : "Connexion réussie, profil à configurer");
+    recordRemoteEvent("auth_login", { email });
+  } catch (error) {
+    showAuthError(error, "Connexion refusée");
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+  }
+}
+
+async function logoutFromSupabase() {
+  try {
+    if (hasSupabaseConfig() && currentToken()) {
+      await supabaseFetch("/auth/v1/logout", { method: "POST" });
+    }
+  } catch {
+    // Le token peut déjà être expiré; on nettoie quand même la session locale.
+  }
+
+  saveAuthSession(null);
+  state.remoteProfiles = [];
+  state.remoteMatches = [];
+  state.remoteMessages = {};
+  state.remoteLikes = [];
+  state.currentProfileRecord = null;
+  window.clearInterval(state.refreshTimer);
+  state.refreshTimer = null;
+  stopRealtimeChannels();
+  renderAll();
+  renderProfileForm();
+  showToast("Déconnecté");
+}
+
+async function restoreAuthSession() {
+  renderAuthState();
+
+  if (!hasSupabaseConfig() || !currentToken()) {
+    return;
+  }
+
+  let user = null;
+
+  try {
+    user = await supabaseJson("/auth/v1/user");
+    saveAuthSession({ ...state.auth, user });
+  } catch {
+    saveAuthSession(null);
+    return;
+  }
+
+  await tryEnsureRemoteProfile(user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Membre mbifê");
+  await syncRemoteData();
+  startRemoteRefresh();
+}
+
+async function ensureRemoteProfile(displayName) {
+  const user = currentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const existing = await supabaseJson(`/rest/v1/profiles?user_id=eq.${user.id}&select=*&limit=1`, {
+    prefer: "return=representation",
+  });
+
+  if (existing?.[0]) {
+    state.currentProfileRecord = existing[0];
+    localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(existing[0]));
+    renderProfileForm();
+    return existing[0];
+  }
+
+  const [created] = await supabaseJson("/rest/v1/profiles", {
+    method: "POST",
+    prefer: "return=representation",
+    body: [
+      {
+        user_id: user.id,
+        display_name: displayName,
+        bio: "Je découvre mbifê et je cherche une vraie connexion.",
+        intent: "Rencontrer quelqu'un avec sincérité et respect.",
+        city: "À compléter",
+        interests: ["discussion", "respect", "découverte"],
+        tags: ["serious", "verified"],
+        compatibility_score: 82,
+        is_verified: true,
+      },
+    ],
+  });
+
+  state.currentProfileRecord = created;
+  localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(created));
+  renderProfileForm();
+  return created;
+}
+
+async function tryEnsureRemoteProfile(displayName) {
+  try {
+    await ensureRemoteProfile(displayName);
+    return true;
+  } catch (error) {
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+
+    if (profileStatusTitle && profileStatusText) {
+      profileStatusTitle.textContent = "Profil à configurer";
+      profileStatusText.textContent =
+        "Tu es connecté, mais Supabase bloque encore la création du profil. Lance le correctif RLS dans Supabase.";
+    }
+
+    authStatus.textContent =
+      "Connecté. Le profil public attend la correction RLS dans Supabase.";
+    return false;
+  }
+}
+
+function parseList(value) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
+function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url || "") {
+  return {
+    display_name: profileName.value.trim() || authName.value.trim() || "Membre mbifê",
+    age: profileAge.value ? Number(profileAge.value) : null,
+    city: profileCity.value.trim() || "À compléter",
+    distance_km: profileDistance.value ? Number(profileDistance.value) : 0,
+    bio: profileBio.value.trim() || "Je découvre mbifê et je cherche une vraie connexion.",
+    intent: profileIntent.value.trim() || "Rencontrer quelqu'un avec sincérité et respect.",
+    interests: parseList(profileInterests.value || "discussion, respect, découverte"),
+    tags: ["serious", "verified"],
+    photo_url: photoUrl,
+    compatibility_score: state.currentProfileRecord?.compatibility_score || 84,
+    is_verified: true,
+    is_active: true,
+  };
+}
+
+function renderProfileForm() {
+  if (!profileForm) {
+    return;
+  }
+
+  const record = state.currentProfileRecord || {};
+  const user = currentUser();
+
+  profileName.value = record.display_name || authName.value || "";
+  profileAge.value = record.age || "";
+  profileCity.value = record.city || "";
+  profileDistance.value = record.distance_km ?? "";
+  profileBio.value = record.bio || "";
+  profileIntent.value = record.intent || "";
+  profileInterests.value = Array.isArray(record.interests) ? record.interests.join(", ") : "";
+  profilePreview.src =
+    record.photo_url ||
+    "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85";
+
+  const disabled = !hasSupabaseConfig() || !user;
+  profileForm.querySelectorAll("input, textarea, button").forEach((element) => {
+    element.disabled = disabled;
+  });
+
+  if (profileStatusTitle && profileStatusText) {
+    if (!hasSupabaseConfig()) {
+      profileStatusTitle.textContent = "Supabase connecté";
+      profileStatusText.textContent = "Ajoute Supabase pour enregistrer ton profil en ligne.";
+    } else if (!user) {
+      profileStatusTitle.textContent = "Connexion requise";
+      profileStatusText.textContent = "Connecte-toi pour créer ou modifier ton profil public.";
+    } else if (record.id) {
+      profileStatusTitle.textContent = "Profil synchronisé";
+      profileStatusText.textContent = "Tes informations peuvent apparaître dans la découverte Supabase.";
+    } else {
+      profileStatusTitle.textContent = "Profil à compléter";
+      profileStatusText.textContent = "Remplis le formulaire pour créer ton profil public.";
+    }
+  }
+
+  document.querySelector("#profileCount").textContent = record.id ? "1" : "0";
+}
+
+async function uploadProfilePhoto(file) {
+  const user = currentUser();
+
+  if (!file || !user) {
+    return state.currentProfileRecord?.photo_url || "";
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Photo trop lourde. Limite: 5 Mo.");
+  }
+
+  const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const safeExtension = ["jpg", "jpeg", "png", "webp"].includes(extension) ? extension : "jpg";
+  const storagePath = `${user.id}/avatar.${safeExtension}`;
+  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/avatars/${storagePath}`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      apikey: supabaseConfig.anonKey,
+      Authorization: `Bearer ${currentToken()}`,
+      "Content-Type": file.type || "image/jpeg",
+      "x-upsert": "true",
+    },
+    body: file,
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Upload photo ${response.status}: ${text.slice(0, 140)}`);
+  }
+
+  return `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/public/avatars/${storagePath}`;
+}
+
+function readableStorageError(error) {
+  const message = String(error?.message || "");
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes("bucket not found")) {
+    return "Profil sauvegardé, mais la photo attend le bucket Supabase Storage avatars.";
+  }
+
+  if (normalized.includes("photo trop lourde")) {
+    return "Profil sauvegardé, mais la photo dépasse la limite de 5 Mo.";
+  }
+
+  if (normalized.includes("403") || normalized.includes("row-level security")) {
+    return "Profil sauvegardé, mais la policy Storage bloque encore l'upload photo.";
+  }
+
+  return "Profil sauvegardé, mais la photo n'a pas encore pu être envoyée.";
+}
+
+async function saveProfile(event) {
+  event.preventDefault();
+
+  const user = currentUser();
+
+  if (!user || !hasSupabaseConfig()) {
+    showToast("Connecte-toi pour sauvegarder ton profil");
+    return;
+  }
+
+  try {
+    let photoUrl = state.currentProfileRecord?.photo_url || "";
+    let photoWarning = "";
+
+    try {
+      photoUrl = await uploadProfilePhoto(profilePhoto.files?.[0]);
+    } catch (photoError) {
+      photoWarning = readableStorageError(photoError);
+      state.supabase.lastError = photoError.message;
+    }
+
+    const draft = profileDraftFromForm(photoUrl);
+    const existingId = state.currentProfileRecord?.id;
+    const [saved] = await supabaseJson("/rest/v1/profiles?on_conflict=user_id", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=representation",
+      body: [
+        {
+          id: existingId,
+          user_id: user.id,
+          ...draft,
+        },
+      ],
+    });
+
+    state.currentProfileRecord = saved;
+    localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(saved));
+    renderProfileForm();
+    await syncRemoteData();
+
+    if (photoWarning) {
+      renderSupabaseStatus();
+      if (profileStatusTitle && profileStatusText) {
+        profileStatusTitle.textContent = "Profil sauvegardé sans photo";
+        profileStatusText.textContent = photoWarning;
+      }
+      showToast(photoWarning);
+    } else {
+      showToast("Profil sauvegardé");
+    }
+  } catch (error) {
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+    showToast("Profil non sauvegardé");
+  }
+}
+
+function normalizeRemoteProfile(row) {
+  return {
+    id: row.id,
+    remote: true,
+    name: row.display_name || "Membre mbifê",
+    age: row.age || 24,
+    city: row.city || "Ville à compléter",
+    distance: row.distance_km || 0,
+    tags: row.tags?.length ? row.tags : ["serious"],
+    verified: Boolean(row.is_verified),
+    score: row.compatibility_score || 80,
+    photo:
+      row.photo_url ||
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
+    bio: row.bio || "Profil mbifê connecté à Supabase.",
+    intent: row.intent || "Rencontrer quelqu'un avec sincérité.",
+    interests: row.interests?.length ? row.interests : ["discussion", "respect", "découverte"],
+    traits: [
+      ["Rythme de vie", Math.max(62, (row.compatibility_score || 80) - 5)],
+      ["Intentions", row.compatibility_score || 80],
+      ["Humour", Math.min(96, (row.compatibility_score || 80) + 4)],
+      ["Valeurs", Math.min(98, (row.compatibility_score || 80) + 7)],
+    ],
+    prompts: [
+      `Qu'est-ce qui t'a donné envie de tester mbifê ?`,
+      "Quel type de conversation te met vite à l'aise ?",
+      "Quel rendez-vous simple te ressemble le plus ?",
+    ],
+    dateIdeas: [
+      ["Café sans pression", "Un premier échange court, simple et facile à prolonger."],
+      ["Balade tranquille", "Un rendez-vous léger pour découvrir l'autre sans forcer."],
+    ],
+  };
+}
+
+function allProfiles() {
+  return state.remoteProfiles || [];
+}
+
+async function loadRemoteProfiles() {
+  if (!hasSupabaseConfig() || !currentUser()) {
+    state.remoteProfiles = [];
+    return;
+  }
+
+  try {
+    const rows = await supabaseJson(
+      `/rest/v1/profiles?select=*&is_active=eq.true&order=created_at.desc&limit=40`,
+    );
+    state.remoteProfiles = (rows || [])
+      .filter((row) => row.user_id !== currentUser().id)
+      .map(normalizeRemoteProfile);
+    state.supabase.connected = true;
+    state.supabase.lastError = "";
+  } catch (error) {
+    state.remoteProfiles = [];
+    state.supabase.connected = false;
+    state.supabase.lastError = error.message;
+  }
+}
+
+async function loadRemoteLikes() {
+  const user = currentUser();
+
+  if (!hasSupabaseConfig() || !user) {
+    state.remoteLikes = [];
+    state.remoteIncomingLikes = [];
+    return;
+  }
+
+  try {
+    state.remoteLikes = await supabaseJson(
+      `/rest/v1/likes?liker_user_id=eq.${user.id}&select=target_profile_id,action,created_at`,
+    );
+  } catch {
+    state.remoteLikes = [];
+  }
+}
+
+async function loadIncomingLikes() {
+  const user = currentUser();
+  const myProfileId = state.currentProfileRecord?.id;
+
+  if (!hasSupabaseConfig() || !user || !myProfileId) {
+    state.remoteIncomingLikes = [];
+    return;
+  }
+
+  try {
+    const rows = await supabaseJson(
+      `/rest/v1/likes?target_profile_id=eq.${myProfileId}&action=in.(like,spark)&select=id,liker_user_id,target_profile_id,action,created_at&order=created_at.desc`,
+    );
+    const visibleRows = (rows || []).filter((like) => !state.dismissedIncomingLikes.includes(like.id));
+    const likerIds = [...new Set(visibleRows.map((like) => like.liker_user_id).filter(Boolean))];
+    const profilesByUserId = {};
+
+    if (likerIds.length) {
+      const profileRows = await supabaseJson(`/rest/v1/profiles?user_id=in.(${likerIds.join(",")})&select=*`);
+      (profileRows || []).forEach((profile) => {
+        profilesByUserId[profile.user_id] = normalizeRemoteProfile(profile);
+      });
+    }
+
+    const matchedUserIds = new Set(
+      state.remoteMatches.flatMap((match) => [match.user_a_id, match.user_b_id]).filter((id) => id !== user.id),
+    );
+
+    state.remoteIncomingLikes = visibleRows
+      .map((like) => ({
+        ...like,
+        profile: profilesByUserId[like.liker_user_id] || null,
+      }))
+      .filter((like) => like.profile && !matchedUserIds.has(like.liker_user_id));
+  } catch (error) {
+    state.remoteIncomingLikes = [];
+    state.supabase.lastError = error.message;
+  }
+}
+
+async function loadRemoteMatches() {
+  const user = currentUser();
+
+  if (!hasSupabaseConfig() || !user) {
+    state.remoteMatches = [];
+    state.remoteMessages = {};
+    return;
+  }
+
+  try {
+    const matches = await supabaseJson(
+      `/rest/v1/matches?or=(user_a_id.eq.${user.id},user_b_id.eq.${user.id})&order=created_at.desc`,
+    );
+    const profileIds = [
+      ...new Set((matches || []).flatMap((match) => [match.profile_a_id, match.profile_b_id]).filter(Boolean)),
+    ];
+    const profilesById = {};
+
+    if (profileIds.length) {
+      const remoteProfileRows = await supabaseJson(
+        `/rest/v1/profiles?id=in.(${profileIds.join(",")})&select=*`,
+      );
+      (remoteProfileRows || []).forEach((profile) => {
+        profilesById[profile.id] = normalizeRemoteProfile(profile);
+      });
+    }
+
+    state.remoteMatches = (matches || []).map((match) => {
+      const otherProfileId = match.user_a_id === user.id ? match.profile_b_id : match.profile_a_id;
+      return {
+        ...match,
+        otherProfile: profilesById[otherProfileId] || null,
+      };
+    });
+    trackNewMatches();
+
+    await loadRemoteMessages();
+  } catch (error) {
+    state.remoteMatches = [];
+    state.remoteMessages = {};
+    state.supabase.lastError = error.message;
+  }
+}
+
+async function loadRemoteMessages() {
+  const matchIds = state.remoteMatches.map((match) => match.id);
+
+  if (!matchIds.length) {
+    state.remoteMessages = {};
+    return;
+  }
+
+  const rows = await supabaseJson(
+    `/rest/v1/messages?match_id=in.(${matchIds.join(",")})&select=*&order=created_at.asc`,
+  );
+  const grouped = {};
+
+  (rows || []).forEach((message) => {
+    grouped[message.match_id] ||= [];
+    grouped[message.match_id].push(message);
+  });
+
+  trackIncomingMessages(grouped);
+  state.remoteMessages = grouped;
+}
+
+async function sendRemoteMessage(matchId, body) {
+  return supabaseJson("/rest/v1/rpc/send_match_message", {
+    method: "POST",
+    body: {
+      p_match_id: matchId,
+      p_body: body,
+    },
+  });
+}
+
+function parseMessageMedia(body) {
+  const match = String(body || "").match(/^\[\[mbife-media:(photo|voice):([^\]]+)\]\]\n?([\s\S]*)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    type: match[1],
+    url: match[2],
+    caption: match[3] || "",
+  };
+}
+
+function messagePreview(body) {
+  const media = parseMessageMedia(body);
+
+  if (media?.type === "photo") {
+    return media.caption ? `Photo: ${media.caption}` : "Photo envoyée";
+  }
+
+  if (media?.type === "voice") {
+    return media.caption ? `Vocal: ${media.caption}` : "Message vocal";
+  }
+
+  return String(body || "");
+}
+
+function renderMessageContent(body) {
+  const media = parseMessageMedia(body);
+
+  if (!media) {
+    return escapeHtml(body);
+  }
+
+  const caption = media.caption ? `<span class="media-caption">${escapeHtml(media.caption)}</span>` : "";
+  const url = escapeHtml(media.url);
+
+  if (media.type === "photo") {
+    return `<img src="${url}" alt="Photo envoyée dans la conversation" loading="lazy" />${caption}`;
+  }
+
+  return `<audio controls src="${url}"></audio>${caption}`;
+}
+
+function mediaMessageBody(type, url, caption = "") {
+  const cleanCaption = caption.trim().slice(0, 420);
+  return `[[mbife-media:${type}:${url}]]${cleanCaption ? `\n${cleanCaption}` : ""}`;
+}
+
+function uploadContentType(attachment) {
+  const rawType = String(attachment?.file?.type || "").split(";")[0].toLowerCase();
+
+  if (attachment?.type === "voice") {
+    const supportedAudio = ["audio/webm", "audio/ogg", "audio/mpeg", "audio/mp4", "audio/wav"];
+    return supportedAudio.includes(rawType) ? rawType : "audio/webm";
+  }
+
+  const supportedImages = ["image/jpeg", "image/png", "image/webp"];
+  return supportedImages.includes(rawType) ? rawType : "image/jpeg";
+}
+
+function saveUnreadThreads() {
+  localStorage.setItem("mbifeUnreadThreads", JSON.stringify(state.unreadThreads));
+}
+
+function clearUnreadForConversation(conversationId) {
+  if (!conversationId?.startsWith("remote:")) {
+    return;
+  }
+
+  const matchId = conversationId.replace("remote:", "");
+  if (state.unreadThreads[matchId]) {
+    delete state.unreadThreads[matchId];
+    saveUnreadThreads();
+  }
+}
+
+function showMessageNotice(title, detail) {
+  if (messageNotice) {
+    messageNotice.hidden = false;
+    messageNotice.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(detail)}</span>`;
+    window.clearTimeout(showMessageNotice.timer);
+    showMessageNotice.timer = window.setTimeout(() => {
+      messageNotice.hidden = true;
+    }, 5200);
+  }
+
+  showToast(`${title}: ${detail}`);
+
+  if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+    new Notification(title, { body: detail });
+  }
+}
+
+function trackNewMatches() {
+  const currentIds = state.remoteMatches.map((match) => match.id);
+  const known = new Set(state.seenMatchIds);
+  const fresh = state.remoteMatches.filter((match) => !known.has(match.id));
+
+  if (state.matchesReady && fresh.length) {
+    const profile = fresh[0].otherProfile;
+    showMessageNotice("Nouveau match", profile?.name ? `Tu as matché avec ${profile.name}` : "Un nouveau match est disponible");
+  }
+
+  state.seenMatchIds = [...new Set([...state.seenMatchIds, ...currentIds])];
+  localStorage.setItem("mbifeSeenMatchIds", JSON.stringify(state.seenMatchIds));
+  state.matchesReady = true;
+}
+
+function trackIncomingLikes() {
+  const current = state.remoteIncomingLikes || [];
+  const known = new Set(readStoredJson("mbifeSeenLikeIds", []));
+  const fresh = current.filter((like) => !known.has(like.id));
+
+  if (state.likesReady && fresh.length) {
+    fresh.forEach((like) => {
+      const name = like.profile?.name || "Quelqu'un";
+      const label = like.action === "spark"
+        ? `${name} t'a envoyé un Super like ⚡`
+        : `${name} a aimé ton profil ❤️`;
+      showMessageNotice("Nouvelle demande", label);
+    });
+  }
+
+  const allIds = current.map((like) => like.id);
+  const nextSeen = [...new Set([...known, ...allIds])];
+  localStorage.setItem("mbifeSeenLikeIds", JSON.stringify(nextSeen));
+  state.likesReady = true;
+}
+
+function trackIncomingMessages(grouped) {
+  const user = currentUser();
+  const nextSeen = { ...state.seenMessageIds };
+
+  Object.entries(grouped).forEach(([matchId, messages]) => {
+    const known = new Set(nextSeen[matchId] || []);
+    const incoming = messages.filter((message) => message.sender_id !== user?.id && !known.has(message.id));
+
+    if (state.notificationsReady && incoming.length && state.activeConversation !== `remote:${matchId}`) {
+      state.unreadThreads[matchId] = (state.unreadThreads[matchId] || 0) + incoming.length;
+      const match = state.remoteMatches.find((item) => item.id === matchId);
+      const profileName = match?.otherProfile?.name || "Nouveau message";
+      showMessageNotice(profileName, messagePreview(incoming[incoming.length - 1].body));
+    }
+
+    nextSeen[matchId] = [...new Set([...known, ...messages.map((message) => message.id)])];
+  });
+
+  state.seenMessageIds = nextSeen;
+  localStorage.setItem("mbifeSeenMessageIds", JSON.stringify(state.seenMessageIds));
+  state.notificationsReady = true;
+  saveUnreadThreads();
+}
+
+function updateAttachmentPreview() {
+  if (!attachmentPreview) {
+    return;
+  }
+
+  if (!state.pendingAttachment) {
+    attachmentPreview.hidden = true;
+    attachmentPreview.innerHTML = "";
+    return;
+  }
+
+  const label =
+    state.pendingAttachment.type === "photo"
+      ? `Photo prête: ${state.pendingAttachment.name}`
+      : `Vocal prêt: ${state.pendingAttachment.duration || "quelques"} s`;
+  attachmentPreview.hidden = false;
+  attachmentPreview.innerHTML = `<span>${escapeHtml(label)}</span><button type="button" id="clearAttachmentButton">Retirer</button>`;
+  attachmentPreview.querySelector("#clearAttachmentButton")?.addEventListener("click", clearPendingAttachment);
+}
+
+function clearPendingAttachment() {
+  if (state.pendingAttachment?.previewUrl) {
+    URL.revokeObjectURL(state.pendingAttachment.previewUrl);
+  }
+
+  state.pendingAttachment = null;
+  if (messagePhotoInput) {
+    messagePhotoInput.value = "";
+  }
+  updateAttachmentPreview();
+}
+
+async function uploadMessageAttachment(attachment) {
+  const user = currentUser();
+
+  if (!attachment?.file || !user || !currentToken()) {
+    throw new Error("Connexion requise pour envoyer un média.");
+  }
+
+  const bucketName = attachment.type === "voice" ? "chat-audio" : "chat-images";
+  const originalName = attachment.name || attachment.file.name || "media";
+  const extension = originalName.split(".").pop()?.toLowerCase() || (attachment.type === "voice" ? "webm" : "jpg");
+  const allowed = attachment.type === "voice" ? ["webm", "ogg", "mp3", "m4a", "wav"] : ["jpg", "jpeg", "png", "webp"];
+  const safeExtension = allowed.includes(extension) ? extension : allowed[0];
+  const storagePath = `${user.id}/${Date.now()}-${attachment.type}.${safeExtension}`;
+  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/${bucketName}/${storagePath}`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      apikey: supabaseConfig.anonKey,
+      Authorization: `Bearer ${currentToken()}`,
+      "Content-Type": uploadContentType(attachment),
+      "x-upsert": "false",
+    },
+    body: attachment.file,
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`${bucketName} ${response.status}: ${text.slice(0, 180)}`);
+  }
+
+  return `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/public/${bucketName}/${storagePath}`;
+}
+
+async function buildOutgoingMessageBody(text, attachment, isRemote) {
+  if (!attachment) {
+    return text;
+  }
+
+  const mediaUrl = isRemote ? await uploadMessageAttachment(attachment) : attachment.previewUrl;
+  return mediaMessageBody(attachment.type, mediaUrl, text);
+}
+
+async function toggleVoiceRecording() {
+  if (state.mediaRecorder?.state === "recording") {
+    state.mediaRecorder.stop();
+    return;
+  }
+
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    showToast("Le vocal n'est pas supporté sur ce navigateur");
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    state.recordingChunks = [];
+    state.recordingStartedAt = Date.now();
+    const recorderOptions = MediaRecorder.isTypeSupported?.("audio/webm") ? { mimeType: "audio/webm" } : undefined;
+    state.mediaRecorder = new MediaRecorder(stream, recorderOptions);
+    state.mediaRecorder.addEventListener("dataavailable", (event) => {
+      if (event.data.size) {
+        state.recordingChunks.push(event.data);
+      }
+    });
+    state.mediaRecorder.addEventListener("stop", () => {
+      const cleanAudioType = String(state.mediaRecorder.mimeType || "audio/webm").split(";")[0];
+      const blob = new Blob(state.recordingChunks, { type: cleanAudioType || "audio/webm" });
+      const duration = Math.max(1, Math.round((Date.now() - state.recordingStartedAt) / 1000));
+      stream.getTracks().forEach((track) => track.stop());
+      state.pendingAttachment = {
+        type: "voice",
+        file: blob,
+        name: "vocal.webm",
+        duration,
+        previewUrl: URL.createObjectURL(blob),
+      };
+      voiceMessageButton?.classList.remove("recording");
+      voiceMessageButton.textContent = "Vocal";
+      updateAttachmentPreview();
+      showToast("Vocal prêt à envoyer");
+    });
+    state.mediaRecorder.start();
+    voiceMessageButton?.classList.add("recording");
+    voiceMessageButton.textContent = "Stop";
+    showToast("Enregistrement vocal...");
+  } catch {
+    showToast("Micro non autorisé");
+  }
+}
+
+async function requestMessageNotifications() {
+  if (!("Notification" in window)) {
+    showToast("Notifications navigateur non disponibles ici");
+    return;
+  }
+
+  const permission = await Notification.requestPermission();
+  showToast(permission === "granted" ? "Notifications activées" : "Notifications non activées");
+}
+
+async function syncRemoteData() {
+  if (!hasSupabaseConfig() || !currentUser()) {
+    renderAll();
+    return;
+  }
+
+  await loadRemoteProfiles();
+  await loadRemoteLikes();
+  await loadRemoteMatches();
+  await loadIncomingLikes();
+  renderAll();
+}
+
+async function refreshBackendData() {
+  if (!hasSupabaseConfig() || !currentUser()) {
+    showToast("Connecte-toi pour synchroniser");
+    return;
+  }
+
+  await syncRemoteData();
+  showToast("Données synchronisées");
+}
+
+function startRemoteRefresh() {
+  window.clearInterval(state.refreshTimer);
+  stopRealtimeChannels();
+
+  if (!hasSupabaseConfig() || !currentUser()) {
+    return;
+  }
+
+  if (tryStartRealtimeChannels()) return;
+
+  // Fallback polling 10s
+  state.refreshTimer = window.setInterval(async () => {
+    try {
+      await loadRemoteMessages();
+      await loadIncomingLikes();
+      trackIncomingLikes();
+      renderConversations();
+      renderMatches();
+    } catch {
+      // La prochaine action utilisateur affichera l'erreur si nécessaire.
+    }
+  }, 10000);
+}
+
+function stopRealtimeChannels() {
+  if (state.realtimeChannels?.length) {
+    state.realtimeChannels.forEach((ch) => {
+      try { ch.unsubscribe(); } catch {}
+    });
+    state.realtimeChannels = [];
+  }
+}
+
+function tryStartRealtimeChannels() {
+  if (!hasSupabaseConfig() || !currentUser()) return false;
+  try {
+    const wsBase = supabaseConfig.url.replace(/^https?/, (m) => (m === "https" ? "wss" : "ws")).replace(/\/$/, "");
+    const wsUrl = `${wsBase}/realtime/v1/websocket?apikey=${encodeURIComponent(supabaseConfig.anonKey)}&vsn=1.0.0`;
+    const ws = new WebSocket(wsUrl);
+    let heartbeat = null;
+
+    ws.addEventListener("open", () => {
+      ws.send(JSON.stringify({ topic: "realtime:messages", event: "phx_join", payload: { config: { broadcast: { ack: false }, presence: { key: "" } }, filter: {} }, ref: "1" }));
+      ws.send(JSON.stringify({ topic: "realtime:likes", event: "phx_join", payload: { config: { broadcast: { ack: false }, presence: { key: "" } }, filter: {} }, ref: "2" }));
+      heartbeat = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ topic: "phoenix", event: "heartbeat", payload: {}, ref: null }));
+        }
+      }, 25000);
+    });
+
+    ws.addEventListener("message", async (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.event === "INSERT" || msg.event === "UPDATE") {
+          await loadRemoteMessages();
+          await loadIncomingLikes();
+          trackIncomingLikes();
+          renderConversations();
+          renderMatches();
+        }
+      } catch {}
+    });
+
+    ws.addEventListener("close", () => {
+      clearInterval(heartbeat);
+      state.realtimeChannels = [];
+      // Fallback to polling
+      if (!state.refreshTimer && hasSupabaseConfig() && currentUser()) {
+        state.refreshTimer = window.setInterval(async () => {
+          try {
+            await loadRemoteMessages();
+            await loadIncomingLikes();
+            trackIncomingLikes();
+            renderConversations();
+            renderMatches();
+          } catch {}
+        }, 10000);
+      }
+    });
+
+    ws.addEventListener("error", () => ws.close());
+
+    state.realtimeChannels = [{ unsubscribe: () => { clearInterval(heartbeat); ws.close(); } }];
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function filteredProfiles() {
+  const availableProfiles = allProfiles();
+
+  if (state.activeFilter === "all") {
+    return availableProfiles;
+  }
+
+  return availableProfiles.filter((profile) => profile.tags.includes(state.activeFilter));
+}
+
+function currentProfile() {
+  const list = filteredProfiles();
+  return list[state.index % list.length];
+}
+
+function profileBackendBadge(profile) {
+  if (!profile.remote) {
+    return '<span class="profile-badge">Démo</span>';
+  }
+
+  const liked = state.remoteLikes.find((like) => like.target_profile_id === profile.id);
+  const matched = state.remoteMatches.some((match) => match.otherProfile?.id === profile.id);
+
+  if (matched) {
+    return '<span class="profile-badge">Match réel</span>';
+  }
+
+  if (liked?.action === "spark") {
+    return '<span class="profile-badge">Super like envoyé</span>';
+  }
+
+  if (liked?.action === "like") {
+    return '<span class="profile-badge">Déjà liké</span>';
+  }
+
+  if (liked?.action === "pass") {
+    return '<span class="profile-badge">Déjà passé</span>';
+  }
+
+  return '<span class="profile-badge">Profil réel</span>';
+}
+
+function renderProfile() {
+  const list = filteredProfiles();
+
+  if (list.length === 0) {
+    profileCard.innerHTML = `
+      <div class="profile-content">
+        <div class="intent-card">
+          <span>Aucun profil</span>
+          <strong>Essaie un autre filtre.</strong>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const profile = currentProfile();
+  profileCard.innerHTML = `
+    <img class="profile-photo" src="${profile.photo}" alt="Portrait de ${profile.name}" />
+    <div class="photo-wash"></div>
+    <div class="profile-content">
+      <div class="profile-topline">
+        <div class="badge-row">
+          ${profile.verified ? '<span class="badge verified">Profil vérifié</span>' : ""}
+          ${profileBackendBadge(profile)}
+          <span class="badge">${profile.city}</span>
+          <span class="badge">${profile.score}% compatible</span>
+        </div>
+        <span class="distance">${profile.distance} km</span>
+      </div>
+      <div class="profile-title">
+        <h2>${profile.name}</h2>
+        <span>${profile.age}</span>
+      </div>
+      <p class="profile-bio">${profile.bio}</p>
+      <div class="interest-row">
+        ${profile.interests.map((interest) => `<span class="interest">${interest}</span>`).join("")}
+      </div>
+      <div class="intent-card">
+        <span>Intention claire</span>
+        <strong>${profile.intent}</strong>
+      </div>
+    </div>
+  `;
+
+  renderInsights(profile);
+  document.querySelector("#discoverCount").textContent = list.length;
+}
+
+function renderInsights(profile) {
+  insightName.textContent = `${profile.name}, ${profile.city}`;
+  scoreValue.textContent = `${profile.score}%`;
+  scoreRing.style.background = `
+    radial-gradient(circle at center, white 58%, transparent 59%),
+    conic-gradient(var(--rose) 0deg, var(--gold) ${profile.score * 2.3}deg, var(--mint) ${profile.score * 3.2}deg, #ded6ca ${profile.score * 3.2}deg)
+  `;
+  traitList.innerHTML = profile.traits
+    .map(
+      ([label, value]) => `
+        <div class="trait">
+          <div class="trait-label"><span>${label}</span><strong>${value}%</strong></div>
+          <div class="trait-bar"><span style="width: ${value}%"></span></div>
+        </div>
+      `,
+    )
+    .join("");
+  promptText.textContent = profile.prompts[0];
+  renderDateIdeas(profile);
+}
+
+function nextPrompt() {
+  const profile = currentProfile();
+  const currentIndex = profile.prompts.indexOf(promptText.textContent);
+  const nextIndex = (currentIndex + 1) % profile.prompts.length;
+  promptText.textContent = profile.prompts[nextIndex];
+}
+
+async function saveProfileAction(action, profile) {
+  const user = currentUser();
+
+  if (!hasSupabaseConfig() || !user || !profile?.remote) {
+    await recordRemoteEvent("profile_action", {
+      action,
+      profile_id: profile.id,
+      profile_name: profile.name,
+      score: profile.score,
+      mode: "local_or_demo",
+    });
+    return;
+  }
+
+  try {
+    await supabaseFetch("/rest/v1/likes?on_conflict=liker_user_id,target_profile_id", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=minimal",
+      body: [
+        {
+          liker_user_id: user.id,
+          target_profile_id: profile.id,
+          action,
+        },
+      ],
+    });
+    await loadRemoteMatches();
+    renderMatches();
+    renderConversations();
+    await recordRemoteEvent("profile_action", {
+      action,
+      profile_id: profile.id,
+      profile_name: profile.name,
+      score: profile.score,
+      mode: "supabase",
+    });
+  } catch (error) {
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+    showToast(readableBackendError(error, "Action gardée en local"));
+  }
+}
+
+async function acceptIncomingLike(likeId) {
+  const like = state.remoteIncomingLikes.find((item) => item.id === likeId);
+  const user = currentUser();
+
+  if (!like?.profile || !user) {
+    showToast("Demande introuvable");
+    return;
+  }
+
+  try {
+    await supabaseFetch("/rest/v1/likes?on_conflict=liker_user_id,target_profile_id", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=minimal",
+      body: [
+        {
+          liker_user_id: user.id,
+          target_profile_id: like.profile.id,
+          action: "like",
+        },
+      ],
+    });
+    state.dismissedIncomingLikes = [...new Set([...state.dismissedIncomingLikes, likeId])];
+    localStorage.setItem("mbifeDismissedIncomingLikes", JSON.stringify(state.dismissedIncomingLikes));
+    await syncRemoteData();
+    const match = state.remoteMatches.find(
+      (item) => item.user_a_id === like.liker_user_id || item.user_b_id === like.liker_user_id,
+    );
+    if (match) {
+      state.activeConversation = `remote:${match.id}`;
+    }
+    setPanel("messages");
+    renderConversations();
+    showToast(`Match créé avec ${like.profile.name}`);
+  } catch (error) {
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+    showToast(readableBackendError(error, "Acceptation impossible"));
+  }
+}
+
+async function declineIncomingLike(likeId) {
+  const like = state.remoteIncomingLikes.find((item) => item.id === likeId);
+
+  if (!like) {
+    return;
+  }
+
+  state.dismissedIncomingLikes = [...new Set([...state.dismissedIncomingLikes, likeId])];
+  localStorage.setItem("mbifeDismissedIncomingLikes", JSON.stringify(state.dismissedIncomingLikes));
+
+  if (like.profile && hasSupabaseConfig() && currentUser()) {
+    await saveProfileAction("pass", like.profile);
+  }
+
+  state.remoteIncomingLikes = state.remoteIncomingLikes.filter((item) => item.id !== likeId);
+  renderMatches();
+  showToast("Demande refusée");
+}
+
+async function reportCurrentProfile() {
+  const profile = currentProfile();
+  const user = currentUser();
+  const reason = window.prompt("Pourquoi veux-tu signaler ce profil ?")?.trim();
+
+  if (!reason) {
+    return;
+  }
+
+  if (!hasSupabaseConfig() || !user || !profile.remote) {
+    showToast("Signalement noté localement");
+    await recordRemoteEvent("profile_reported", {
+      profile_id: profile.id,
+      profile_name: profile.name,
+      reason,
+      mode: "local_or_demo",
+    });
+    return;
+  }
+
+  try {
+    await supabaseFetch("/rest/v1/profile_reports", {
+      method: "POST",
+      prefer: "return=minimal",
+      body: [
+        {
+          reporter_user_id: user.id,
+          target_profile_id: profile.id,
+          reason,
+        },
+      ],
+    });
+    showToast("Signalement envoyé");
+  } catch (error) {
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+    showToast("Signalement non envoyé");
+  }
+}
+
+function advanceProfile(action) {
+  const profile = currentProfile();
+  state.history.push({ index: state.index, filter: state.activeFilter });
+
+  if (action === "like" || action === "spark") {
+    if (!profile.remote && !state.matches.includes(profile.id)) {
+      state.matches.push(profile.id);
+    }
+    showToast(
+      profile.remote
+        ? action === "spark"
+          ? `Super like envoyé à ${profile.name}`
+          : `Like réel envoyé à ${profile.name}`
+        : action === "spark"
+          ? `Super like envoyé à ${profile.name}`
+          : `Match potentiel avec ${profile.name}`,
+    );
+  } else {
+    showToast(`${profile.name} passé pour l'instant`);
+  }
+
+  state.index += 1;
+  renderAll();
+  saveProfileAction(action, profile);
+}
+
+function undoProfile() {
+  const previous = state.history.pop();
+  if (!previous) {
+    showToast("Aucun profil précédent");
+    return;
+  }
+
+  state.index = previous.index;
+  state.activeFilter = previous.filter;
+  syncFilterButtons();
+  renderAll();
+  showToast("Retour au profil précédent");
+}
+
+function renderMatches() {
+  const localMatchedProfiles = state.matches
+    .map((id) => allProfiles().find((profile) => profile.id === id))
+    .filter(Boolean);
+  const remoteMatchedProfiles = state.remoteMatches
+    .map((match) => match.otherProfile)
+    .filter(Boolean);
+  const matchedProfiles = [...remoteMatchedProfiles, ...localMatchedProfiles];
+  const incomingLikes = state.remoteIncomingLikes || [];
+
+  document.querySelector("#matchCount").textContent = matchedProfiles.length + incomingLikes.length;
+
+  incomingLikeList.innerHTML = incomingLikes.length
+    ? incomingLikes
+        .map((like) => {
+          const profile = like.profile;
+          const label = like.action === "spark" ? "t'a envoyé un Super like" : "a aimé ton profil";
+          return `
+            <article class="like-request-card">
+              <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+              <div class="like-request-body">
+                <strong>${profile.name}, ${profile.age}</strong>
+                <p>${label}. Accepte pour créer le match et ouvrir la messagerie.</p>
+                <div class="like-request-actions">
+                  <button class="accept-like-button" data-like-id="${like.id}" type="button">Accepter</button>
+                  <button class="decline-like-button" data-like-id="${like.id}" type="button">Refuser</button>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join("")
+    : "";
+
+  if (matchedProfiles.length === 0) {
+    matchGrid.innerHTML = `<div class="empty-state">Tes matches apparaîtront ici après acceptation d'une demande ou d'un like mutuel.</div>`;
+    dateCard.innerHTML = `<div class="empty-state">Like un profil pour générer des idées de rendez-vous adaptées.</div>`;
+    return;
+  }
+
+  matchGrid.innerHTML = matchedProfiles
+    .map(
+      (profile) => `
+        <article class="mini-card">
+          <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+          <div>
+            <strong>${profile.name}, ${profile.age}</strong>
+            <span>${profile.score}% compatible · ${profile.city}</span>
+          </div>
+        </article>
+      `,
+    )
+    .join("");
+
+  renderDateIdeas(matchedProfiles[matchedProfiles.length - 1]);
+}
+
+function renderDateIdeas(profile = currentProfile()) {
+  dateCard.innerHTML = profile.dateIdeas
+    .map(
+      ([title, description]) => `
+        <div class="date-option">
+          <strong>${title}</strong>
+          <span>${description}</span>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function shareProfile() {
+  const availableProfiles = allProfiles();
+
+  if (!availableProfiles.length) {
+    return {
+      name: "mbifê",
+      score: 0,
+      city: "Ouagadougou",
+      photo: "",
+      age: 0,
+    };
+  }
+
+  return availableProfiles[state.shareProfileIndex % availableProfiles.length];
+}
+
+function buildShareText(profile) {
+  return `J'ai ${profile.score}% de compatibilité avec ${profile.name} sur mbifê. Mon code VIP : ${state.inviteCode}. Tu testes ton signal et le défi du jour ?`;
+}
+
+function renderViralLab() {
+  const profile = shareProfile();
+  shareText.value = buildShareText(profile);
+  inviteCode.textContent = state.inviteCode;
+  renderInviteProgress();
+  renderWingVotes();
+  renderChallenge();
+  drawShareCanvas(profile);
+}
+
+function renderInviteProgress() {
+  const target = 5;
+  const progress = Math.min(100, (state.invitesSent / target) * 100);
+  inviteProgressText.textContent = `${state.invitesSent} invitation${state.invitesSent > 1 ? "s" : ""} envoyée${state.invitesSent > 1 ? "s" : ""} / ${target}`;
+  inviteProgressBar.style.width = `${progress}%`;
+}
+
+function renderWingVotes() {
+  const labels = {
+    go: "Go",
+    maybe: "Pause",
+    pass: "Non",
+  };
+  const total = Object.values(state.wingVotes).reduce((sum, value) => sum + value, 0) || 1;
+
+  voteList.innerHTML = Object.entries(labels)
+    .map(([key, label]) => {
+      const votes = state.wingVotes[key] || 0;
+      const percent = Math.round((votes / total) * 100);
+
+      return `
+        <div class="vote-item">
+          <div class="vote-label"><span>${label}</span><strong>${percent}%</strong></div>
+          <div class="vote-track"><span style="width: ${percent}%"></span></div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderChallenge() {
+  const total = Object.values(state.challengeVotes).reduce((sum, value) => sum + value, 0) || 1;
+
+  challengeTitle.textContent = dailyChallenge.title;
+  challengeCopy.textContent = dailyChallenge.copy;
+  challengeOptions.innerHTML = dailyChallenge.options
+    .map((option) => {
+      const votes = state.challengeVotes[option.id] || 0;
+      const percent = Math.round((votes / total) * 100);
+      const selected = state.challengeChoice === option.id ? "selected" : "";
+
+      return `<button class="${selected}" data-option="${option.id}" type="button">${option.label} · ${percent}%</button>`;
+    })
+    .join("");
+}
+
+function drawShareCanvas(profile) {
+  const canvas = shareCanvas;
+  const ctx = canvas.getContext("2d");
+  const { width, height } = canvas;
+  const gradient = ctx.createLinearGradient(0, 0, width, height);
+
+  gradient.addColorStop(0, "#e6536a");
+  gradient.addColorStop(0.46, "#c6812e");
+  gradient.addColorStop(1, "#1c9c83");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = "rgba(255, 250, 243, 0.92)";
+  roundedRect(ctx, 48, 54, width - 96, height - 108, 26);
+  ctx.fill();
+
+  ctx.fillStyle = "#1c1b22";
+  ctx.font = "900 54px Inter, system-ui, sans-serif";
+  ctx.fillText("mbifê", 86, 132);
+  ctx.font = "700 24px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "#696675";
+  ctx.fillText("Carte de compatibilité à partager", 88, 170);
+
+  ctx.fillStyle = "#1c1b22";
+  roundedRect(ctx, 88, 214, 172, 172, 22);
+  ctx.fill();
+  ctx.fillStyle = "#fffaf3";
+  ctx.font = "900 72px Inter, system-ui, sans-serif";
+  ctx.fillText(profile.name.slice(0, 1).toUpperCase(), 140, 326);
+
+  ctx.fillStyle = "#1c1b22";
+  ctx.font = "900 54px Inter, system-ui, sans-serif";
+  ctx.fillText(`${profile.name}, ${profile.age}`, 292, 270);
+  ctx.font = "800 26px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "#e6536a";
+  ctx.fillText(`${profile.score}% compatible`, 294, 314);
+  ctx.fillStyle = "#696675";
+  ctx.font = "700 24px Inter, system-ui, sans-serif";
+  ctx.fillText(`${profile.city} · ${profile.distance} km`, 294, 354);
+
+  ctx.fillStyle = "#583456";
+  ctx.font = "800 33px Inter, system-ui, sans-serif";
+  wrapCanvasText(ctx, profile.intent, 88, 465, width - 176, 44);
+
+  ctx.fillStyle = "#1c1b22";
+  roundedRect(ctx, 88, 606, width - 176, 118, 18);
+  ctx.fill();
+  ctx.fillStyle = "#fffaf3";
+  ctx.font = "850 27px Inter, system-ui, sans-serif";
+  wrapCanvasText(ctx, profile.prompts[0], 116, 657, width - 232, 36);
+
+  ctx.fillStyle = "#696675";
+  ctx.font = "750 23px Inter, system-ui, sans-serif";
+  ctx.fillText(`Code VIP ${state.inviteCode}`, 88, 792);
+  ctx.fillText("Swipe moins. Rencontre mieux.", 88, 832);
+}
+
+function roundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + width, y, x + width, y + height, radius);
+  ctx.arcTo(x + width, y + height, x, y + height, radius);
+  ctx.arcTo(x, y + height, x, y, radius);
+  ctx.arcTo(x, y, x + width, y, radius);
+  ctx.closePath();
+}
+
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+  let lineY = y;
+
+  words.forEach((word, index) => {
+    const testLine = line ? `${line} ${word}` : word;
+    const shouldWrap = ctx.measureText(testLine).width > maxWidth && line;
+
+    if (shouldWrap) {
+      ctx.fillText(line, x, lineY);
+      line = word;
+      lineY += lineHeight;
+    } else {
+      line = testLine;
+    }
+
+    if (index === words.length - 1) {
+      ctx.fillText(line, x, lineY);
+    }
+  });
+}
+
+async function copyToClipboard(text, successMessage) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast(successMessage);
+  } catch {
+    shareText.value = text;
+    shareText.focus();
+    shareText.select();
+    document.execCommand("copy");
+    showToast(successMessage);
+  }
+}
+
+async function shareNative() {
+  const profile = shareProfile();
+  const text = buildShareText(profile);
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "mbifê",
+        text,
+        url: window.location.href,
+      });
+      showToast("Partage ouvert");
+      return;
+    } catch {
+      showToast("Partage annulé");
+      return;
+    }
+  }
+
+  await copyToClipboard(text, "Texte copié pour partage");
+}
+
+function downloadShareCard() {
+  const profile = shareProfile();
+  const link = document.createElement("a");
+  link.download = `mbife-${profile.id}.png`;
+  link.href = shareCanvas.toDataURL("image/png");
+  link.click();
+  showToast("Image de partage générée");
+  recordRemoteEvent("share_card_downloaded", {
+    profile_id: profile.id,
+    score: profile.score,
+  });
+}
+
+function copyInvite() {
+  state.invitesSent += 1;
+  localStorage.setItem("mbifeInvitesSent", String(state.invitesSent));
+  renderInviteProgress();
+  copyToClipboard(
+    `Rejoins mbifê avec mon code ${state.inviteCode}. On compare nos signaux de compatibilité.`,
+    "Invitation copiée",
+  );
+  recordRemoteEvent("invite_copied", {
+    code: state.inviteCode,
+    invites_sent: state.invitesSent,
+  });
+
+  const user = currentUser();
+  if (hasSupabaseConfig() && user) {
+    supabaseFetch("/rest/v1/invitations?on_conflict=code", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=minimal",
+      body: [
+        {
+          owner_user_id: user.id,
+          code: state.inviteCode,
+          uses_count: state.invitesSent,
+        },
+      ],
+    }).catch((error) => {
+      state.supabase.lastError = error.message;
+      renderSupabaseStatus();
+    });
+  }
+}
+
+function voteWing(choice) {
+  const profile = currentProfile();
+  state.wingVotes[choice] = (state.wingVotes[choice] || 0) + 1;
+  localStorage.setItem("mbifeWingVotes", JSON.stringify(state.wingVotes));
+  renderWingVotes();
+  showToast("Vote ami ajouté");
+  recordRemoteEvent("wing_vote", {
+    choice,
+    votes: state.wingVotes,
+  });
+
+  const user = currentUser();
+  if (hasSupabaseConfig() && user && profile.remote) {
+    supabaseFetch("/rest/v1/wing_votes?on_conflict=voter_user_id,target_profile_id", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=minimal",
+      body: [
+        {
+          voter_user_id: user.id,
+          target_profile_id: profile.id,
+          vote: choice,
+        },
+      ],
+    }).catch((error) => {
+      state.supabase.lastError = error.message;
+      renderSupabaseStatus();
+    });
+  }
+}
+
+function chooseChallenge(optionId) {
+  if (state.challengeChoice !== optionId) {
+    state.challengeVotes[optionId] = (state.challengeVotes[optionId] || 0) + 1;
+    state.challengeChoice = optionId;
+    localStorage.setItem("mbifeChallengeChoice", optionId);
+    localStorage.setItem("mbifeChallengeVotes", JSON.stringify(state.challengeVotes));
+  }
+
+  renderChallenge();
+  showToast("Réponse enregistrée");
+  recordRemoteEvent("challenge_answered", {
+    choice: optionId,
+    votes: state.challengeVotes,
+  });
+
+  const user = currentUser();
+  if (hasSupabaseConfig() && user) {
+    supabaseFetch("/rest/v1/challenge_answers?on_conflict=user_id,challenge_id", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=minimal",
+      body: [
+        {
+          user_id: user.id,
+          challenge_id: "daily-first-message-vibe",
+          choice: optionId,
+        },
+      ],
+    }).catch((error) => {
+      state.supabase.lastError = error.message;
+      renderSupabaseStatus();
+    });
+  }
+}
+
+function renderConversations() {
+  const sortedRemoteMatches = [...state.remoteMatches].sort((a, b) => {
+    const aMessages = state.remoteMessages[a.id] || [];
+    const bMessages = state.remoteMessages[b.id] || [];
+    const aTime = aMessages[aMessages.length - 1]?.created_at || a.created_at || "";
+    const bTime = bMessages[bMessages.length - 1]?.created_at || b.created_at || "";
+    return bTime.localeCompare(aTime);
+  });
+
+  const remoteRows = sortedRemoteMatches.map((match) => {
+    const profile = match.otherProfile || {
+      name: "Match mbifê",
+      photo:
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
+    };
+    const messages = state.remoteMessages[match.id] || [];
+    const lastMessage = messages.length
+      ? messagePreview(messages[messages.length - 1].body)
+      : "Nouveau match Supabase. Envoie le premier message.";
+    const active = state.activeConversation === `remote:${match.id}` ? "active" : "";
+    const unread = state.unreadThreads[match.id] || 0;
+
+    return `
+      <button class="conversation ${active} ${unread ? "has-unread" : ""}" data-conversation="remote:${match.id}" type="button">
+        ${profileImgHtml(profile.photo, profile.name, "", "width:3rem;height:3rem;border-radius:0.5rem;object-fit:cover;")}
+        <span>
+          <strong>${escapeHtml(profile.name)}</strong>
+          <span class="conversation-preview">
+            <em>${escapeHtml(lastMessage)}</em>
+            ${unread ? `<b class="unread-badge">${unread}</b>` : ""}
+          </span>
+        </span>
+      </button>
+    `;
+  });
+
+  const localRows = conversations.map((conversation) => {
+    const profile = profiles.find((item) => item.id === conversation.id);
+    const lastMessage = conversation.messages[conversation.messages.length - 1][1];
+    const active = conversation.id === state.activeConversation ? "active" : "";
+
+    return `
+      <button class="conversation ${active}" data-conversation="${conversation.id}" type="button">
+        ${profileImgHtml(profile.photo, profile.name, "", "width:3rem;height:3rem;border-radius:0.5rem;object-fit:cover;")}
+        <span>
+          <strong>${escapeHtml(profile.name)}</strong>
+          <span>${escapeHtml(lastMessage)}</span>
+        </span>
+      </button>
+    `;
+  });
+
+  conversationList.innerHTML = [...remoteRows, ...localRows].join("");
+  const unreadTotal = Object.values(state.unreadThreads).reduce((total, count) => total + Number(count || 0), 0);
+  document.querySelector("#messageCount").textContent = unreadTotal || state.remoteMatches.length + conversations.length;
+  renderChat();
+}
+
+function renderChat() {
+  if (state.activeConversation.startsWith("remote:")) {
+    const matchId = state.activeConversation.replace("remote:", "");
+    const match = state.remoteMatches.find((item) => item.id === matchId);
+    const profile = match?.otherProfile || {
+      name: "Match mbifê",
+      intent: "Conversation Supabase",
+      photo:
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
+    };
+    const user = currentUser();
+    const messages = state.remoteMessages[matchId] || [];
+
+    chatHeader.innerHTML = `
+      <div class="chat-person">
+        ${profileImgHtml(profile.photo, profile.name, "chat-avatar", "width:2.6rem;height:2.6rem;border-radius:0.5rem;object-fit:cover;")}
+        <div>
+          <strong>${escapeHtml(profile.name)}</strong>
+          <p>${escapeHtml(profile.intent)}</p>
+        </div>
+      </div>
+      <span class="chat-status">Match privé</span>
+    `;
+    chatThread.innerHTML = messages.length
+      ? messages
+          .map(
+            (message) => {
+              const ts = message.created_at ? formatMsgTime(message.created_at) : "";
+              return `<div class="bubble ${message.sender_id === user?.id ? "me" : "them"}">${renderMessageContent(message.body)}${ts ? `<time class="bubble-time">${escapeHtml(ts)}</time>` : ""}</div>`;
+            }
+          )
+          .join("")
+      : `<div class="bubble them">Vous avez matché. Lance une conversation simple et respectueuse.</div>`;
+    chatThread.scrollTop = chatThread.scrollHeight;
+    return;
+  }
+
+  const conversation = conversations.find((item) => item.id === state.activeConversation);
+
+  if (!conversation) {
+    return;
+  }
+  const profile = profiles.find((item) => item.id === conversation.id);
+
+  chatHeader.innerHTML = `
+    <div class="chat-person">
+      ${profileImgHtml(profile.photo, profile.name, "chat-avatar", "width:2.6rem;height:2.6rem;border-radius:0.5rem;object-fit:cover;")}
+      <div>
+        <strong>${escapeHtml(profile.name)}</strong>
+        <p>${escapeHtml(profile.intent)}</p>
+      </div>
+    </div>
+    <span class="chat-status">Démo</span>
+  `;
+  chatThread.innerHTML = conversation.messages
+    .map(([side, text]) => `<div class="bubble ${side}">${renderMessageContent(text)}</div>`)
+    .join("");
+  chatThread.scrollTop = chatThread.scrollHeight;
+}
+
+async function submitMessage(event) {
+  event.preventDefault();
+  const value = messageInput.value.trim();
+  const attachment = state.pendingAttachment;
+
+  if (!value && !attachment) {
+    return;
+  }
+
+  if (Date.now() < state.messageCooldownUntil) {
+    showToast("Attends quelques secondes avant le prochain message");
+    return;
+  }
+
+  if (state.activeConversation.startsWith("remote:")) {
+    const user = currentUser();
+    const matchId = state.activeConversation.replace("remote:", "");
+
+    if (!user || !hasSupabaseConfig()) {
+      showToast("Connecte-toi pour envoyer un message réel");
+      return;
+    }
+
+    try {
+      const body = await buildOutgoingMessageBody(value, attachment, true);
+      await sendRemoteMessage(matchId, body);
+      state.messageCooldownUntil = Date.now() + 5000;
+      messageInput.value = "";
+      clearPendingAttachment();
+      await loadRemoteMessages();
+      renderConversations();
+      showToast("Message envoyé");
+      recordRemoteEvent("message_created", {
+        conversation_id: matchId,
+        length: value.length,
+      });
+    } catch (error) {
+      state.supabase.lastError = error.message;
+      renderSupabaseStatus();
+      showToast(readableBackendError(error, "Message non envoyé"));
+    }
+    return;
+  }
+
+  const conversation = conversations.find((item) => item.id === state.activeConversation);
+
+  if (!conversation) {
+    return;
+  }
+  const body = await buildOutgoingMessageBody(value, attachment, false);
+  conversation.messages.push(["me", body]);
+  messageInput.value = "";
+  clearPendingAttachment();
+  renderConversations();
+  showToast("Message ajouté à la conversation");
+  recordRemoteEvent("message_created", {
+    conversation_id: conversation.id,
+    length: value.length,
+  });
+}
+
+function setPanel(panel) {
+  state.activePanel = panel;
+  if (panel === "messages") {
+    clearUnreadForConversation(state.activeConversation);
+  }
+  document.querySelectorAll(".nav-item").forEach((button) => {
+    button.classList.toggle("active", button.dataset.panel === panel);
+  });
+  document.querySelectorAll(".panel").forEach((section) => {
+    section.classList.toggle("active", section.id === `${panel}Panel`);
+  });
+}
+
+function syncFilterButtons() {
+  document.querySelectorAll(".filter-chip").forEach((button) => {
+    button.classList.toggle("active", button.dataset.filter === state.activeFilter);
+  });
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1900);
+}
+
+
+function formatMsgTime(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+const uiState = {
+  loadingProfiles: false,
+  loadingMessages: false,
+};
+
+function renderLoadingProfiles() {
+  profileCard.innerHTML = `
+    <div class="loading-card">
+      <div class="loading-photo"></div>
+      <div class="loading-lines"></div>
+    </div>
+  `;
+}
+
+setInterval(async () => {
+  if (!state.auth?.refresh_token) {
+    return;
+  }
+
+  try {
+    await tryRefreshToken();
+  } catch (error) {
+    console.error(error);
+  }
+}, 1000 * 60 * 15);
+
+
+function renderAll() {
+  renderProfile();
+  renderProfileForm();
+  renderMatches();
+  renderConversations();
+  renderViralLab();
+  renderSupabaseStatus();
+  renderAuthState();
+}
+
+document.querySelectorAll(".nav-item").forEach((button) => {
+  button.addEventListener("click", () => setPanel(button.dataset.panel));
+});
+
+document.querySelectorAll(".filter-chip").forEach((button) => {
+  button.addEventListener("click", () => {
+    state.activeFilter = button.dataset.filter;
+    state.index = 0;
+    syncFilterButtons();
+    renderAll();
+  });
+});
+
+document.querySelector("#passButton").addEventListener("click", () => advanceProfile("pass"));
+document.querySelector("#likeButton").addEventListener("click", () => advanceProfile("like"));
+document.querySelector("#sparkButton").addEventListener("click", () => advanceProfile("spark"));
+document.querySelector("#undoButton").addEventListener("click", undoProfile);
+document.querySelector("#reportButton").addEventListener("click", reportCurrentProfile);
+promptButton.addEventListener("click", nextPrompt);
+composer.addEventListener("submit", submitMessage);
+photoMessageButton?.addEventListener("click", () => messagePhotoInput?.click());
+voiceMessageButton?.addEventListener("click", toggleVoiceRecording);
+notificationButton?.addEventListener("click", requestMessageNotifications);
+messagePhotoInput?.addEventListener("change", () => {
+  const file = messagePhotoInput.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    showToast("Photo trop lourde. Limite: 5 Mo.");
+    messagePhotoInput.value = "";
+    return;
+  }
+
+  if (state.pendingAttachment?.previewUrl) {
+    URL.revokeObjectURL(state.pendingAttachment.previewUrl);
+  }
+
+  state.pendingAttachment = {
+    type: "photo",
+    file,
+    name: file.name,
+    previewUrl: URL.createObjectURL(file),
+  };
+  updateAttachmentPreview();
+});
+loginButton.addEventListener("click", loginWithSupabase);
+signupButton.addEventListener("click", signupWithSupabase);
+logoutButton.addEventListener("click", logoutFromSupabase);
+profileLogoutButton?.addEventListener("click", logoutFromSupabase);
+profileForm.addEventListener("submit", saveProfile);
+refreshBackendButton.addEventListener("click", refreshBackendData);
+profilePhoto.addEventListener("change", () => {
+  const file = profilePhoto.files?.[0];
+
+  if (file) {
+    profilePreview.src = URL.createObjectURL(file);
+  }
+});
+authForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  loginWithSupabase();
+});
+document.querySelector("#copyShareButton").addEventListener("click", () => {
+  copyToClipboard(shareText.value, "Carte partageable copiée");
+});
+document.querySelector("#nativeShareButton").addEventListener("click", shareNative);
+document.querySelector("#downloadShareButton").addEventListener("click", downloadShareCard);
+document.querySelector("#refreshShareButton").addEventListener("click", () => {
+  state.shareProfileIndex = (state.shareProfileIndex + 1) % allProfiles().length;
+  renderViralLab();
+  showToast("Carte actualisée");
+});
+document.querySelector("#copyInviteButton").addEventListener("click", copyInvite);
+document.querySelector("#copyChallengeButton").addEventListener("click", () => {
+  copyToClipboard(
+    `Défi mbifê: ${dailyChallenge.title} Mon code VIP: ${state.inviteCode}. Tu réponds quoi ?`,
+    "Défi copié",
+  );
+});
+
+conversationList.addEventListener("click", (event) => {
+  const button = event.target.closest(".conversation");
+  if (!button) {
+    return;
+  }
+
+  state.activeConversation = button.dataset.conversation;
+  clearUnreadForConversation(state.activeConversation);
+  renderConversations();
+});
+
+incomingLikeList?.addEventListener("click", (event) => {
+  const acceptButton = event.target.closest(".accept-like-button");
+  const declineButton = event.target.closest(".decline-like-button");
+
+  if (acceptButton) {
+    acceptIncomingLike(acceptButton.dataset.likeId);
+    return;
+  }
+
+  if (declineButton) {
+    declineIncomingLike(declineButton.dataset.likeId);
+  }
+});
+
+wingActions.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-vote]");
+  if (!button) {
+    return;
+  }
+
+  voteWing(button.dataset.vote);
+});
+
+challengeOptions.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-option]");
+  if (!button) {
+    return;
+  }
+
+  chooseChallenge(button.dataset.option);
+});
+
+document.querySelector("#safeModeButton").addEventListener("click", (event) => {
+  state.safeMode = !state.safeMode;
+  event.currentTarget.setAttribute("aria-pressed", String(state.safeMode));
+  showToast(state.safeMode ? "Mode respect activé" : "Mode respect désactivé");
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowRight") {
+    advanceProfile("like");
+  }
+
+  if (event.key === "ArrowLeft") {
+    advanceProfile("pass");
+  }
+});
+
+renderAll();
+restoreAuthSession();
+checkSupabaseStatus();
+
+</script>
+  </body>
+</html>
