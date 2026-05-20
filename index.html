@@ -932,6 +932,18 @@ blockquote {
   object-fit: cover;
 }
 
+/* Avatar fallback for broken/missing photos */
+.avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: white;
+  background: linear-gradient(135deg, var(--rose), var(--plum));
+  flex-shrink: 0;
+}
+
 .conversation strong,
 .conversation span {
   display: block;
@@ -2098,8 +2110,39 @@ blockquote {
   }
 }
 
+
+.bubble-time {
+  display:block;
+  margin-top:6px;
+  font-size:11px;
+  opacity:0.72;
+}
+.loading-card {
+  display:grid;
+  gap:1rem;
+  padding:1rem;
+}
+.loading-photo {
+  height:320px;
+  border-radius:1rem;
+  background:#ececec;
+  animation:pulse 1.2s infinite;
+}
+.loading-lines {
+  height:120px;
+  border-radius:1rem;
+  background:#f4f4f4;
+  animation:pulse 1.2s infinite;
+}
+@keyframes pulse {
+  0% { opacity:0.5; }
+  50% { opacity:1; }
+  100% { opacity:0.5; }
+}
+
 </style>
-  </head>
+    <link rel="manifest" href="/manifest.json" />
+</head>
   <body>
     <div class="app-shell">
       <aside class="sidebar" aria-label="Navigation mbifê">
@@ -2548,6 +2591,7 @@ const state = {
   seenMatchIds: readStoredJson("mbifeSeenMatchIds", []),
   notificationsReady: Boolean(localStorage.getItem("mbifeSeenMessageIds")),
   matchesReady: Boolean(localStorage.getItem("mbifeSeenMatchIds")),
+  likesReady: Boolean(localStorage.getItem("mbifeSeenLikeIds")),
   pendingAttachment: null,
   mediaRecorder: null,
   recordingChunks: [],
@@ -2556,6 +2600,7 @@ const state = {
   remoteLikes: [],
   messageCooldownUntil: 0,
   refreshTimer: null,
+  realtimeChannels: [],
 };
 
 const profileCard = document.querySelector("#profileCard");
@@ -2643,6 +2688,35 @@ function getStoredInviteCode() {
   return code;
 }
 
+function initialsFor(name) {
+  const parts = String(name || "?").trim().split(/\s+/);
+  return parts.length >= 2
+    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    : String(name || "?").trim().slice(0, 2).toUpperCase();
+}
+
+function initialsAvatar(name, cssClass = "", style = "") {
+  return `<span class="avatar-fallback ${cssClass}" style="${style}" aria-label="${escapeHtml(name)}">${escapeHtml(initialsFor(name))}</span>`;
+}
+
+function profileImgHtml(photoUrl, name, cssClass = "", style = "") {
+  if (!photoUrl) return initialsAvatar(name, cssClass, style);
+  // On error, swap the img for an initials span via a global helper
+  const fallbackId = `fallback-${Math.random().toString(36).slice(2)}`;
+  return `<img src="${escapeHtml(photoUrl)}" alt="Portrait de ${escapeHtml(name)}" class="${cssClass}" style="${style}" data-fallback-name="${escapeHtml(name)}" data-fallback-class="${escapeHtml(cssClass)}" data-fallback-style="${escapeHtml(style)}" onerror="mbifeFallbackImg(this)" />`;
+}
+
+function mbifeFallbackImg(img) {
+  const name = img.dataset.fallbackName || "";
+  const cssClass = img.dataset.fallbackClass || "";
+  const style = img.dataset.fallbackStyle || "";
+  const span = document.createElement("span");
+  span.className = `avatar-fallback ${cssClass}`;
+  span.setAttribute("style", style);
+  span.textContent = initialsFor(name);
+  img.replaceWith(span);
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -2691,17 +2765,53 @@ function saveAuthSession(session) {
   renderAuthState();
 }
 
+async function tryRefreshToken() {
+  const refreshToken = state.auth?.refresh_token;
+  if (!refreshToken || !hasSupabaseConfig()) return false;
+  try {
+    const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/auth/v1/token?grant_type=refresh_token`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { apikey: supabaseConfig.anonKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!response.ok) return false;
+    const data = await response.json();
+    if (data?.access_token) {
+      saveAuthSession({ ...state.auth, ...data });
+      return true;
+    }
+  } catch { /* silent */ }
+  return false;
+}
+
 async function supabaseFetch(path, { method = "GET", body, prefer, useUserToken = true } = {}) {
   if (!hasSupabaseConfig()) {
     throw new Error("Supabase n'est pas configuré");
   }
 
   const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}${path}`;
-  const response = await fetch(endpoint, {
+  let response = await fetch(endpoint, {
     method,
     headers: authHeaders({ prefer, useUserToken }),
     body: body ? JSON.stringify(body) : undefined,
   });
+
+  // Intercept 401: try to refresh token once and retry
+  if (response.status === 401 && useUserToken && state.auth?.refresh_token) {
+    const refreshed = await tryRefreshToken();
+    if (refreshed) {
+      response = await fetch(endpoint, {
+        method,
+        headers: authHeaders({ prefer, useUserToken }),
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } else {
+      saveAuthSession(null);
+      showToast("Session expirée — reconnecte-toi");
+      renderAuthState();
+    }
+  }
 
   if (!response.ok) {
     const text = await response.text();
@@ -3040,6 +3150,8 @@ async function logoutFromSupabase() {
   state.remoteLikes = [];
   state.currentProfileRecord = null;
   window.clearInterval(state.refreshTimer);
+  state.refreshTimer = null;
+  stopRealtimeChannels();
   renderAll();
   renderProfileForm();
   showToast("Déconnecté");
@@ -3612,6 +3724,27 @@ function trackNewMatches() {
   state.matchesReady = true;
 }
 
+function trackIncomingLikes() {
+  const current = state.remoteIncomingLikes || [];
+  const known = new Set(readStoredJson("mbifeSeenLikeIds", []));
+  const fresh = current.filter((like) => !known.has(like.id));
+
+  if (state.likesReady && fresh.length) {
+    fresh.forEach((like) => {
+      const name = like.profile?.name || "Quelqu'un";
+      const label = like.action === "spark"
+        ? `${name} t'a envoyé un Super like ⚡`
+        : `${name} a aimé ton profil ❤️`;
+      showMessageNotice("Nouvelle demande", label);
+    });
+  }
+
+  const allIds = current.map((like) => like.id);
+  const nextSeen = [...new Set([...known, ...allIds])];
+  localStorage.setItem("mbifeSeenLikeIds", JSON.stringify(nextSeen));
+  state.likesReady = true;
+}
+
 function trackIncomingMessages(grouped) {
   const user = currentUser();
   const nextSeen = { ...state.seenMessageIds };
@@ -3793,20 +3926,92 @@ async function refreshBackendData() {
 
 function startRemoteRefresh() {
   window.clearInterval(state.refreshTimer);
+  stopRealtimeChannels();
 
   if (!hasSupabaseConfig() || !currentUser()) {
     return;
   }
 
-  state.refreshTimer = window.setInterval(() => {
-    loadRemoteMessages()
-      .then(() => {
-        renderConversations();
-      })
-      .catch(() => {
-        // La prochaine action utilisateur affichera l'erreur si nécessaire.
-      });
+  if (tryStartRealtimeChannels()) return;
+
+  // Fallback polling 10s
+  state.refreshTimer = window.setInterval(async () => {
+    try {
+      await loadRemoteMessages();
+      await loadIncomingLikes();
+      trackIncomingLikes();
+      renderConversations();
+      renderMatches();
+    } catch {
+      // La prochaine action utilisateur affichera l'erreur si nécessaire.
+    }
   }, 10000);
+}
+
+function stopRealtimeChannels() {
+  if (state.realtimeChannels?.length) {
+    state.realtimeChannels.forEach((ch) => {
+      try { ch.unsubscribe(); } catch {}
+    });
+    state.realtimeChannels = [];
+  }
+}
+
+function tryStartRealtimeChannels() {
+  if (!hasSupabaseConfig() || !currentUser()) return false;
+  try {
+    const wsBase = supabaseConfig.url.replace(/^https?/, (m) => (m === "https" ? "wss" : "ws")).replace(/\/$/, "");
+    const wsUrl = `${wsBase}/realtime/v1/websocket?apikey=${encodeURIComponent(supabaseConfig.anonKey)}&vsn=1.0.0`;
+    const ws = new WebSocket(wsUrl);
+    let heartbeat = null;
+
+    ws.addEventListener("open", () => {
+      ws.send(JSON.stringify({ topic: "realtime:messages", event: "phx_join", payload: { config: { broadcast: { ack: false }, presence: { key: "" } }, filter: {} }, ref: "1" }));
+      ws.send(JSON.stringify({ topic: "realtime:likes", event: "phx_join", payload: { config: { broadcast: { ack: false }, presence: { key: "" } }, filter: {} }, ref: "2" }));
+      heartbeat = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ topic: "phoenix", event: "heartbeat", payload: {}, ref: null }));
+        }
+      }, 25000);
+    });
+
+    ws.addEventListener("message", async (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.event === "INSERT" || msg.event === "UPDATE") {
+          await loadRemoteMessages();
+          await loadIncomingLikes();
+          trackIncomingLikes();
+          renderConversations();
+          renderMatches();
+        }
+      } catch {}
+    });
+
+    ws.addEventListener("close", () => {
+      clearInterval(heartbeat);
+      state.realtimeChannels = [];
+      // Fallback to polling
+      if (!state.refreshTimer && hasSupabaseConfig() && currentUser()) {
+        state.refreshTimer = window.setInterval(async () => {
+          try {
+            await loadRemoteMessages();
+            await loadIncomingLikes();
+            trackIncomingLikes();
+            renderConversations();
+            renderMatches();
+          } catch {}
+        }, 10000);
+      }
+    });
+
+    ws.addEventListener("error", () => ws.close());
+
+    state.realtimeChannels = [{ unsubscribe: () => { clearInterval(heartbeat); ws.close(); } }];
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function filteredProfiles() {
@@ -4513,9 +4718,9 @@ function renderConversations() {
 
     return `
       <button class="conversation ${active} ${unread ? "has-unread" : ""}" data-conversation="remote:${match.id}" type="button">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+        ${profileImgHtml(profile.photo, profile.name, "", "width:3rem;height:3rem;border-radius:0.5rem;object-fit:cover;")}
         <span>
-          <strong>${profile.name}</strong>
+          <strong>${escapeHtml(profile.name)}</strong>
           <span class="conversation-preview">
             <em>${escapeHtml(lastMessage)}</em>
             ${unread ? `<b class="unread-badge">${unread}</b>` : ""}
@@ -4532,10 +4737,10 @@ function renderConversations() {
 
     return `
       <button class="conversation ${active}" data-conversation="${conversation.id}" type="button">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+        ${profileImgHtml(profile.photo, profile.name, "", "width:3rem;height:3rem;border-radius:0.5rem;object-fit:cover;")}
         <span>
-          <strong>${profile.name}</strong>
-          <span>${lastMessage}</span>
+          <strong>${escapeHtml(profile.name)}</strong>
+          <span>${escapeHtml(lastMessage)}</span>
         </span>
       </button>
     `;
@@ -4562,10 +4767,10 @@ function renderChat() {
 
     chatHeader.innerHTML = `
       <div class="chat-person">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+        ${profileImgHtml(profile.photo, profile.name, "chat-avatar", "width:2.6rem;height:2.6rem;border-radius:0.5rem;object-fit:cover;")}
         <div>
-          <strong>${profile.name}</strong>
-          <p>${profile.intent}</p>
+          <strong>${escapeHtml(profile.name)}</strong>
+          <p>${escapeHtml(profile.intent)}</p>
         </div>
       </div>
       <span class="chat-status">Match privé</span>
@@ -4573,8 +4778,10 @@ function renderChat() {
     chatThread.innerHTML = messages.length
       ? messages
           .map(
-            (message) =>
-              `<div class="bubble ${message.sender_id === user?.id ? "me" : "them"}">${renderMessageContent(message.body)}</div>`,
+            (message) => {
+              const ts = message.created_at ? formatMsgTime(message.created_at) : "";
+              return `<div class="bubble ${message.sender_id === user?.id ? "me" : "them"}">${renderMessageContent(message.body)}${ts ? `<time class="bubble-time">${escapeHtml(ts)}</time>` : ""}</div>`;
+            }
           )
           .join("")
       : `<div class="bubble them">Vous avez matché. Lance une conversation simple et respectueuse.</div>`;
@@ -4591,10 +4798,10 @@ function renderChat() {
 
   chatHeader.innerHTML = `
     <div class="chat-person">
-      <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+      ${profileImgHtml(profile.photo, profile.name, "chat-avatar", "width:2.6rem;height:2.6rem;border-radius:0.5rem;object-fit:cover;")}
       <div>
-        <strong>${profile.name}</strong>
-        <p>${profile.intent}</p>
+        <strong>${escapeHtml(profile.name)}</strong>
+        <p>${escapeHtml(profile.intent)}</p>
       </div>
     </div>
     <span class="chat-status">Démo</span>
@@ -4691,6 +4898,42 @@ function showToast(message) {
   window.clearTimeout(showToast.timer);
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1900);
 }
+
+
+function formatMsgTime(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+const uiState = {
+  loadingProfiles: false,
+  loadingMessages: false,
+};
+
+function renderLoadingProfiles() {
+  profileCard.innerHTML = `
+    <div class="loading-card">
+      <div class="loading-photo"></div>
+      <div class="loading-lines"></div>
+    </div>
+  `;
+}
+
+setInterval(async () => {
+  if (!state.auth?.refresh_token) {
+    return;
+  }
+
+  try {
+    await tryRefreshToken();
+  } catch (error) {
+    console.error(error);
+  }
+}, 1000 * 60 * 15);
+
 
 function renderAll() {
   renderProfile();
