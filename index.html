@@ -3552,6 +3552,18 @@ function mediaMessageBody(type, url, caption = "") {
   return `[[mbife-media:${type}:${url}]]${cleanCaption ? `\n${cleanCaption}` : ""}`;
 }
 
+function uploadContentType(attachment) {
+  const rawType = String(attachment?.file?.type || "").split(";")[0].toLowerCase();
+
+  if (attachment?.type === "voice") {
+    const supportedAudio = ["audio/webm", "audio/ogg", "audio/mpeg", "audio/mp4", "audio/wav"];
+    return supportedAudio.includes(rawType) ? rawType : "audio/webm";
+  }
+
+  const supportedImages = ["image/jpeg", "image/png", "image/webp"];
+  return supportedImages.includes(rawType) ? rawType : "image/jpeg";
+}
+
 function saveUnreadThreads() {
   localStorage.setItem("mbifeUnreadThreads", JSON.stringify(state.unreadThreads));
 }
@@ -3675,7 +3687,7 @@ async function uploadMessageAttachment(attachment) {
     headers: {
       apikey: supabaseConfig.anonKey,
       Authorization: `Bearer ${currentToken()}`,
-      "Content-Type": attachment.file.type || (attachment.type === "voice" ? "audio/webm" : "image/jpeg"),
+      "Content-Type": uploadContentType(attachment),
       "x-upsert": "false",
     },
     body: attachment.file,
@@ -3713,14 +3725,16 @@ async function toggleVoiceRecording() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     state.recordingChunks = [];
     state.recordingStartedAt = Date.now();
-    state.mediaRecorder = new MediaRecorder(stream);
+    const recorderOptions = MediaRecorder.isTypeSupported?.("audio/webm") ? { mimeType: "audio/webm" } : undefined;
+    state.mediaRecorder = new MediaRecorder(stream, recorderOptions);
     state.mediaRecorder.addEventListener("dataavailable", (event) => {
       if (event.data.size) {
         state.recordingChunks.push(event.data);
       }
     });
     state.mediaRecorder.addEventListener("stop", () => {
-      const blob = new Blob(state.recordingChunks, { type: state.mediaRecorder.mimeType || "audio/webm" });
+      const cleanAudioType = String(state.mediaRecorder.mimeType || "audio/webm").split(";")[0];
+      const blob = new Blob(state.recordingChunks, { type: cleanAudioType || "audio/webm" });
       const duration = Math.max(1, Math.round((Date.now() - state.recordingStartedAt) / 1000));
       stream.getTracks().forEach((track) => track.stop());
       state.pendingAttachment = {
