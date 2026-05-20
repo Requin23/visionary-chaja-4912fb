@@ -1525,14 +1525,45 @@ blockquote {
 
   .auth-panel {
     grid-column: 1;
+    gap: 0.45rem;
+    padding: 0.65rem;
+  }
+
+  .auth-panel h2 {
+    margin: 0;
+    font-size: 0.92rem;
+  }
+
+  .auth-panel p {
+    font-size: 0.78rem;
+    line-height: 1.25;
   }
 
   .auth-form {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.42rem;
+  }
+
+  .auth-form input {
+    min-height: 2.35rem;
+    padding: 0.52rem 0.58rem;
+    font-size: 0.86rem;
+  }
+
+  #authName {
+    grid-column: 1 / -1;
   }
 
   .auth-actions {
+    grid-column: 1 / -1;
     grid-template-columns: 1fr 1fr;
+    gap: 0.42rem;
+  }
+
+  .auth-actions button,
+  .auth-logout {
+    min-height: 2.35rem;
+    font-size: 0.86rem;
   }
 
   .workspace {
@@ -1956,6 +1987,30 @@ blockquote {
   .topbar {
     border-radius: 0.8rem;
     padding: 0.8rem;
+  }
+
+  body:not(.is-authenticated) .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255, 250, 243, 0.96);
+    box-shadow: 0 12px 34px rgba(32, 26, 20, 0.12);
+  }
+
+  body:not(.is-authenticated) .side-nav {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    justify-content: flex-start;
+    overflow-x: auto;
+    border-radius: 0.85rem;
+    box-shadow: none;
+  }
+
+  body:not(.is-authenticated) .workspace {
+    padding-bottom: 2rem;
   }
 
   .topbar-actions {
@@ -2733,8 +2788,8 @@ function readableBackendError(error, fallback) {
     return "Supabase bloque encore les messages. Relance supabase-production-fix.sql puis redéploie l'app.";
   }
 
-  if (normalized.includes("bucket not found") || normalized.includes("message-media")) {
-    return "Le média est prêt, mais le bucket Supabase message-media manque encore.";
+  if (normalized.includes("bucket not found") || normalized.includes("chat-images") || normalized.includes("chat-audio")) {
+    return "Le média est prêt, mais les policies Supabase des buckets chat-images/chat-audio doivent être vérifiées.";
   }
 
   if (normalized.includes("could not find the function") || normalized.includes("send_match_message")) {
@@ -3608,12 +3663,13 @@ async function uploadMessageAttachment(attachment) {
     throw new Error("Connexion requise pour envoyer un média.");
   }
 
+  const bucketName = attachment.type === "voice" ? "chat-audio" : "chat-images";
   const originalName = attachment.name || attachment.file.name || "media";
   const extension = originalName.split(".").pop()?.toLowerCase() || (attachment.type === "voice" ? "webm" : "jpg");
   const allowed = attachment.type === "voice" ? ["webm", "ogg", "mp3", "m4a", "wav"] : ["jpg", "jpeg", "png", "webp"];
   const safeExtension = allowed.includes(extension) ? extension : allowed[0];
   const storagePath = `${user.id}/${Date.now()}-${attachment.type}.${safeExtension}`;
-  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/message-media/${storagePath}`;
+  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/${bucketName}/${storagePath}`;
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
@@ -3627,10 +3683,10 @@ async function uploadMessageAttachment(attachment) {
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`message-media ${response.status}: ${text.slice(0, 180)}`);
+    throw new Error(`${bucketName} ${response.status}: ${text.slice(0, 180)}`);
   }
 
-  return `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/public/message-media/${storagePath}`;
+  return `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/public/${bucketName}/${storagePath}`;
 }
 
 async function buildOutgoingMessageBody(text, attachment, isRemote) {
