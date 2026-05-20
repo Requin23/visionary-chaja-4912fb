@@ -722,6 +722,69 @@ blockquote {
   margin-top: 0.9rem;
 }
 
+.like-requests {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.like-request-card {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  border: 1px solid rgba(230, 83, 106, 0.18);
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, #fff0f2, rgba(255, 255, 255, 0.94));
+  padding: 0.7rem;
+  box-shadow: 0 16px 36px rgba(230, 83, 106, 0.1);
+}
+
+.like-request-card img {
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 0.6rem;
+  object-fit: cover;
+}
+
+.like-request-body {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.like-request-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.like-request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.like-request-actions button {
+  min-height: 2.35rem;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  font-weight: 850;
+}
+
+.accept-like-button {
+  border: 0;
+  background: var(--rose);
+  color: white;
+}
+
+.decline-like-button {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+}
+
 .mini-card {
   overflow: hidden;
   border: 1px solid var(--line);
@@ -798,9 +861,42 @@ blockquote {
   padding: 0.5rem;
 }
 
+.message-sidebar {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.message-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.message-section-head h2 {
+  margin-top: 0.2rem;
+}
+
+.notify-button {
+  min-height: 2.4rem;
+  padding-inline: 0.7rem;
+}
+
+.message-notice {
+  border: 1px solid rgba(28, 156, 131, 0.2);
+  border-radius: 0.55rem;
+  background: #e8fff7;
+  color: #12715f;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.86rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
 .conversation {
   display: grid;
-  grid-template-columns: 3rem 1fr;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
   gap: 0.65rem;
   align-items: center;
   border: 0;
@@ -809,6 +905,19 @@ blockquote {
   padding: 0.55rem;
   text-align: left;
   min-width: 0;
+}
+
+.conversation::after {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.conversation.has-unread::after {
+  background: var(--rose);
+  box-shadow: 0 0 0 0.25rem rgba(230, 83, 106, 0.12);
 }
 
 .conversation.active,
@@ -836,6 +945,35 @@ blockquote {
   white-space: nowrap;
 }
 
+.conversation-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.conversation-preview em {
+  flex: 1 1 auto;
+  overflow: hidden;
+  color: var(--muted);
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unread-badge {
+  display: inline-grid;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--rose);
+  color: white;
+  padding: 0 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
 .chat-window {
   display: grid;
   min-height: 31rem;
@@ -846,9 +984,17 @@ blockquote {
 .chat-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.7rem;
   border-bottom: 1px solid var(--line);
   padding: 0.85rem;
+}
+
+.chat-person {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
 }
 
 .chat-header img {
@@ -864,6 +1010,16 @@ blockquote {
   font-size: 0.86rem;
 }
 
+.chat-status {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #e8fff7;
+  color: #12715f;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
 .chat-thread {
   display: flex;
   flex-direction: column;
@@ -877,6 +1033,7 @@ blockquote {
   border-radius: 0.7rem;
   padding: 0.65rem 0.8rem;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .bubble.them {
@@ -890,12 +1047,61 @@ blockquote {
   color: white;
 }
 
+.bubble img {
+  display: block;
+  width: min(16rem, 72vw);
+  max-height: 19rem;
+  border-radius: 0.55rem;
+  object-fit: cover;
+}
+
+.bubble audio {
+  width: min(15rem, 70vw);
+}
+
+.media-caption {
+  display: block;
+  margin-top: 0.45rem;
+}
+
 .composer {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 0.55rem;
+  align-items: end;
   border-top: 1px solid var(--line);
   padding: 0.75rem;
+}
+
+.composer-tools {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.composer-tool,
+.send-button {
+  border: 0;
+  border-radius: 0.5rem;
+  font-weight: 850;
+}
+
+.composer-tool {
+  min-height: 2.7rem;
+  background: var(--soft);
+  color: var(--ink);
+  padding: 0.55rem 0.65rem;
+}
+
+.composer-tool.recording {
+  background: #fff0f2;
+  color: var(--rose);
+  box-shadow: inset 0 0 0 1px rgba(230, 83, 106, 0.25);
+}
+
+.composer-main {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .composer input {
@@ -904,6 +1110,30 @@ blockquote {
   border-radius: 0.5rem;
   background: white;
   padding: 0.72rem 0.85rem;
+}
+
+.attachment-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  border: 1px solid rgba(28, 156, 131, 0.2);
+  border-radius: 0.55rem;
+  background: #e8fff7;
+  color: #12715f;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.attachment-preview button {
+  min-height: 2rem;
+  border: 0;
+  border-radius: 0.45rem;
+  background: white;
+  color: var(--ink);
+  padding: 0.3rem 0.55rem;
+  font-weight: 850;
 }
 
 .viral-layout {
@@ -1411,6 +1641,24 @@ blockquote {
     grid-template-columns: 1fr;
   }
 
+  .composer-tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .composer-tool,
+  .send-button {
+    width: 100%;
+  }
+
+  .message-section-head {
+    align-items: start;
+  }
+
+  .notify-button {
+    max-width: 9rem;
+  }
+
   .chat-window {
     min-height: min(34rem, 72dvh);
   }
@@ -1430,6 +1678,15 @@ blockquote {
 
   .match-grid {
     grid-template-columns: 1fr;
+  }
+
+  .like-request-card {
+    grid-template-columns: 3.7rem minmax(0, 1fr);
+  }
+
+  .like-request-card img {
+    width: 3.7rem;
+    height: 3.7rem;
   }
 
   .form-grid {
@@ -1516,6 +1773,276 @@ blockquote {
   }
 }
 
+/* Interface refresh */
+.sidebar {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 243, 0.84)),
+    var(--surface);
+  box-shadow: 14px 0 44px rgba(32, 26, 20, 0.06);
+}
+
+.brand-mark {
+  box-shadow: 0 12px 26px rgba(230, 83, 106, 0.28);
+}
+
+.nav-item {
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.nav-item.active {
+  border-color: rgba(230, 83, 106, 0.22);
+  background: linear-gradient(135deg, #fff0f2, #fffaf3);
+  box-shadow: 0 10px 26px rgba(32, 26, 20, 0.08);
+  color: var(--rose);
+}
+
+.nav-item:hover {
+  transform: translateX(2px);
+}
+
+.topbar {
+  position: sticky;
+  top: 1rem;
+  z-index: 6;
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 0.95rem;
+  box-shadow: 0 18px 44px rgba(32, 26, 20, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.topbar-copy {
+  min-width: 0;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.status-pill,
+.hero-kpis span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  border: 1px solid rgba(230, 83, 106, 0.2);
+  border-radius: 999px;
+  background: #fff0f2;
+  color: var(--rose);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 850;
+}
+
+.status-pill {
+  background: #e8fff7;
+  border-color: rgba(28, 156, 131, 0.22);
+  color: #12715f;
+}
+
+.hero-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.filters {
+  align-items: center;
+}
+
+.filter-chip {
+  box-shadow: 0 8px 18px rgba(32, 26, 20, 0.05);
+}
+
+.filter-chip.active {
+  box-shadow: 0 10px 22px rgba(230, 83, 106, 0.13);
+}
+
+.profile-card {
+  border-radius: 1.05rem;
+  box-shadow: 0 26px 74px rgba(32, 26, 20, 0.22);
+}
+
+.profile-content {
+  padding: 1.25rem;
+}
+
+.intent-card,
+.badge,
+.interest,
+.profile-badge {
+  backdrop-filter: blur(14px);
+}
+
+.actions {
+  align-items: stretch;
+}
+
+.action-button {
+  position: relative;
+  align-content: center;
+  gap: 0.1rem;
+  padding: 0.35rem 0.25rem;
+}
+
+.action-button small {
+  display: block;
+  color: currentColor;
+  font-size: 0.66rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.action-button.like,
+.action-button.spark {
+  border-color: rgba(230, 83, 106, 0.18);
+}
+
+.action-button.like:hover,
+.action-button.spark:hover {
+  background: #fff0f2;
+}
+
+.insight-panel,
+.date-lab,
+.chat-window,
+.conversation-list,
+.share-studio,
+.viral-card,
+.about-hero,
+.about-card,
+.profile-editor {
+  border-color: rgba(28, 27, 34, 0.1);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.conversation {
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.conversation:hover {
+  transform: translateX(2px);
+}
+
+.composer button,
+.primary-button {
+  box-shadow: 0 12px 24px rgba(230, 83, 106, 0.18);
+}
+
+@media (max-width: 980px) {
+  .topbar {
+    position: static;
+  }
+
+  .nav-item:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .sidebar {
+    box-shadow: none;
+  }
+
+  .topbar {
+    border-radius: 0.8rem;
+    padding: 0.8rem;
+  }
+
+  .topbar-actions {
+    align-items: flex-start;
+  }
+
+  .status-pill {
+    display: none;
+  }
+
+  .hero-kpis {
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+  }
+
+  .hero-kpis span {
+    min-height: 1.75rem;
+    padding: 0.28rem 0.5rem;
+    font-size: 0.68rem;
+  }
+
+  .side-nav {
+    position: fixed;
+    left: 0.6rem;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    z-index: 30;
+    justify-content: space-between;
+    margin: 0;
+    border: 1px solid rgba(28, 27, 34, 0.1);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 0.35rem;
+    box-shadow: 0 18px 50px rgba(32, 26, 20, 0.18);
+    backdrop-filter: blur(18px);
+  }
+
+  .nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 3rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.18rem;
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.25rem;
+    font-size: 0.68rem;
+    text-align: center;
+  }
+
+  .nav-item span {
+    max-width: 100%;
+  }
+
+  .nav-item strong {
+    display: none;
+  }
+
+  .workspace {
+    padding-bottom: 6.6rem;
+  }
+
+  .profile-card {
+    box-shadow: 0 18px 46px rgba(32, 26, 20, 0.2);
+  }
+
+  .actions {
+    position: sticky;
+    bottom: 5.1rem;
+    z-index: 12;
+    border: 1px solid rgba(28, 27, 34, 0.08);
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 0.4rem;
+    box-shadow: 0 18px 42px rgba(32, 26, 20, 0.14);
+    backdrop-filter: blur(16px);
+  }
+
+  .action-button {
+    box-shadow: none;
+  }
+
+  .action-button small {
+    font-size: 0.54rem;
+  }
+}
+
 </style>
   </head>
   <body>
@@ -1584,13 +2111,21 @@ blockquote {
 
       <main class="workspace">
         <header class="topbar">
-          <div>
+          <div class="topbar-copy">
             <p class="eyebrow">Aujourd'hui</p>
             <h1>Découvre des profils vraiment alignés.</h1>
+            <div class="hero-kpis" aria-label="Points forts mbifê">
+              <span>Profils réels</span>
+              <span>Matches privés</span>
+              <span>Messages sécurisés</span>
+            </div>
           </div>
-          <button class="icon-button" id="safeModeButton" type="button" aria-pressed="false" title="Activer le mode respect">
-            <span aria-hidden="true">✓</span>
-          </button>
+          <div class="topbar-actions">
+            <span class="status-pill">Bêta privée</span>
+            <button class="icon-button" id="safeModeButton" type="button" aria-pressed="false" title="Activer le mode respect">
+              <span aria-hidden="true">✓</span>
+            </button>
+          </div>
         </header>
 
         <section class="filters" aria-label="Filtres de découverte">
@@ -1608,18 +2143,23 @@ blockquote {
             <div class="actions" aria-label="Actions sur le profil">
               <button class="action-button secondary" id="undoButton" type="button" title="Revenir au profil précédent">
                 <span aria-hidden="true">↶</span>
+                <small>Retour</small>
               </button>
               <button class="action-button pass" id="passButton" type="button" title="Passer">
                 <span aria-hidden="true">×</span>
+                <small>Passer</small>
               </button>
               <button class="action-button like" id="likeButton" type="button" title="Aimer">
                 <span aria-hidden="true">♥</span>
+                <small>Aimer</small>
               </button>
               <button class="action-button spark" id="sparkButton" type="button" title="Super like : montrer un intérêt plus fort">
                 <span aria-hidden="true">✦</span>
+                <small>Super</small>
               </button>
               <button class="action-button report" id="reportButton" type="button" title="Signaler ce profil">
                 <span aria-hidden="true">!</span>
+                <small>Signaler</small>
               </button>
             </div>
           </div>
@@ -1714,6 +2254,7 @@ blockquote {
         <section class="panel two-column" id="matchesPanel" aria-label="Matches">
           <div>
             <h2>Matches récents</h2>
+            <div class="like-requests" id="incomingLikeList"></div>
             <div class="match-grid" id="matchGrid"></div>
           </div>
           <div class="date-lab">
@@ -1723,14 +2264,32 @@ blockquote {
           </div>
         </section>
 
-        <section class="panel two-column" id="messagesPanel" aria-label="Messages">
-          <div class="conversation-list" id="conversationList"></div>
+        <section class="panel two-column messages-layout" id="messagesPanel" aria-label="Messages">
+          <aside class="message-sidebar">
+            <div class="message-section-head">
+              <div>
+                <p class="eyebrow">Inbox</p>
+                <h2>Messages</h2>
+              </div>
+              <button class="ghost-button notify-button" id="notificationButton" type="button">Notifications</button>
+            </div>
+            <div class="message-notice" id="messageNotice" hidden></div>
+            <div class="conversation-list" id="conversationList"></div>
+          </aside>
           <div class="chat-window">
             <div class="chat-header" id="chatHeader"></div>
             <div class="chat-thread" id="chatThread"></div>
             <form class="composer" id="composer">
-              <input id="messageInput" name="message" type="text" autocomplete="off" placeholder="Écris une réponse simple..." />
-              <button type="submit">Envoyer</button>
+              <div class="composer-tools" aria-label="Options message">
+                <button class="composer-tool" id="photoMessageButton" type="button" title="Envoyer une photo">Photo</button>
+                <button class="composer-tool" id="voiceMessageButton" type="button" title="Enregistrer un vocal">Vocal</button>
+              </div>
+              <div class="composer-main">
+                <div class="attachment-preview" id="attachmentPreview" hidden></div>
+                <input id="messageInput" name="message" type="text" autocomplete="off" placeholder="Écris une réponse simple..." />
+              </div>
+              <button class="send-button" type="submit">Envoyer</button>
+              <input id="messagePhotoInput" name="messagePhoto" type="file" accept="image/png,image/jpeg,image/webp" hidden />
             </form>
           </div>
         </section>
@@ -1927,6 +2486,17 @@ const state = {
   remoteProfiles: [],
   remoteMatches: [],
   remoteMessages: {},
+  remoteIncomingLikes: [],
+  dismissedIncomingLikes: readStoredJson("mbifeDismissedIncomingLikes", []),
+  unreadThreads: readStoredJson("mbifeUnreadThreads", {}),
+  seenMessageIds: readStoredJson("mbifeSeenMessageIds", {}),
+  seenMatchIds: readStoredJson("mbifeSeenMatchIds", []),
+  notificationsReady: Boolean(localStorage.getItem("mbifeSeenMessageIds")),
+  matchesReady: Boolean(localStorage.getItem("mbifeSeenMatchIds")),
+  pendingAttachment: null,
+  mediaRecorder: null,
+  recordingChunks: [],
+  recordingStartedAt: 0,
   currentProfileRecord: readStoredJson("mbifeLocalProfileDraft", null),
   remoteLikes: [],
   messageCooldownUntil: 0,
@@ -1941,12 +2511,19 @@ const traitList = document.querySelector("#traitList");
 const promptText = document.querySelector("#promptText");
 const promptButton = document.querySelector("#promptButton");
 const matchGrid = document.querySelector("#matchGrid");
+const incomingLikeList = document.querySelector("#incomingLikeList");
 const dateCard = document.querySelector("#dateCard");
 const conversationList = document.querySelector("#conversationList");
 const chatHeader = document.querySelector("#chatHeader");
 const chatThread = document.querySelector("#chatThread");
 const composer = document.querySelector("#composer");
 const messageInput = document.querySelector("#messageInput");
+const messagePhotoInput = document.querySelector("#messagePhotoInput");
+const photoMessageButton = document.querySelector("#photoMessageButton");
+const voiceMessageButton = document.querySelector("#voiceMessageButton");
+const attachmentPreview = document.querySelector("#attachmentPreview");
+const notificationButton = document.querySelector("#notificationButton");
+const messageNotice = document.querySelector("#messageNotice");
 const toast = document.querySelector("#toast");
 const shareCanvas = document.querySelector("#shareCanvas");
 const shareText = document.querySelector("#shareText");
@@ -2154,6 +2731,10 @@ function readableBackendError(error, fallback) {
 
   if (normalized.includes("row-level security") && normalized.includes("messages")) {
     return "Supabase bloque encore les messages. Relance supabase-production-fix.sql puis redéploie l'app.";
+  }
+
+  if (normalized.includes("bucket not found") || normalized.includes("message-media")) {
+    return "Le média est prêt, mais le bucket Supabase message-media manque encore.";
   }
 
   if (normalized.includes("could not find the function") || normalized.includes("send_match_message")) {
@@ -2737,6 +3318,7 @@ async function loadRemoteLikes() {
 
   if (!hasSupabaseConfig() || !user) {
     state.remoteLikes = [];
+    state.remoteIncomingLikes = [];
     return;
   }
 
@@ -2746,6 +3328,46 @@ async function loadRemoteLikes() {
     );
   } catch {
     state.remoteLikes = [];
+  }
+}
+
+async function loadIncomingLikes() {
+  const user = currentUser();
+  const myProfileId = state.currentProfileRecord?.id;
+
+  if (!hasSupabaseConfig() || !user || !myProfileId) {
+    state.remoteIncomingLikes = [];
+    return;
+  }
+
+  try {
+    const rows = await supabaseJson(
+      `/rest/v1/likes?target_profile_id=eq.${myProfileId}&action=in.(like,spark)&select=id,liker_user_id,target_profile_id,action,created_at&order=created_at.desc`,
+    );
+    const visibleRows = (rows || []).filter((like) => !state.dismissedIncomingLikes.includes(like.id));
+    const likerIds = [...new Set(visibleRows.map((like) => like.liker_user_id).filter(Boolean))];
+    const profilesByUserId = {};
+
+    if (likerIds.length) {
+      const profileRows = await supabaseJson(`/rest/v1/profiles?user_id=in.(${likerIds.join(",")})&select=*`);
+      (profileRows || []).forEach((profile) => {
+        profilesByUserId[profile.user_id] = normalizeRemoteProfile(profile);
+      });
+    }
+
+    const matchedUserIds = new Set(
+      state.remoteMatches.flatMap((match) => [match.user_a_id, match.user_b_id]).filter((id) => id !== user.id),
+    );
+
+    state.remoteIncomingLikes = visibleRows
+      .map((like) => ({
+        ...like,
+        profile: profilesByUserId[like.liker_user_id] || null,
+      }))
+      .filter((like) => like.profile && !matchedUserIds.has(like.liker_user_id));
+  } catch (error) {
+    state.remoteIncomingLikes = [];
+    state.supabase.lastError = error.message;
   }
 }
 
@@ -2783,6 +3405,7 @@ async function loadRemoteMatches() {
         otherProfile: profilesById[otherProfileId] || null,
       };
     });
+    trackNewMatches();
 
     await loadRemoteMessages();
   } catch (error) {
@@ -2810,6 +3433,7 @@ async function loadRemoteMessages() {
     grouped[message.match_id].push(message);
   });
 
+  trackIncomingMessages(grouped);
   state.remoteMessages = grouped;
 }
 
@@ -2823,6 +3447,257 @@ async function sendRemoteMessage(matchId, body) {
   });
 }
 
+function parseMessageMedia(body) {
+  const match = String(body || "").match(/^\[\[mbife-media:(photo|voice):([^\]]+)\]\]\n?([\s\S]*)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    type: match[1],
+    url: match[2],
+    caption: match[3] || "",
+  };
+}
+
+function messagePreview(body) {
+  const media = parseMessageMedia(body);
+
+  if (media?.type === "photo") {
+    return media.caption ? `Photo: ${media.caption}` : "Photo envoyée";
+  }
+
+  if (media?.type === "voice") {
+    return media.caption ? `Vocal: ${media.caption}` : "Message vocal";
+  }
+
+  return String(body || "");
+}
+
+function renderMessageContent(body) {
+  const media = parseMessageMedia(body);
+
+  if (!media) {
+    return escapeHtml(body);
+  }
+
+  const caption = media.caption ? `<span class="media-caption">${escapeHtml(media.caption)}</span>` : "";
+  const url = escapeHtml(media.url);
+
+  if (media.type === "photo") {
+    return `<img src="${url}" alt="Photo envoyée dans la conversation" loading="lazy" />${caption}`;
+  }
+
+  return `<audio controls src="${url}"></audio>${caption}`;
+}
+
+function mediaMessageBody(type, url, caption = "") {
+  const cleanCaption = caption.trim().slice(0, 420);
+  return `[[mbife-media:${type}:${url}]]${cleanCaption ? `\n${cleanCaption}` : ""}`;
+}
+
+function saveUnreadThreads() {
+  localStorage.setItem("mbifeUnreadThreads", JSON.stringify(state.unreadThreads));
+}
+
+function clearUnreadForConversation(conversationId) {
+  if (!conversationId?.startsWith("remote:")) {
+    return;
+  }
+
+  const matchId = conversationId.replace("remote:", "");
+  if (state.unreadThreads[matchId]) {
+    delete state.unreadThreads[matchId];
+    saveUnreadThreads();
+  }
+}
+
+function showMessageNotice(title, detail) {
+  if (messageNotice) {
+    messageNotice.hidden = false;
+    messageNotice.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(detail)}</span>`;
+    window.clearTimeout(showMessageNotice.timer);
+    showMessageNotice.timer = window.setTimeout(() => {
+      messageNotice.hidden = true;
+    }, 5200);
+  }
+
+  showToast(`${title}: ${detail}`);
+
+  if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+    new Notification(title, { body: detail });
+  }
+}
+
+function trackNewMatches() {
+  const currentIds = state.remoteMatches.map((match) => match.id);
+  const known = new Set(state.seenMatchIds);
+  const fresh = state.remoteMatches.filter((match) => !known.has(match.id));
+
+  if (state.matchesReady && fresh.length) {
+    const profile = fresh[0].otherProfile;
+    showMessageNotice("Nouveau match", profile?.name ? `Tu as matché avec ${profile.name}` : "Un nouveau match est disponible");
+  }
+
+  state.seenMatchIds = [...new Set([...state.seenMatchIds, ...currentIds])];
+  localStorage.setItem("mbifeSeenMatchIds", JSON.stringify(state.seenMatchIds));
+  state.matchesReady = true;
+}
+
+function trackIncomingMessages(grouped) {
+  const user = currentUser();
+  const nextSeen = { ...state.seenMessageIds };
+
+  Object.entries(grouped).forEach(([matchId, messages]) => {
+    const known = new Set(nextSeen[matchId] || []);
+    const incoming = messages.filter((message) => message.sender_id !== user?.id && !known.has(message.id));
+
+    if (state.notificationsReady && incoming.length && state.activeConversation !== `remote:${matchId}`) {
+      state.unreadThreads[matchId] = (state.unreadThreads[matchId] || 0) + incoming.length;
+      const match = state.remoteMatches.find((item) => item.id === matchId);
+      const profileName = match?.otherProfile?.name || "Nouveau message";
+      showMessageNotice(profileName, messagePreview(incoming[incoming.length - 1].body));
+    }
+
+    nextSeen[matchId] = [...new Set([...known, ...messages.map((message) => message.id)])];
+  });
+
+  state.seenMessageIds = nextSeen;
+  localStorage.setItem("mbifeSeenMessageIds", JSON.stringify(state.seenMessageIds));
+  state.notificationsReady = true;
+  saveUnreadThreads();
+}
+
+function updateAttachmentPreview() {
+  if (!attachmentPreview) {
+    return;
+  }
+
+  if (!state.pendingAttachment) {
+    attachmentPreview.hidden = true;
+    attachmentPreview.innerHTML = "";
+    return;
+  }
+
+  const label =
+    state.pendingAttachment.type === "photo"
+      ? `Photo prête: ${state.pendingAttachment.name}`
+      : `Vocal prêt: ${state.pendingAttachment.duration || "quelques"} s`;
+  attachmentPreview.hidden = false;
+  attachmentPreview.innerHTML = `<span>${escapeHtml(label)}</span><button type="button" id="clearAttachmentButton">Retirer</button>`;
+  attachmentPreview.querySelector("#clearAttachmentButton")?.addEventListener("click", clearPendingAttachment);
+}
+
+function clearPendingAttachment() {
+  if (state.pendingAttachment?.previewUrl) {
+    URL.revokeObjectURL(state.pendingAttachment.previewUrl);
+  }
+
+  state.pendingAttachment = null;
+  if (messagePhotoInput) {
+    messagePhotoInput.value = "";
+  }
+  updateAttachmentPreview();
+}
+
+async function uploadMessageAttachment(attachment) {
+  const user = currentUser();
+
+  if (!attachment?.file || !user || !currentToken()) {
+    throw new Error("Connexion requise pour envoyer un média.");
+  }
+
+  const originalName = attachment.name || attachment.file.name || "media";
+  const extension = originalName.split(".").pop()?.toLowerCase() || (attachment.type === "voice" ? "webm" : "jpg");
+  const allowed = attachment.type === "voice" ? ["webm", "ogg", "mp3", "m4a", "wav"] : ["jpg", "jpeg", "png", "webp"];
+  const safeExtension = allowed.includes(extension) ? extension : allowed[0];
+  const storagePath = `${user.id}/${Date.now()}-${attachment.type}.${safeExtension}`;
+  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/message-media/${storagePath}`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      apikey: supabaseConfig.anonKey,
+      Authorization: `Bearer ${currentToken()}`,
+      "Content-Type": attachment.file.type || (attachment.type === "voice" ? "audio/webm" : "image/jpeg"),
+      "x-upsert": "false",
+    },
+    body: attachment.file,
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`message-media ${response.status}: ${text.slice(0, 180)}`);
+  }
+
+  return `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/public/message-media/${storagePath}`;
+}
+
+async function buildOutgoingMessageBody(text, attachment, isRemote) {
+  if (!attachment) {
+    return text;
+  }
+
+  const mediaUrl = isRemote ? await uploadMessageAttachment(attachment) : attachment.previewUrl;
+  return mediaMessageBody(attachment.type, mediaUrl, text);
+}
+
+async function toggleVoiceRecording() {
+  if (state.mediaRecorder?.state === "recording") {
+    state.mediaRecorder.stop();
+    return;
+  }
+
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    showToast("Le vocal n'est pas supporté sur ce navigateur");
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    state.recordingChunks = [];
+    state.recordingStartedAt = Date.now();
+    state.mediaRecorder = new MediaRecorder(stream);
+    state.mediaRecorder.addEventListener("dataavailable", (event) => {
+      if (event.data.size) {
+        state.recordingChunks.push(event.data);
+      }
+    });
+    state.mediaRecorder.addEventListener("stop", () => {
+      const blob = new Blob(state.recordingChunks, { type: state.mediaRecorder.mimeType || "audio/webm" });
+      const duration = Math.max(1, Math.round((Date.now() - state.recordingStartedAt) / 1000));
+      stream.getTracks().forEach((track) => track.stop());
+      state.pendingAttachment = {
+        type: "voice",
+        file: blob,
+        name: "vocal.webm",
+        duration,
+        previewUrl: URL.createObjectURL(blob),
+      };
+      voiceMessageButton?.classList.remove("recording");
+      voiceMessageButton.textContent = "Vocal";
+      updateAttachmentPreview();
+      showToast("Vocal prêt à envoyer");
+    });
+    state.mediaRecorder.start();
+    voiceMessageButton?.classList.add("recording");
+    voiceMessageButton.textContent = "Stop";
+    showToast("Enregistrement vocal...");
+  } catch {
+    showToast("Micro non autorisé");
+  }
+}
+
+async function requestMessageNotifications() {
+  if (!("Notification" in window)) {
+    showToast("Notifications navigateur non disponibles ici");
+    return;
+  }
+
+  const permission = await Notification.requestPermission();
+  showToast(permission === "granted" ? "Notifications activées" : "Notifications non activées");
+}
+
 async function syncRemoteData() {
   if (!hasSupabaseConfig() || !currentUser()) {
     renderAll();
@@ -2832,6 +3707,7 @@ async function syncRemoteData() {
   await loadRemoteProfiles();
   await loadRemoteLikes();
   await loadRemoteMatches();
+  await loadIncomingLikes();
   renderAll();
 }
 
@@ -3024,6 +3900,65 @@ async function saveProfileAction(action, profile) {
   }
 }
 
+async function acceptIncomingLike(likeId) {
+  const like = state.remoteIncomingLikes.find((item) => item.id === likeId);
+  const user = currentUser();
+
+  if (!like?.profile || !user) {
+    showToast("Demande introuvable");
+    return;
+  }
+
+  try {
+    await supabaseFetch("/rest/v1/likes?on_conflict=liker_user_id,target_profile_id", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=minimal",
+      body: [
+        {
+          liker_user_id: user.id,
+          target_profile_id: like.profile.id,
+          action: "like",
+        },
+      ],
+    });
+    state.dismissedIncomingLikes = [...new Set([...state.dismissedIncomingLikes, likeId])];
+    localStorage.setItem("mbifeDismissedIncomingLikes", JSON.stringify(state.dismissedIncomingLikes));
+    await syncRemoteData();
+    const match = state.remoteMatches.find(
+      (item) => item.user_a_id === like.liker_user_id || item.user_b_id === like.liker_user_id,
+    );
+    if (match) {
+      state.activeConversation = `remote:${match.id}`;
+    }
+    setPanel("messages");
+    renderConversations();
+    showToast(`Match créé avec ${like.profile.name}`);
+  } catch (error) {
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+    showToast(readableBackendError(error, "Acceptation impossible"));
+  }
+}
+
+async function declineIncomingLike(likeId) {
+  const like = state.remoteIncomingLikes.find((item) => item.id === likeId);
+
+  if (!like) {
+    return;
+  }
+
+  state.dismissedIncomingLikes = [...new Set([...state.dismissedIncomingLikes, likeId])];
+  localStorage.setItem("mbifeDismissedIncomingLikes", JSON.stringify(state.dismissedIncomingLikes));
+
+  if (like.profile && hasSupabaseConfig() && currentUser()) {
+    await saveProfileAction("pass", like.profile);
+  }
+
+  state.remoteIncomingLikes = state.remoteIncomingLikes.filter((item) => item.id !== likeId);
+  renderMatches();
+  showToast("Demande refusée");
+}
+
 async function reportCurrentProfile() {
   const profile = currentProfile();
   const user = currentUser();
@@ -3112,11 +4047,34 @@ function renderMatches() {
     .map((match) => match.otherProfile)
     .filter(Boolean);
   const matchedProfiles = [...remoteMatchedProfiles, ...localMatchedProfiles];
+  const incomingLikes = state.remoteIncomingLikes || [];
 
-  document.querySelector("#matchCount").textContent = matchedProfiles.length;
+  document.querySelector("#matchCount").textContent = matchedProfiles.length + incomingLikes.length;
+
+  incomingLikeList.innerHTML = incomingLikes.length
+    ? incomingLikes
+        .map((like) => {
+          const profile = like.profile;
+          const label = like.action === "spark" ? "t'a envoyé un Super like" : "a aimé ton profil";
+          return `
+            <article class="like-request-card">
+              <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+              <div class="like-request-body">
+                <strong>${profile.name}, ${profile.age}</strong>
+                <p>${label}. Accepte pour créer le match et ouvrir la messagerie.</p>
+                <div class="like-request-actions">
+                  <button class="accept-like-button" data-like-id="${like.id}" type="button">Accepter</button>
+                  <button class="decline-like-button" data-like-id="${like.id}" type="button">Refuser</button>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join("")
+    : "";
 
   if (matchedProfiles.length === 0) {
-    matchGrid.innerHTML = `<div class="empty-state">Tes matches apparaîtront ici. Avec Supabase, un match réel se crée quand deux utilisateurs se likent mutuellement.</div>`;
+    matchGrid.innerHTML = `<div class="empty-state">Tes matches apparaîtront ici après acceptation d'une demande ou d'un like mutuel.</div>`;
     dateCard.innerHTML = `<div class="empty-state">Like un profil pour générer des idées de rendez-vous adaptées.</div>`;
     return;
   }
@@ -3478,16 +4436,20 @@ function renderConversations() {
     };
     const messages = state.remoteMessages[match.id] || [];
     const lastMessage = messages.length
-      ? messages[messages.length - 1].body
+      ? messagePreview(messages[messages.length - 1].body)
       : "Nouveau match Supabase. Envoie le premier message.";
     const active = state.activeConversation === `remote:${match.id}` ? "active" : "";
+    const unread = state.unreadThreads[match.id] || 0;
 
     return `
-      <button class="conversation ${active}" data-conversation="remote:${match.id}" type="button">
+      <button class="conversation ${active} ${unread ? "has-unread" : ""}" data-conversation="remote:${match.id}" type="button">
         <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
         <span>
           <strong>${profile.name}</strong>
-          <span>${escapeHtml(lastMessage)}</span>
+          <span class="conversation-preview">
+            <em>${escapeHtml(lastMessage)}</em>
+            ${unread ? `<b class="unread-badge">${unread}</b>` : ""}
+          </span>
         </span>
       </button>
     `;
@@ -3510,7 +4472,8 @@ function renderConversations() {
   });
 
   conversationList.innerHTML = [...remoteRows, ...localRows].join("");
-  document.querySelector("#messageCount").textContent = state.remoteMatches.length + conversations.length;
+  const unreadTotal = Object.values(state.unreadThreads).reduce((total, count) => total + Number(count || 0), 0);
+  document.querySelector("#messageCount").textContent = unreadTotal || state.remoteMatches.length + conversations.length;
   renderChat();
 }
 
@@ -3528,17 +4491,20 @@ function renderChat() {
     const messages = state.remoteMessages[matchId] || [];
 
     chatHeader.innerHTML = `
-      <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-      <div>
-        <strong>${profile.name}</strong>
-        <p>${profile.intent}</p>
+      <div class="chat-person">
+        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+        <div>
+          <strong>${profile.name}</strong>
+          <p>${profile.intent}</p>
+        </div>
       </div>
+      <span class="chat-status">Match privé</span>
     `;
     chatThread.innerHTML = messages.length
       ? messages
           .map(
             (message) =>
-              `<div class="bubble ${message.sender_id === user?.id ? "me" : "them"}">${escapeHtml(message.body)}</div>`,
+              `<div class="bubble ${message.sender_id === user?.id ? "me" : "them"}">${renderMessageContent(message.body)}</div>`,
           )
           .join("")
       : `<div class="bubble them">Vous avez matché. Lance une conversation simple et respectueuse.</div>`;
@@ -3554,14 +4520,17 @@ function renderChat() {
   const profile = profiles.find((item) => item.id === conversation.id);
 
   chatHeader.innerHTML = `
-    <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-    <div>
-      <strong>${profile.name}</strong>
-      <p>${profile.intent}</p>
+    <div class="chat-person">
+      <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+      <div>
+        <strong>${profile.name}</strong>
+        <p>${profile.intent}</p>
+      </div>
     </div>
+    <span class="chat-status">Démo</span>
   `;
   chatThread.innerHTML = conversation.messages
-    .map(([side, text]) => `<div class="bubble ${side}">${escapeHtml(text)}</div>`)
+    .map(([side, text]) => `<div class="bubble ${side}">${renderMessageContent(text)}</div>`)
     .join("");
   chatThread.scrollTop = chatThread.scrollHeight;
 }
@@ -3569,8 +4538,9 @@ function renderChat() {
 async function submitMessage(event) {
   event.preventDefault();
   const value = messageInput.value.trim();
+  const attachment = state.pendingAttachment;
 
-  if (!value) {
+  if (!value && !attachment) {
     return;
   }
 
@@ -3589,9 +4559,11 @@ async function submitMessage(event) {
     }
 
     try {
-      await sendRemoteMessage(matchId, value);
+      const body = await buildOutgoingMessageBody(value, attachment, true);
+      await sendRemoteMessage(matchId, body);
       state.messageCooldownUntil = Date.now() + 5000;
       messageInput.value = "";
+      clearPendingAttachment();
       await loadRemoteMessages();
       renderConversations();
       showToast("Message envoyé");
@@ -3612,8 +4584,10 @@ async function submitMessage(event) {
   if (!conversation) {
     return;
   }
-  conversation.messages.push(["me", value]);
+  const body = await buildOutgoingMessageBody(value, attachment, false);
+  conversation.messages.push(["me", body]);
   messageInput.value = "";
+  clearPendingAttachment();
   renderConversations();
   showToast("Message ajouté à la conversation");
   recordRemoteEvent("message_created", {
@@ -3624,6 +4598,9 @@ async function submitMessage(event) {
 
 function setPanel(panel) {
   state.activePanel = panel;
+  if (panel === "messages") {
+    clearUnreadForConversation(state.activeConversation);
+  }
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.classList.toggle("active", button.dataset.panel === panel);
   });
@@ -3675,6 +4652,34 @@ document.querySelector("#undoButton").addEventListener("click", undoProfile);
 document.querySelector("#reportButton").addEventListener("click", reportCurrentProfile);
 promptButton.addEventListener("click", nextPrompt);
 composer.addEventListener("submit", submitMessage);
+photoMessageButton?.addEventListener("click", () => messagePhotoInput?.click());
+voiceMessageButton?.addEventListener("click", toggleVoiceRecording);
+notificationButton?.addEventListener("click", requestMessageNotifications);
+messagePhotoInput?.addEventListener("change", () => {
+  const file = messagePhotoInput.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    showToast("Photo trop lourde. Limite: 5 Mo.");
+    messagePhotoInput.value = "";
+    return;
+  }
+
+  if (state.pendingAttachment?.previewUrl) {
+    URL.revokeObjectURL(state.pendingAttachment.previewUrl);
+  }
+
+  state.pendingAttachment = {
+    type: "photo",
+    file,
+    name: file.name,
+    previewUrl: URL.createObjectURL(file),
+  };
+  updateAttachmentPreview();
+});
 loginButton.addEventListener("click", loginWithSupabase);
 signupButton.addEventListener("click", signupWithSupabase);
 logoutButton.addEventListener("click", logoutFromSupabase);
@@ -3717,7 +4722,22 @@ conversationList.addEventListener("click", (event) => {
   }
 
   state.activeConversation = button.dataset.conversation;
+  clearUnreadForConversation(state.activeConversation);
   renderConversations();
+});
+
+incomingLikeList?.addEventListener("click", (event) => {
+  const acceptButton = event.target.closest(".accept-like-button");
+  const declineButton = event.target.closest(".decline-like-button");
+
+  if (acceptButton) {
+    acceptIncomingLike(acceptButton.dataset.likeId);
+    return;
+  }
+
+  if (declineButton) {
+    declineIncomingLike(declineButton.dataset.likeId);
+  }
 });
 
 wingActions.addEventListener("click", (event) => {
