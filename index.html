@@ -1156,6 +1156,218 @@ blockquote {
   padding: 1rem;
 }
 
+/* Annonces */
+.annonces-layout {
+  display: grid;
+  grid-template-columns: minmax(19rem, 34rem) minmax(17rem, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.annonce-composer {
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 42px rgba(32, 26, 20, 0.08);
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.annonce-composer textarea {
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--soft);
+  color: var(--ink);
+  padding: 0.75rem;
+  line-height: 1.45;
+  font: inherit;
+}
+
+.annonce-composer textarea:focus {
+  outline: 2px solid rgba(230, 83, 106, 0.35);
+  outline-offset: 1px;
+}
+
+.annonce-char-count {
+  text-align: right;
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: -0.5rem;
+}
+
+.annonce-options {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.annonce-anon-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.annonce-anon-toggle input {
+  accent-color: var(--rose);
+  width: 1rem;
+  height: 1rem;
+}
+
+.annonces-feed {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.annonce-card {
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 28px rgba(32, 26, 20, 0.06);
+  padding: 1rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.annonce-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.annonce-avatar {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.5rem;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  object-fit: cover;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.annonce-author {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.annonce-author strong {
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.annonce-author span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.annonce-body {
+  color: var(--ink);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.annonce-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.annonce-like-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  color: var(--muted);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.annonce-like-btn:hover,
+.annonce-like-btn.liked {
+  border-color: rgba(230, 83, 106, 0.35);
+  background: #fff0f2;
+  color: var(--rose);
+}
+
+.annonce-reply-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  color: var(--muted);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.annonce-reply-btn:hover {
+  border-color: rgba(28, 156, 131, 0.35);
+  background: #e8fff7;
+  color: var(--mint);
+}
+
+.annonces-empty {
+  border: 1px dashed rgba(28, 27, 34, 0.22);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.annonces-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.annonces-feed-header h2 {
+  margin-top: 0.2rem;
+}
+
+.annonces-refresh-btn {
+  min-height: 2.4rem;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: white;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.annonces-refresh-btn:hover {
+  border-color: rgba(230, 83, 106, 0.3);
+  color: var(--rose);
+}
+
 .section-heading {
   display: grid;
   gap: 0.25rem;
@@ -1488,6 +1700,7 @@ blockquote {
   .profile-layout,
   .two-column,
   .viral-layout,
+  .annonces-layout,
   .about-layout {
     grid-template-columns: 1fr;
   }
@@ -1732,6 +1945,8 @@ blockquote {
   .conversation-list,
   .share-studio,
   .viral-card,
+  .annonce-composer,
+  .annonce-card,
   .about-hero,
   .about-card {
     border-radius: 0.55rem;
@@ -2155,8 +2370,8 @@ blockquote {
             <strong id="messageCount">3</strong>
           </button>
           <button class="nav-item" data-panel="viral" type="button">
-            <span>Viral Lab</span>
-            <strong id="viralCount">4</strong>
+            <span>Annonces</span>
+            <strong id="viralCount">0</strong>
           </button>
           <button class="nav-item" data-panel="about" type="button">
             <span>À propos</span>
@@ -2375,66 +2590,35 @@ blockquote {
           </div>
         </section>
 
-        <section class="panel viral-layout" id="viralPanel" aria-label="Viral Lab">
-          <div class="share-studio">
+        <section class="panel annonces-layout" id="viralPanel" aria-label="Annonces">
+          <!-- Colonne gauche : formulaire de publication -->
+          <div class="annonce-composer">
             <div class="section-heading">
-              <p class="eyebrow">Boucle de partage</p>
-              <h2>Transforme un match en contenu que les gens ont envie d'envoyer.</h2>
+              <p class="eyebrow">Communauté mbifê</p>
+              <h2>Publie une annonce visible par tous.</h2>
             </div>
-
-            <canvas class="share-canvas" id="shareCanvas" width="720" height="900" aria-label="Carte de compatibilité partageable"></canvas>
-
-            <div class="share-copy">
-              <label for="shareText">Texte partageable</label>
-              <textarea id="shareText" readonly rows="4"></textarea>
+            <p class="muted-copy" style="margin:0">Cherche un ami, une sortie, partage une humeur — librement. Tu peux rester anonyme.</p>
+            <textarea id="annonceTextarea" maxlength="280" placeholder="Écris ton annonce ici… (max 280 caractères)"></textarea>
+            <p class="annonce-char-count"><span id="annonceCharCount">0</span> / 280</p>
+            <div class="annonce-options">
+              <label class="annonce-anon-toggle">
+                <input type="checkbox" id="annonceAnonCheck" />
+                Anonyme
+              </label>
             </div>
-
-            <div class="viral-actions">
-              <button class="primary-button" id="copyShareButton" type="button">Copier</button>
-              <button class="ghost-button" id="nativeShareButton" type="button">Partager</button>
-              <button class="ghost-button" id="downloadShareButton" type="button">Image</button>
-              <button class="ghost-button" id="refreshShareButton" type="button">Changer profil</button>
-            </div>
+            <button class="primary-button" id="annonceSubmitBtn" type="button">Publier l'annonce</button>
           </div>
 
-          <div class="viral-stack">
-            <article class="viral-card invite-card">
-              <div class="section-heading">
-                <p class="eyebrow">Invite loop</p>
-                <h2>Code VIP</h2>
+          <!-- Colonne droite : fil des annonces -->
+          <div>
+            <div class="annonces-feed-header">
+              <div>
+                <p class="eyebrow">Fil des annonces</p>
+                <h2>Dernières publications</h2>
               </div>
-              <p class="invite-code" id="inviteCode"></p>
-              <p class="muted-copy">Chaque invitation débloque un bonus visible : plus de prompts, plus de votes amis, plus de cartes partageables.</p>
-              <button class="primary-button" id="copyInviteButton" type="button">Copier l'invitation</button>
-              <div class="progress-row">
-                <span id="inviteProgressText">0 invitation</span>
-                <div class="progress-track"><span id="inviteProgressBar"></span></div>
-              </div>
-            </article>
-
-            <article class="viral-card wing-card">
-              <div class="section-heading">
-                <p class="eyebrow">Wing mode</p>
-                <h2>Fais voter tes amis</h2>
-              </div>
-              <p class="muted-copy">Un profil devient une mini-discussion de groupe: go, pause ou non. C'est social, leger, et ca ramene les amis dans l'app.</p>
-              <div class="wing-actions" id="wingActions">
-                <button data-vote="go" type="button">Go</button>
-                <button data-vote="maybe" type="button">Pause</button>
-                <button data-vote="pass" type="button">Non</button>
-              </div>
-              <div class="vote-list" id="voteList"></div>
-            </article>
-
-            <article class="viral-card challenge-card">
-              <div class="section-heading">
-                <p class="eyebrow">Défi du jour</p>
-                <h2 id="challengeTitle">Question partageable</h2>
-              </div>
-              <p class="muted-copy" id="challengeCopy"></p>
-              <div class="challenge-options" id="challengeOptions"></div>
-              <button class="ghost-button" id="copyChallengeButton" type="button">Inviter un ami à répondre</button>
-            </article>
+              <button class="annonces-refresh-btn" id="annoncesRefreshBtn" type="button">↻ Rafraîchir</button>
+            </div>
+            <div class="annonces-feed" id="annoncesFeed" style="margin-top:0.9rem"></div>
           </div>
         </section>
 
@@ -2572,8 +2756,11 @@ const state = {
   unreadThreads: readStoredJson("mbifeUnreadThreads", {}),
   seenMessageIds: readStoredJson("mbifeSeenMessageIds", {}),
   seenMatchIds: readStoredJson("mbifeSeenMatchIds", []),
+  seenLikeIds: readStoredJson("mbifeSeenLikeIds", []),
   notificationsReady: Boolean(localStorage.getItem("mbifeSeenMessageIds")),
   matchesReady: Boolean(localStorage.getItem("mbifeSeenMatchIds")),
+  likesReady: Boolean(localStorage.getItem("mbifeSeenLikeIds")),
+  likesRealtimeChannel: null,
   pendingAttachment: null,
   mediaRecorder: null,
   recordingChunks: [],
@@ -3002,6 +3189,7 @@ async function signupWithSupabase() {
       await ensureRemoteProfile(name);
       await syncRemoteData();
       startRemoteRefresh();
+      subscribeLikesRealtime();
       showToast("Compte créé et connecté");
     } else {
       authStatus.textContent = "Compte créé. Vérifie ton email, puis reviens cliquer sur Connexion.";
@@ -3042,6 +3230,7 @@ async function loginWithSupabase() {
     await syncRemoteData();
     startRemoteRefresh();
     showToast(profileReady ? "Connexion réussie" : "Connexion réussie, profil à configurer");
+    subscribeLikesRealtime();
     recordRemoteEvent("auth_login", { email });
   } catch (error) {
     showAuthError(error, "Connexion refusée");
@@ -3064,8 +3253,16 @@ async function logoutFromSupabase() {
   state.remoteMatches = [];
   state.remoteMessages = {};
   state.remoteLikes = [];
+  state.remoteIncomingLikes = [];
   state.currentProfileRecord = null;
   window.clearInterval(state.refreshTimer);
+  if (state.likesRealtimeChannel) {
+    state.likesRealtimeChannel.onclose = null;
+    state.likesRealtimeChannel.close();
+    state.likesRealtimeChannel = null;
+  }
+  state.likesReady = false;
+  state.seenLikeIds = [];
   renderAll();
   renderProfileForm();
   showToast("Déconnecté");
@@ -3091,6 +3288,7 @@ async function restoreAuthSession() {
   await tryEnsureRemoteProfile(user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Membre mbifê");
   await syncRemoteData();
   startRemoteRefresh();
+  subscribeLikesRealtime();
 }
 
 async function ensureRemoteProfile(displayName) {
@@ -3504,6 +3702,8 @@ async function loadIncomingLikes() {
         profile: profilesByUserId[like.liker_user_id] || null,
       }))
       .filter((like) => like.profile && !matchedUserIds.has(like.liker_user_id));
+
+    trackNewLikes(state.remoteIncomingLikes);
   } catch (error) {
     state.remoteIncomingLikes = [];
     state.supabase.lastError = error.message;
@@ -3694,6 +3894,106 @@ function trackNewMatches() {
   state.seenMatchIds = [...new Set([...state.seenMatchIds, ...currentIds])];
   localStorage.setItem("mbifeSeenMatchIds", JSON.stringify(state.seenMatchIds));
   state.matchesReady = true;
+}
+
+function trackNewLikes(likes) {
+  const known = new Set(state.seenLikeIds);
+  const fresh = (likes || []).filter((like) => !known.has(like.id));
+
+  if (state.likesReady && fresh.length) {
+    const like = fresh[0];
+    const profileName = like.profile?.name;
+    const action = like.action === "spark" ? "t'a envoyé un Super like ✦" : "a aimé ton profil ♥";
+    const title = profileName ? profileName : "Quelqu'un";
+    showMessageNotice(title, action);
+    if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+      new Notification(title, { body: action });
+    }
+    setPanel("matches");
+  }
+
+  const allIds = (likes || []).map((like) => like.id);
+  state.seenLikeIds = [...new Set([...state.seenLikeIds, ...allIds])];
+  localStorage.setItem("mbifeSeenLikeIds", JSON.stringify(state.seenLikeIds));
+  state.likesReady = true;
+}
+
+function subscribeLikesRealtime() {
+  if (!hasSupabaseConfig() || !currentUser()) return;
+  if (state.likesRealtimeChannel) return;
+
+  const myProfileId = state.currentProfileRecord?.id;
+  if (!myProfileId) return;
+
+  try {
+    const host = supabaseConfig.url.replace(/\/$/, "").replace(/^https?:\/\//, "");
+    const ws = new WebSocket(
+      `wss://${host}/realtime/v1/websocket?apikey=${encodeURIComponent(supabaseConfig.anonKey)}&vsn=1.0.0`,
+    );
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        topic: `realtime:public:likes:target_profile_id=eq.${myProfileId}`,
+        event: "phx_join",
+        payload: {},
+        ref: "like-sub",
+      }));
+      ws.likesPing = window.setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ topic: "phoenix", event: "heartbeat", payload: {}, ref: "hb" }));
+        }
+      }, 25000);
+    };
+
+    ws.onmessage = async (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (
+          (msg.event === "INSERT" || msg.event === "postgres_changes") &&
+          (msg.payload?.record || msg.payload?.data?.record)
+        ) {
+          const rec = msg.payload?.record || msg.payload?.data?.record;
+          if (!rec) return;
+
+          const action = rec.action;
+          if (action !== "like" && action !== "spark") return;
+          if (state.dismissedIncomingLikes.includes(rec.id)) return;
+
+          // Fetch the liker profile
+          let profile = null;
+          if (rec.liker_user_id) {
+            try {
+              const rows = await supabaseJson(
+                `/rest/v1/profiles?user_id=eq.${encodeURIComponent(rec.liker_user_id)}&select=*&limit=1`,
+              );
+              if (rows?.[0]) profile = normalizeRemoteProfile(rows[0], state.currentProfileRecord);
+            } catch { /* silent */ }
+          }
+
+          const enriched = { ...rec, profile };
+
+          // Add to remoteIncomingLikes if not already there
+          if (!state.remoteIncomingLikes.find((l) => l.id === rec.id)) {
+            state.remoteIncomingLikes = [enriched, ...state.remoteIncomingLikes];
+          }
+
+          trackNewLikes([enriched]);
+          renderMatches();
+        }
+      } catch { /* ignore bad frames */ }
+    };
+
+    ws.onclose = () => {
+      window.clearInterval(ws.likesPing);
+      state.likesRealtimeChannel = null;
+      // Reconnect after 5 s
+      window.setTimeout(() => subscribeLikesRealtime(), 5000);
+    };
+
+    ws.onerror = () => ws.close();
+
+    state.likesRealtimeChannel = ws;
+  } catch { /* WS not available */ }
 }
 
 function trackIncomingMessages(grouped) {
@@ -4293,17 +4593,265 @@ function buildShareText(profile) {
   return `J'ai ${profile.score}% de compatibilité avec ${profile.name} sur mbifê. Mon code VIP : ${state.inviteCode}. Tu testes ton signal et le défi du jour ?`;
 }
 
+/* ── ANNONCES ─────────────────────────────────────────────── */
+// State for annonces (local + remote)
+state.annonces = readStoredJson("mbifeAnnonces", []);
+state.annonceLikes = readStoredJson("mbifeAnnonceLikes", {});
+state.annoncesRealtimeChannel = null;
+
 function renderViralLab() {
-  const profile = shareProfile();
-  shareText.value = buildShareText(profile);
-  inviteCode.textContent = state.inviteCode;
-  renderInviteProgress();
-  renderWingVotes();
-  renderChallenge();
-  drawShareCanvas(profile);
+  renderAnnoncesFeed();
+  const count = state.annonces.length;
+  const viralCount = document.querySelector("#viralCount");
+  if (viralCount) viralCount.textContent = count || 0;
+}
+
+function timeAgo(iso) {
+  const delta = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (delta < 60) return "à l'instant";
+  if (delta < 3600) return `il y a ${Math.floor(delta / 60)} min`;
+  if (delta < 86400) return `il y a ${Math.floor(delta / 3600)} h`;
+  return `il y a ${Math.floor(delta / 86400)} j`;
+}
+
+function renderAnnoncesFeed() {
+  const feed = document.querySelector("#annoncesFeed");
+  if (!feed) return;
+
+  if (!state.annonces.length) {
+    feed.innerHTML = `<div class="annonces-empty">Aucune annonce pour l'instant.<br>Sois le premier à publier quelque chose !</div>`;
+    return;
+  }
+
+  feed.innerHTML = state.annonces
+    .slice()
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .map((ann) => {
+      const liked = !!state.annonceLikes[ann.id];
+      const likeCount = ann.like_count || 0;
+      const isAnon = ann.anonymous;
+      const authorName = isAnon ? "Anonyme" : escapeHtml(ann.author_name || "Utilisateur");
+      const initial = isAnon ? "?" : (ann.author_name || "U").slice(0, 1).toUpperCase();
+      const avatarHtml = ann.author_photo && !isAnon
+        ? `<img class="annonce-avatar" src="${escapeHtml(ann.author_photo)}" alt="${authorName}" onerror="this.outerHTML='<div class=\\"annonce-avatar\\">${initial}</div>'" />`
+        : `<div class="annonce-avatar">${initial}</div>`;
+      const canReply = !isAnon && ann.author_id && ann.author_id !== currentUser()?.id;
+
+      return `
+        <article class="annonce-card" data-annonce-id="${escapeHtml(ann.id)}">
+          <div class="annonce-header">
+            ${avatarHtml}
+            <div class="annonce-author">
+              <strong>${authorName}</strong>
+              <span>${timeAgo(ann.created_at)}</span>
+            </div>
+          </div>
+          <p class="annonce-body">${escapeHtml(ann.body)}</p>
+          <div class="annonce-footer">
+            <button class="annonce-like-btn${liked ? " liked" : ""}" data-annonce-like="${escapeHtml(ann.id)}" type="button">
+              ♥ ${likeCount > 0 ? likeCount : "J'aime"}
+            </button>
+            ${canReply ? `<button class="annonce-reply-btn" data-annonce-reply="${escapeHtml(ann.id)}" data-author-id="${escapeHtml(ann.author_id)}" type="button">↩ Répondre en privé</button>` : ""}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function submitAnnonce() {
+  const textarea = document.querySelector("#annonceTextarea");
+  const anonCheck = document.querySelector("#annonceAnonCheck");
+  const body = textarea?.value.trim();
+
+  if (!body) {
+    showToast("Écris quelque chose avant de publier.");
+    return;
+  }
+
+  const user = currentUser();
+  const anonymous = anonCheck?.checked || false;
+  const now = new Date().toISOString();
+
+  const newAnn = {
+    id: `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    body,
+    anonymous,
+    author_name: anonymous ? null : (user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Utilisateur"),
+    author_photo: anonymous ? null : (user?.user_metadata?.photo_url || null),
+    author_id: anonymous ? null : (user?.id || null),
+    like_count: 0,
+    created_at: now,
+  };
+
+  // Try to save to Supabase first
+  if (hasSupabaseConfig() && user) {
+    try {
+      const result = await supabaseJson("/rest/v1/annonces", {
+        method: "POST",
+        prefer: "return=representation",
+        body: {
+          body: newAnn.body,
+          anonymous,
+          author_id: anonymous ? null : user.id,
+          author_name: newAnn.author_name,
+          author_photo: newAnn.author_photo,
+        },
+      });
+      if (result?.[0]) {
+        newAnn.id = result[0].id;
+        newAnn.like_count = result[0].like_count || 0;
+      }
+    } catch (err) {
+      // Fall through to local save — show note but continue
+      showToast("Annonce enregistrée localement (Supabase non disponible)");
+    }
+  }
+
+  state.annonces.unshift(newAnn);
+  localStorage.setItem("mbifeAnnonces", JSON.stringify(state.annonces.slice(0, 80)));
+
+  if (textarea) textarea.value = "";
+  const charCount = document.querySelector("#annonceCharCount");
+  if (charCount) charCount.textContent = "0";
+
+  renderViralLab();
+  showToast("Annonce publiée !");
+}
+
+async function toggleAnnonceLike(annonceId) {
+  const idx = state.annonces.findIndex((a) => a.id === annonceId);
+  if (idx === -1) return;
+
+  const ann = state.annonces[idx];
+  const alreadyLiked = !!state.annonceLikes[annonceId];
+
+  if (alreadyLiked) {
+    state.annonceLikes[annonceId] = false;
+    ann.like_count = Math.max(0, (ann.like_count || 0) - 1);
+  } else {
+    state.annonceLikes[annonceId] = true;
+    ann.like_count = (ann.like_count || 0) + 1;
+  }
+
+  localStorage.setItem("mbifeAnnonceLikes", JSON.stringify(state.annonceLikes));
+  localStorage.setItem("mbifeAnnonces", JSON.stringify(state.annonces));
+
+  // Try Supabase like
+  if (hasSupabaseConfig() && currentUser() && !annonceId.startsWith("local-")) {
+    try {
+      if (alreadyLiked) {
+        await supabaseFetch(`/rest/v1/annonce_likes?annonce_id=eq.${encodeURIComponent(annonceId)}&user_id=eq.${encodeURIComponent(currentUser().id)}`, {
+          method: "DELETE",
+        });
+      } else {
+        await supabaseJson("/rest/v1/annonce_likes", {
+          method: "POST",
+          prefer: "return=minimal",
+          body: { annonce_id: annonceId, user_id: currentUser().id },
+        });
+      }
+    } catch {
+      // silent — UI already updated
+    }
+  }
+
+  renderAnnoncesFeed();
+}
+
+async function replyToAnnonce(authorId) {
+  const user = currentUser();
+  if (!user) {
+    showToast("Connecte-toi pour répondre en privé.");
+    return;
+  }
+  if (!hasSupabaseConfig()) {
+    showToast("Supabase nécessaire pour répondre en privé.");
+    return;
+  }
+
+  // Try to find or create a match between the two users
+  try {
+    const existing = await supabaseJson(
+      `/rest/v1/matches?select=id&or=(and(user1_id.eq.${encodeURIComponent(user.id)},user2_id.eq.${encodeURIComponent(authorId)}),and(user1_id.eq.${encodeURIComponent(authorId)},user2_id.eq.${encodeURIComponent(user.id)}))&limit=1`,
+    );
+
+    let matchId;
+    if (existing?.length) {
+      matchId = existing[0].id;
+    } else {
+      const created = await supabaseJson("/rest/v1/matches", {
+        method: "POST",
+        prefer: "return=representation",
+        body: { user1_id: user.id, user2_id: authorId },
+      });
+      matchId = created?.[0]?.id;
+    }
+
+    if (matchId) {
+      state.activeConversation = `remote:${matchId}`;
+      setPanel("messages");
+      await loadRemoteMessages();
+      renderConversations();
+      showToast("Conversation ouverte !");
+    }
+  } catch (err) {
+    showToast("Impossible d'ouvrir la conversation : " + err.message.slice(0, 80));
+  }
+}
+
+async function loadRemoteAnnonces() {
+  if (!hasSupabaseConfig()) return;
+
+  try {
+    const data = await supabaseJson(
+      "/rest/v1/annonces?select=id,body,anonymous,author_name,author_photo,author_id,like_count,created_at&order=created_at.desc&limit=40",
+    );
+
+    if (Array.isArray(data)) {
+      // Merge: keep local-only and add remote
+      const localOnly = state.annonces.filter((a) => a.id.startsWith("local-"));
+      state.annonces = [...localOnly, ...data];
+      localStorage.setItem("mbifeAnnonces", JSON.stringify(state.annonces.slice(0, 80)));
+      renderViralLab();
+    }
+  } catch {
+    // silent — local fallback already shown
+  }
+}
+
+function subscribeAnnoncesRealtime() {
+  if (!hasSupabaseConfig()) return;
+  if (state.annoncesRealtimeChannel) return;
+
+  try {
+    const url = supabaseConfig.url.replace(/\/$/, "").replace(/^https?:\/\//, "");
+    const ws = new WebSocket(`wss://${url}/realtime/v1/websocket?apikey=${encodeURIComponent(supabaseConfig.anonKey)}&vsn=1.0.0`);
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ topic: "realtime:public:annonces", event: "phx_join", payload: {}, ref: "1" }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.event === "INSERT" && msg.payload?.record) {
+          const rec = msg.payload.record;
+          if (!state.annonces.find((a) => a.id === rec.id)) {
+            state.annonces.unshift(rec);
+            renderViralLab();
+            showToast("Nouvelle annonce publiée !");
+          }
+        }
+      } catch { /* ignore */ }
+    };
+
+    state.annoncesRealtimeChannel = ws;
+  } catch { /* ignore if WS not available */ }
 }
 
 function renderInviteProgress() {
+  if (!inviteProgressText || !inviteProgressBar) return;
   const target = 5;
   const progress = Math.min(100, (state.invitesSent / target) * 100);
   inviteProgressText.textContent = `${state.invitesSent} invitation${state.invitesSent > 1 ? "s" : ""} envoyée${state.invitesSent > 1 ? "s" : ""} / ${target}`;
@@ -4311,6 +4859,7 @@ function renderInviteProgress() {
 }
 
 function renderWingVotes() {
+  if (!voteList) return;
   const labels = {
     go: "Go",
     maybe: "Pause",
@@ -4334,8 +4883,8 @@ function renderWingVotes() {
 }
 
 function renderChallenge() {
+  if (!challengeTitle || !challengeCopy || !challengeOptions) return;
   const total = Object.values(state.challengeVotes).reduce((sum, value) => sum + value, 0) || 1;
-
   challengeTitle.textContent = dailyChallenge.title;
   challengeCopy.textContent = dailyChallenge.copy;
   challengeOptions.innerHTML = dailyChallenge.options
@@ -4351,6 +4900,7 @@ function renderChallenge() {
 
 function drawShareCanvas(profile) {
   const canvas = shareCanvas;
+  if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const { width, height } = canvas;
   const gradient = ctx.createLinearGradient(0, 0, width, height);
@@ -4861,22 +5411,22 @@ authForm.addEventListener("submit", (event) => {
   event.preventDefault();
   loginWithSupabase();
 });
-document.querySelector("#copyShareButton").addEventListener("click", () => {
-  copyToClipboard(shareText.value, "Carte partageable copiée");
+document.querySelector("#annonceSubmitBtn")?.addEventListener("click", submitAnnonce);
+document.querySelector("#annoncesRefreshBtn")?.addEventListener("click", async () => {
+  await loadRemoteAnnonces();
+  showToast("Annonces actualisées");
 });
-document.querySelector("#nativeShareButton").addEventListener("click", shareNative);
-document.querySelector("#downloadShareButton").addEventListener("click", downloadShareCard);
-document.querySelector("#refreshShareButton").addEventListener("click", () => {
-  state.shareProfileIndex = (state.shareProfileIndex + 1) % allProfiles().length;
-  renderViralLab();
-  showToast("Carte actualisée");
+
+document.querySelector("#annonceTextarea")?.addEventListener("input", (event) => {
+  const count = document.querySelector("#annonceCharCount");
+  if (count) count.textContent = event.target.value.length;
 });
-document.querySelector("#copyInviteButton").addEventListener("click", copyInvite);
-document.querySelector("#copyChallengeButton").addEventListener("click", () => {
-  copyToClipboard(
-    `Défi mbifê: ${dailyChallenge.title} Mon code VIP: ${state.inviteCode}. Tu réponds quoi ?`,
-    "Défi copié",
-  );
+
+document.querySelector("#annoncesFeed")?.addEventListener("click", (event) => {
+  const likeBtn = event.target.closest("[data-annonce-like]");
+  const replyBtn = event.target.closest("[data-annonce-reply]");
+  if (likeBtn) toggleAnnonceLike(likeBtn.dataset.annonceLike);
+  if (replyBtn) replyToAnnonce(replyBtn.dataset.authorId);
 });
 
 conversationList.addEventListener("click", (event) => {
@@ -4904,23 +5454,6 @@ incomingLikeList?.addEventListener("click", (event) => {
   }
 });
 
-wingActions.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-vote]");
-  if (!button) {
-    return;
-  }
-
-  voteWing(button.dataset.vote);
-});
-
-challengeOptions.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-option]");
-  if (!button) {
-    return;
-  }
-
-  chooseChallenge(button.dataset.option);
-});
 
 document.querySelector("#safeModeButton").addEventListener("click", (event) => {
   state.safeMode = !state.safeMode;
@@ -4941,6 +5474,8 @@ window.addEventListener("keydown", (event) => {
 renderAll();
 restoreAuthSession();
 checkSupabaseStatus();
+loadRemoteAnnonces();
+subscribeAnnoncesRealtime();
 
 </script>
   </body>
