@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>mbifê - rencontres sincères</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#e6536a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="mbifê" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <style>
 :root {
   color-scheme: light;
@@ -2313,6 +2324,75 @@ blockquote {
 }
 
 
+/* ── Messagerie : vue conversation plein écran ── */
+.messages-layout {
+  transition: none;
+}
+
+.messages-layout.chat-open .message-sidebar {
+  display: none;
+}
+
+.messages-layout.chat-open .chat-window {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: calc(100vh - 5rem);
+  max-height: 860px;
+}
+
+.messages-layout:not(.chat-open) .chat-window {
+  display: none;
+}
+
+.chat-back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.4rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--muted);
+  padding: 0.4rem 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.chat-back-button:hover {
+  background: var(--soft);
+  color: var(--ink);
+}
+
+.chat-back-button::before {
+  content: "←";
+  font-size: 1rem;
+}
+
+.chat-header {
+  gap: 0.6rem;
+}
+
+/* Liste : marquer visuellement la conv active */
+.conversation-list {
+  overflow-y: auto;
+  max-height: calc(100vh - 14rem);
+}
+
+.conversation.active {
+  background: var(--soft);
+  border-left: 3px solid var(--rose);
+  padding-left: calc(0.55rem - 3px);
+}
+
+@media (max-width: 980px) {
+  .messages-layout.chat-open .chat-window {
+    height: calc(100dvh - 8rem);
+    max-height: none;
+  }
+}
+
 .shared-interests-row {
   display: flex;
   flex-wrap: wrap;
@@ -2572,7 +2652,9 @@ blockquote {
             <div class="conversation-list" id="conversationList"></div>
           </aside>
           <div class="chat-window">
-            <div class="chat-header" id="chatHeader"></div>
+            <div class="chat-header" id="chatHeader">
+              <button class="chat-back-button" id="chatBackButton" type="button" aria-label="Retour aux messages">Retour</button>
+            </div>
             <div class="chat-thread" id="chatThread"></div>
             <form class="composer" id="composer">
               <div class="composer-tools" aria-label="Options message">
@@ -4416,6 +4498,7 @@ async function acceptIncomingLike(likeId) {
     }
     setPanel("messages");
     renderConversations();
+    openChatView();
     showToast(`Match créé avec ${like.profile.name}`);
   } catch (error) {
     state.supabase.lastError = error.message;
@@ -5225,6 +5308,7 @@ function renderChat() {
     const messages = state.remoteMessages[matchId] || [];
 
     chatHeader.innerHTML = `
+      <button class="chat-back-button" id="chatBackButton" type="button" aria-label="Retour aux messages">Retour</button>
       <div class="chat-person">
         <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
         <div>
@@ -5243,6 +5327,7 @@ function renderChat() {
           .join("")
       : `<div class="bubble them">Vous avez matché. Lance une conversation simple et respectueuse.</div>`;
     chatThread.scrollTop = chatThread.scrollHeight;
+    document.querySelector("#chatBackButton")?.addEventListener("click", closeChatView);
     return;
   }
 
@@ -5254,6 +5339,7 @@ function renderChat() {
   const profile = profiles.find((item) => item.id === conversation.id);
 
   chatHeader.innerHTML = `
+    <button class="chat-back-button" id="chatBackButton" type="button" aria-label="Retour aux messages">Retour</button>
     <div class="chat-person">
       <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
       <div>
@@ -5267,6 +5353,7 @@ function renderChat() {
     .map(([side, text]) => `<div class="bubble ${side}">${renderMessageContent(text)}</div>`)
     .join("");
   chatThread.scrollTop = chatThread.scrollHeight;
+  document.querySelector("#chatBackButton")?.addEventListener("click", closeChatView);
 }
 
 async function submitMessage(event) {
@@ -5334,6 +5421,8 @@ function setPanel(panel) {
   state.activePanel = panel;
   if (panel === "messages") {
     clearUnreadForConversation(state.activeConversation);
+  } else {
+    closeChatView();
   }
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.classList.toggle("active", button.dataset.panel === panel);
@@ -5458,7 +5547,23 @@ conversationList.addEventListener("click", (event) => {
   state.activeConversation = button.dataset.conversation;
   clearUnreadForConversation(state.activeConversation);
   renderConversations();
+  openChatView();
 });
+
+document.querySelector("#chatBackButton")?.addEventListener("click", closeChatView);
+
+function openChatView() {
+  const panel = document.querySelector("#messagesPanel");
+  if (panel) panel.classList.add("chat-open");
+  document.querySelector("#chatThread")?.scrollTo(0, document.querySelector("#chatThread").scrollHeight);
+}
+
+function closeChatView() {
+  const panel = document.querySelector("#messagesPanel");
+  if (panel) panel.classList.remove("chat-open");
+  state.activeConversation = "";
+  renderConversations();
+}
 
 incomingLikeList?.addEventListener("click", (event) => {
   const acceptButton = event.target.closest(".accept-like-button");
@@ -5496,6 +5601,13 @@ restoreAuthSession();
 checkSupabaseStatus();
 loadRemoteAnnonces();
 subscribeAnnoncesRealtime();
+
+// PWA — Service Worker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
 
 </script>
   </body>
