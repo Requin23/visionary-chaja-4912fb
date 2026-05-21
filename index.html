@@ -4244,15 +4244,131 @@ async function toggleVoiceRecording() {
   }
 }
 
+// ── Web Push ────────────────────────────────────────────────
+const VAPID_PUBLIC_KEY = "wu-UP72iQAL7alsjuU16Py_YgrCKg6ONMCmYN9auoTkYBrxcxGwhp5PwKpBdtPNB6Q8U6Nn6xECabpBUCgfdZA";
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = atob(base64);
+  return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
+}
+
+async function savePushSubscription(subscription) {
+  const user = currentUser();
+  if (!user || !hasSupabaseConfig()) return;
+
+  const sub = subscription.toJSON();
+  try {
+    await supabaseFetch("/rest/v1/push_subscriptions?on_conflict=user_id,endpoint", {
+      method: "POST",
+      prefer: "resolution=merge-duplicates,return=minimal",
+      body: [{
+        user_id: user.id,
+        endpoint: sub.endpoint,
+        p256dh: sub.keys?.p256dh || "",
+        auth: sub.keys?.auth || "",
+      }],
+    });
+  } catch (error) {
+    state.supabase.lastError = error.message;
+  }
+}
+
+async function removePushSubscription(endpoint) {
+  const user = currentUser();
+  if (!user || !hasSupabaseConfig()) return;
+  try {
+    await supabaseFetch(
+      `/rest/v1/push_subscriptions?user_id=eq.${user.id}&endpoint=eq.${encodeURIComponent(endpoint)}`,
+      { method: "DELETE" }
+    );
+  } catch { /* silencieux */ }
+}
+
 async function requestMessageNotifications() {
   if (!("Notification" in window)) {
-    showToast("Notifications navigateur non disponibles ici");
+    showToast("Notifications non disponibles sur ce navigateur");
     return;
   }
 
-  const permission = await Notification.requestPermission();
-  showToast(permission === "granted" ? "Notifications activées" : "Notifications non activées");
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    // Fallback : notifications simples sans push
+    const permission = await Notification.requestPermission();
+    showToast(permission === "granted" ? "Notifications activées" : "Notifications refusées");
+    return;
+  }
+
+  // Web Push complet
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      showToast("Notifications refusées");
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    let subscription = await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      });
+    }
+
+    await savePushSubscription(subscription);
+    state.notificationsReady = true;
+    localStorage.setItem("mbifeSeenMessageIds", JSON.stringify(state.seenMessageIds));
+
+    // Mettre à jour le bouton
+    const btn = document.querySelector("#notificationButton");
+    if (btn) {
+      btn.textContent = "Notifs ✓";
+      btn.style.color = "var(--mint)";
+    }
+
+    showToast("Notifications push activées");
+    recordRemoteEvent("push_subscribed", { endpoint: subscription.endpoint.slice(0, 40) });
+  } catch (error) {
+    showToast("Erreur notifications : " + (error.message || "inconnue"));
+  }
 }
+
+async function unsubscribePushNotifications() {
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) {
+      await removePushSubscription(subscription.endpoint);
+      await subscription.unsubscribe();
+    }
+    const btn = document.querySelector("#notificationButton");
+    if (btn) {
+      btn.textContent = "Notifications";
+      btn.style.color = "";
+    }
+    showToast("Notifications désactivées");
+  } catch { /* silencieux */ }
+}
+
+async function checkAndRestorePushState() {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+  if (Notification.permission !== "granted") return;
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) {
+      const btn = document.querySelector("#notificationButton");
+      if (btn) {
+        btn.textContent = "Notifs ✓";
+        btn.style.color = "var(--mint)";
+      }
+      state.notificationsReady = true;
+    }
+  } catch { /* silencieux */ }
+}
+// ── Fin Web Push ─────────────────────────────────────────────
 
 async function syncRemoteData() {
   if (!hasSupabaseConfig() || !currentUser()) {
@@ -5477,7 +5593,14 @@ promptButton.addEventListener("click", nextPrompt);
 composer.addEventListener("submit", submitMessage);
 photoMessageButton?.addEventListener("click", () => messagePhotoInput?.click());
 voiceMessageButton?.addEventListener("click", toggleVoiceRecording);
-notificationButton?.addEventListener("click", requestMessageNotifications);
+notificationButton?.addEventListener("click", async () => {
+  if (Notification.permission === "granted" && state.notificationsReady) {
+    await unsubscribePushNotifications();
+    state.notificationsReady = false;
+  } else {
+    await requestMessageNotifications();
+  }
+});
 messagePhotoInput?.addEventListener("change", () => {
   const file = messagePhotoInput.files?.[0];
 
@@ -5601,6 +5724,7 @@ restoreAuthSession();
 checkSupabaseStatus();
 loadRemoteAnnonces();
 subscribeAnnoncesRealtime();
+checkAndRestorePushState();
 
 // PWA — Service Worker
 if ("serviceWorker" in navigator) {

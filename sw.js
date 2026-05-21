@@ -7,7 +7,6 @@ const ASSETS = [
   "/icon-512.png",
 ];
 
-// Installation : mise en cache des ressources statiques
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE).then((cache) => cache.addAll(ASSETS))
@@ -15,7 +14,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activation : suppression des anciens caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -25,11 +23,9 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch : cache-first pour les assets, network-first pour les requêtes Supabase
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // Toujours réseau pour Supabase et APIs externes
   if (
     url.hostname.includes("supabase.co") ||
     url.hostname.includes("unsplash.com") ||
@@ -38,7 +34,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Cache-first pour tout le reste
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
@@ -48,6 +43,49 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, clone));
         return response;
       }).catch(() => caches.match("/index.html"));
+    })
+  );
+});
+
+// ── Push notifications ───────────────────────────────────────
+self.addEventListener("push", (event) => {
+  let data = { title: "mbifê", body: "Tu as un nouveau message", url: "/" };
+
+  try {
+    if (event.data) {
+      data = { ...data, ...event.data.json() };
+    }
+  } catch { /* payload non JSON */ }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
+      tag: data.tag || "mbife-message",
+      renotify: true,
+      data: { url: data.url || "/" },
+      vibrate: [200, 100, 200],
+    })
+  );
+});
+
+// Clic sur la notification → ouvrir l'app sur le panneau messages
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = event.notification.data?.url || "/";
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && "focus" in client) {
+          client.postMessage({ type: "NOTIFICATION_CLICK", url: target });
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(target);
+      }
     })
   );
 });
