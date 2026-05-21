@@ -1158,7 +1158,6 @@ blockquote {
 
 /* Annonces */
 .annonces-layout {
-  display: grid;
   grid-template-columns: minmax(19rem, 34rem) minmax(17rem, 1fr);
   gap: 1rem;
   align-items: start;
@@ -3699,9 +3698,17 @@ async function loadIncomingLikes() {
     state.remoteIncomingLikes = visibleRows
       .map((like) => ({
         ...like,
-        profile: profilesByUserId[like.liker_user_id] || null,
+        profile: profilesByUserId[like.liker_user_id] || {
+          id: like.liker_user_id,
+          name: "Membre mbifê",
+          age: "—",
+          photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
+          city: "",
+          score: 0,
+          remote: true,
+        },
       }))
-      .filter((like) => like.profile && !matchedUserIds.has(like.liker_user_id));
+      .filter((like) => !matchedUserIds.has(like.liker_user_id));
 
     trackNewLikes(state.remoteIncomingLikes);
   } catch (error) {
@@ -3968,6 +3975,19 @@ function subscribeLikesRealtime() {
               );
               if (rows?.[0]) profile = normalizeRemoteProfile(rows[0], state.currentProfileRecord);
             } catch { /* silent */ }
+          }
+
+          // Always show the like even if profile fetch failed
+          if (!profile) {
+            profile = {
+              id: rec.liker_user_id,
+              name: "Membre mbifê",
+              age: "—",
+              photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
+              city: "",
+              score: 0,
+              remote: true,
+            };
           }
 
           const enriched = { ...rec, profile };
