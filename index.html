@@ -2098,6 +2098,32 @@ blockquote {
   }
 }
 
+
+.shared-interests-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+.shared-label {
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-weight: 750;
+  flex-shrink: 0;
+}
+.shared-interest {
+  border: 1px solid rgba(28,156,131,0.35);
+  border-radius: 999px;
+  background: #e8fff7;
+  color: #0f6e56;
+  padding: 0.18rem 0.55rem;
+  font-size: 0.74rem;
+  font-weight: 750;
+}
+
 </style>
   </head>
   <body>
@@ -3307,7 +3333,73 @@ async function saveProfile(event) {
   }
 }
 
-function normalizeRemoteProfile(row) {
+function computeCompatibility(myProfile, theirRow) {
+  if (!myProfile) return { score: 75, traits: [], sharedInterests: [] };
+
+  const myInterests = (myProfile.interests || []).map((i) => String(i).toLowerCase().trim());
+  const theirInterests = (theirRow.interests || []).map((i) => String(i).toLowerCase().trim());
+  const shared = myInterests.filter((i) => theirInterests.includes(i));
+  const interestScore = myInterests.length
+    ? Math.round((shared.length / Math.max(myInterests.length, theirInterests.length)) * 100)
+    : 50;
+
+  const myIntent = String(myProfile.intent || "").toLowerCase();
+  const theirIntent = String(theirRow.intent || "").toLowerCase();
+  const intentKeywords = ["sérieux", "serious", "amitié", "amour", "sortie", "activité", "discussi"];
+  const myIntentKeys = intentKeywords.filter((k) => myIntent.includes(k));
+  const theirIntentKeys = intentKeywords.filter((k) => theirIntent.includes(k));
+  const intentOverlap = myIntentKeys.filter((k) => theirIntentKeys.includes(k));
+  const intentScore = myIntentKeys.length && theirIntentKeys.length
+    ? Math.round((intentOverlap.length / Math.max(myIntentKeys.length, theirIntentKeys.length)) * 100)
+    : 60;
+
+  const myCity = String(myProfile.city || "").toLowerCase().trim();
+  const theirCity = String(theirRow.city || "").toLowerCase().trim();
+  const cityScore = myCity && theirCity && myCity === theirCity ? 100 : 50;
+
+  const myAge = Number(myProfile.age || 0);
+  const theirAge = Number(theirRow.age || 0);
+  const ageDiff = myAge && theirAge ? Math.abs(myAge - theirAge) : 10;
+  const ageScore = Math.max(0, 100 - ageDiff * 5);
+
+  const myBioLen = String(myProfile.bio || "").length;
+  const theirBioLen = String(theirRow.bio || "").length;
+  const profileScore = (myBioLen > 30 && theirBioLen > 30) ? 85 : 60;
+
+  const score = Math.round(
+    interestScore * 0.35 +
+    intentScore   * 0.25 +
+    cityScore     * 0.15 +
+    ageScore      * 0.15 +
+    profileScore  * 0.10
+  );
+
+  const traits = [
+    ["Intérêts communs", interestScore],
+    ["Intention", intentScore],
+    ["Proximité", cityScore],
+    ["Tranche d'âge", ageScore],
+  ];
+
+  return { score: Math.min(99, Math.max(10, score)), traits, sharedInterests: shared };
+}
+
+function normalizeRemoteProfile(row, myProfile) {
+  const compat = computeCompatibility(myProfile, row);
+  const interests = row.interests?.length ? row.interests : ["discussion", "respect", "découverte"];
+
+  const sharedPrompts = compat.sharedInterests.length
+    ? [
+        `Vous aimez tous les deux : ${compat.sharedInterests.slice(0, 2).join(", ")} — qu'est-ce que ça t'a apporté ?`,
+        `Tu es à ${row.city || "ta ville"} — quel endroit te ressemble le plus ?`,
+        "Quel type de conversation te met vite à l'aise ?",
+      ]
+    : [
+        `Qu'est-ce qui t'a donné envie de tester mbifê ?`,
+        "Quel type de conversation te met vite à l'aise ?",
+        "Quel rendez-vous simple te ressemble le plus ?",
+      ];
+
   return {
     id: row.id,
     remote: true,
@@ -3317,24 +3409,16 @@ function normalizeRemoteProfile(row) {
     distance: row.distance_km || 0,
     tags: row.tags?.length ? row.tags : ["serious"],
     verified: Boolean(row.is_verified),
-    score: row.compatibility_score || 80,
+    score: compat.score,
+    sharedInterests: compat.sharedInterests,
     photo:
       row.photo_url ||
       "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
     bio: row.bio || "Profil mbifê connecté à Supabase.",
     intent: row.intent || "Rencontrer quelqu'un avec sincérité.",
-    interests: row.interests?.length ? row.interests : ["discussion", "respect", "découverte"],
-    traits: [
-      ["Rythme de vie", Math.max(62, (row.compatibility_score || 80) - 5)],
-      ["Intentions", row.compatibility_score || 80],
-      ["Humour", Math.min(96, (row.compatibility_score || 80) + 4)],
-      ["Valeurs", Math.min(98, (row.compatibility_score || 80) + 7)],
-    ],
-    prompts: [
-      `Qu'est-ce qui t'a donné envie de tester mbifê ?`,
-      "Quel type de conversation te met vite à l'aise ?",
-      "Quel rendez-vous simple te ressemble le plus ?",
-    ],
+    interests,
+    traits: compat.traits,
+    prompts: sharedPrompts,
     dateIdeas: [
       ["Café sans pression", "Un premier échange court, simple et facile à prolonger."],
       ["Balade tranquille", "Un rendez-vous léger pour découvrir l'autre sans forcer."],
@@ -3358,7 +3442,7 @@ async function loadRemoteProfiles() {
     );
     state.remoteProfiles = (rows || [])
       .filter((row) => row.user_id !== currentUser().id)
-      .map(normalizeRemoteProfile);
+      .map((row) => normalizeRemoteProfile(row, state.currentProfileRecord));
     state.supabase.connected = true;
     state.supabase.lastError = "";
   } catch (error) {
@@ -3406,7 +3490,7 @@ async function loadIncomingLikes() {
     if (likerIds.length) {
       const profileRows = await supabaseJson(`/rest/v1/profiles?user_id=in.(${likerIds.join(",")})&select=*`);
       (profileRows || []).forEach((profile) => {
-        profilesByUserId[profile.user_id] = normalizeRemoteProfile(profile);
+        profilesByUserId[profile.user_id] = normalizeRemoteProfile(profile, state.currentProfileRecord);
       });
     }
 
@@ -3449,7 +3533,7 @@ async function loadRemoteMatches() {
         `/rest/v1/profiles?id=in.(${profileIds.join(",")})&select=*`,
       );
       (remoteProfileRows || []).forEach((profile) => {
-        profilesById[profile.id] = normalizeRemoteProfile(profile);
+        profilesById[profile.id] = normalizeRemoteProfile(profile, state.currentProfileRecord);
       });
     }
 
@@ -3902,10 +3986,14 @@ function renderProfile() {
 function renderInsights(profile) {
   insightName.textContent = `${profile.name}, ${profile.city}`;
   scoreValue.textContent = `${profile.score}%`;
+
+  const deg = profile.score * 3.6;
+  const color = profile.score >= 75 ? "var(--mint)" : profile.score >= 50 ? "var(--gold)" : "var(--rose)";
   scoreRing.style.background = `
     radial-gradient(circle at center, white 58%, transparent 59%),
-    conic-gradient(var(--rose) 0deg, var(--gold) ${profile.score * 2.3}deg, var(--mint) ${profile.score * 3.2}deg, #ded6ca ${profile.score * 3.2}deg)
+    conic-gradient(${color} 0deg, ${color} ${deg}deg, #ded6ca ${deg}deg)
   `;
+
   traitList.innerHTML = profile.traits
     .map(
       ([label, value]) => `
@@ -3916,6 +4004,12 @@ function renderInsights(profile) {
       `,
     )
     .join("");
+
+  if (profile.sharedInterests?.length) {
+    const shared = profile.sharedInterests.slice(0, 4).map((i) => `<span class="shared-interest">${escapeHtml(i)}</span>`).join("");
+    traitList.innerHTML += `<div class="shared-interests-row"><span class="shared-label">En commun :</span>${shared}</div>`;
+  }
+
   promptText.textContent = profile.prompts[0];
   renderDateIdeas(profile);
 }
