@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>mbifê - rencontres sincères</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />
@@ -18,20 +19,21 @@
     <style>
 :root {
   color-scheme: light;
-  --ink: #1c1b22;
-  --muted: #696675;
-  --soft: #f5f1ea;
-  --surface: #fffaf3;
+  --rose: #ff4458;
+  --gold: #ffa500;
+  --mint: #00c9a7;
+  --ink: #1a1a2e;
+  --muted: #7c7c9a;
+  --soft: #f7f7fc;
+  --surface: #ffffff;
   --panel: #ffffff;
-  --line: rgba(28, 27, 34, 0.12);
-  --rose: #e6536a;
-  --plum: #583456;
-  --mint: #1c9c83;
-  --gold: #c6812e;
-  --blue: #3a72db;
-  --shadow: 0 18px 55px rgba(32, 26, 20, 0.16);
+  --line: rgba(26, 26, 46, 0.10);
+  --shadow: 0 20px 60px rgba(26, 26, 46, 0.18);
+  --gradient-brand: linear-gradient(135deg, #ff4458 0%, #ff6b35 100%);
+  --plum: #6d315f;
+  --blue: #3772ff;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 }
 
@@ -58,7 +60,8 @@ body {
 
 button,
 input,
-textarea {
+textarea,
+select {
   max-width: 100%;
   font: inherit;
 }
@@ -200,7 +203,8 @@ canvas {
   gap: 0.5rem;
 }
 
-.auth-form input {
+.auth-form input,
+.auth-form select {
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: 0.5rem;
@@ -2418,6 +2422,1015 @@ blockquote {
   font-weight: 750;
 }
 
+/* --- mbifê dating app refresh: Tinder/Bumble/Hinge inspired --- */
+body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 68, 88, 0.14), transparent 30rem),
+    radial-gradient(circle at 88% 18%, rgba(0, 201, 167, 0.12), transparent 28rem),
+    var(--soft);
+  font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+.brand-name,
+.profile-title h2,
+.about-mark,
+.section-heading h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  letter-spacing: 0;
+}
+
+.app-shell {
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  background: var(--soft);
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 35;
+  width: 4.5rem;
+  min-height: 100vh;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 1rem 0.7rem;
+  box-shadow: 16px 0 46px rgba(26, 26, 46, 0.06);
+  transition: width 220ms ease, box-shadow 220ms ease;
+}
+
+.sidebar:hover,
+.sidebar:focus-within {
+  width: 18rem;
+  box-shadow: 24px 0 70px rgba(26, 26, 46, 0.16);
+}
+
+.brand,
+.side-nav {
+  min-width: 15.6rem;
+}
+
+.brand-mark {
+  flex: 0 0 auto;
+  border-radius: 1.05rem;
+  background: var(--gradient-brand);
+  box-shadow: 0 14px 34px rgba(255, 68, 88, 0.32);
+}
+
+.brand > div:last-child,
+.quality-panel,
+.auth-panel {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-0.45rem);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.sidebar:hover .brand > div:last-child,
+.sidebar:focus-within .brand > div:last-child,
+.sidebar:hover .quality-panel,
+.sidebar:focus-within .quality-panel,
+.sidebar:hover .auth-panel,
+.sidebar:focus-within .auth-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.nav-item {
+  position: relative;
+  justify-content: flex-start;
+  gap: 0.85rem;
+  min-height: 3.2rem;
+  border-radius: 1rem;
+  color: var(--muted);
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.nav-item::before {
+  display: grid;
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: 0 0 2.15rem;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--soft);
+  font-size: 1.1rem;
+  content: "•";
+}
+
+.nav-item[data-panel="discover"]::before { content: "🔥"; }
+.nav-item[data-panel="profile"]::before { content: "👤"; }
+.nav-item[data-panel="matches"]::before { content: "⭐"; }
+.nav-item[data-panel="messages"]::before { content: "💬"; }
+.nav-item[data-panel="viral"]::before { content: "📢"; }
+.nav-item[data-panel="about"]::before { content: "ℹ️"; }
+.nav-item[data-panel="settings"]::before { content: "⚙️"; }
+
+.nav-item.active,
+.nav-item:hover {
+  border-color: transparent;
+  background: rgba(255, 68, 88, 0.1);
+  color: var(--rose);
+  transform: translateX(0.08rem);
+}
+
+.nav-item span,
+.nav-item strong {
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.sidebar:hover .nav-item span,
+.sidebar:focus-within .nav-item span,
+.sidebar:hover .nav-item strong,
+.sidebar:focus-within .nav-item strong {
+  opacity: 1;
+}
+
+.nav-item strong {
+  margin-left: auto;
+  background: #fff0f2;
+  color: var(--rose);
+}
+
+.workspace {
+  padding: 1.1rem clamp(1rem, 3vw, 2.2rem) 2rem;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  margin: -1.1rem calc(clamp(1rem, 3vw, 2.2rem) * -1) 1rem;
+  padding: 1rem clamp(1rem, 3vw, 2.2rem);
+  background: rgba(247, 247, 252, 0.82);
+  backdrop-filter: blur(18px);
+}
+
+.topbar-copy h1 {
+  font-size: clamp(1.55rem, 3vw, 2.6rem);
+}
+
+.status-pill,
+.filter-chip,
+.ghost-button,
+.primary-button,
+.send-button,
+.composer-tool,
+.icon-button {
+  border-radius: 999px;
+}
+
+.primary-button,
+.send-button,
+.accept-like-button,
+#onboardingNext,
+#applyFilters,
+.auth-actions button:last-child {
+  background: var(--gradient-brand);
+  box-shadow: 0 14px 30px rgba(255, 68, 88, 0.26);
+}
+
+#filterDrawerButton {
+  display: inline-grid;
+  min-width: 2.75rem;
+  place-items: center;
+  border: 0;
+  background: var(--ink);
+  color: #fff;
+}
+
+.panel.active {
+  animation: panelFade 200ms ease both;
+}
+
+@keyframes panelFade {
+  from { opacity: 0; transform: translateY(0.35rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#discoverPanel {
+  grid-template-columns: minmax(18rem, 44rem) minmax(16rem, 24rem);
+  align-items: start;
+}
+
+.deck-area {
+  align-items: center;
+}
+
+.profile-card {
+  position: relative;
+  width: min(100%, 31rem);
+  min-height: min(72vh, 42rem);
+  overflow: hidden;
+  border: 0;
+  border-radius: 20px;
+  background: #111;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  transform-style: preserve-3d;
+  touch-action: pan-y;
+  transition: transform 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile-card:hover {
+    transform: perspective(1100px) rotateX(1.5deg) rotateY(-2.2deg) translateY(-0.3rem);
+    box-shadow: 0 38px 95px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.profile-card.is-flying-like {
+  transform: translateX(125vw) rotate(18deg) !important;
+  opacity: 0;
+}
+
+.profile-card.is-flying-pass {
+  transform: translateX(-125vw) rotate(-18deg) !important;
+  opacity: 0;
+}
+
+.profile-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+}
+
+.photo-wash {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, transparent 32%, rgba(0, 0, 0, 0.86) 100%),
+    linear-gradient(0deg, rgba(26, 26, 46, 0.52), transparent 42%);
+}
+
+.profile-content {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.3rem;
+  color: #fff;
+}
+
+.profile-topline {
+  align-items: flex-start;
+}
+
+.badge-row {
+  flex-wrap: wrap;
+}
+
+.badge,
+.profile-badge,
+.distance {
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+
+.badge.verified {
+  background: rgba(0, 201, 167, 0.92);
+  border-color: rgba(0, 201, 167, 0.92);
+}
+
+.profile-title {
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.profile-title h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.2rem, 8vw, 3.2rem);
+  line-height: 0.92;
+  text-shadow: 0 8px 34px rgba(0, 0, 0, 0.42);
+}
+
+.profile-title span {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.profile-bio {
+  max-width: 36ch;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+}
+
+.interest,
+.intent-card {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.intent-card {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.compatibility-orb {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 4;
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: conic-gradient(var(--mint) var(--score-deg), rgba(255, 255, 255, 0.26) 0);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.34);
+}
+
+.compatibility-orb::after {
+  position: absolute;
+  inset: 0.42rem;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(26, 26, 46, 0.66);
+  content: "";
+}
+
+.swipe-overlay {
+  position: absolute;
+  top: 2rem;
+  z-index: 5;
+  border: 0.22rem solid currentColor;
+  border-radius: 0.7rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+.swipe-overlay.like {
+  left: 1.3rem;
+  color: var(--mint);
+}
+
+.swipe-overlay.nope {
+  right: 1.3rem;
+  color: var(--rose);
+  transform: rotate(12deg);
+}
+
+.actions {
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.action-button {
+  display: grid;
+  width: 3.8rem;
+  height: 3.8rem;
+  min-width: 3.8rem;
+  min-height: 3.8rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 18px 38px rgba(26, 26, 46, 0.16);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.action-button small {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.action-button span {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.action-button.pass {
+  border: 2px solid var(--rose);
+  color: var(--rose);
+}
+
+.action-button.pass:hover {
+  box-shadow: 0 18px 42px rgba(255, 68, 88, 0.38);
+}
+
+.action-button.like {
+  border: 0;
+  background: var(--gradient-brand);
+  color: #fff;
+  box-shadow: 0 18px 48px rgba(255, 68, 88, 0.42);
+}
+
+.action-button.spark {
+  border: 0;
+  background: var(--gold);
+  color: #fff;
+  box-shadow: 0 18px 42px rgba(255, 165, 0, 0.34);
+}
+
+.action-button.report,
+.action-button.secondary,
+.action-button.block {
+  width: 3.1rem;
+  height: 3.1rem;
+  min-width: 3.1rem;
+  min-height: 3.1rem;
+}
+
+.action-button.block {
+  border: 1px solid rgba(26, 26, 46, 0.14);
+  color: var(--ink);
+}
+
+.action-button.bounce {
+  animation: actionBounce 300ms ease;
+}
+
+@keyframes actionBounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(0.85); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.match-showcase {
+  margin-bottom: 1.1rem;
+}
+
+.match-showcase h3,
+.conversation-section-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.new-match-strip {
+  display: grid;
+  grid-auto-columns: 5.25rem;
+  grid-auto-flow: column;
+  gap: 0.9rem;
+  overflow-x: auto;
+  padding: 0.2rem 0 0.7rem;
+  scroll-snap-type: x mandatory;
+}
+
+.new-match {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  scroll-snap-align: start;
+}
+
+.new-match img {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px rgba(255, 68, 88, 0.7);
+  animation: matchRing 1.9s ease infinite;
+}
+
+@keyframes matchRing {
+  0%, 100% { box-shadow: 0 0 0 3px #fff, 0 0 0 6px rgba(255, 68, 88, 0.65); }
+  50% { box-shadow: 0 0 0 3px #fff, 0 0 0 9px rgba(255, 68, 88, 0.18); }
+}
+
+.conversation {
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.conversation:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 18px 38px rgba(26, 26, 46, 0.12);
+}
+
+.chat-window {
+  overflow: hidden;
+  border-radius: 1.4rem;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.chat-thread {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(255, 68, 88, 0.07), transparent 14rem),
+    #fff;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.message-row.me {
+  justify-content: flex-end;
+}
+
+.message-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bubble-wrap {
+  display: grid;
+  gap: 0.2rem;
+  max-width: min(76%, 34rem);
+}
+
+.bubble {
+  max-width: none;
+  border-radius: 1.2rem 1.2rem 1.2rem 0.28rem;
+  background: #f0f0f7;
+  color: var(--ink);
+  box-shadow: 0 10px 26px rgba(26, 26, 46, 0.08);
+}
+
+.bubble.me {
+  border-radius: 1.2rem 1.2rem 0.28rem 1.2rem;
+  background: var(--gradient-brand);
+  color: #fff;
+}
+
+.message-time {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.message-row.me .message-time {
+  text-align: right;
+}
+
+.composer {
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+
+.composer-main,
+#messageInput {
+  border-radius: 999px;
+  background: #f0f0f7;
+}
+
+#messageInput {
+  border: 0;
+}
+
+.toast {
+  border-radius: 12px;
+  box-shadow: 0 20px 55px rgba(26, 26, 46, 0.24);
+  transform: translate(-50%, 1rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.toast.show {
+  transform: translate(-50%, 0);
+}
+
+.skeleton-card {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.16) 42%, transparent 62%),
+    linear-gradient(180deg, #dedeea, #c9c9d8);
+  background-size: 220% 100%, 100% 100%;
+  animation: shimmer 1.25s linear infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: -220% 0, 0 0; }
+}
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+.filter-drawer-backdrop,
+.onboarding-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: none;
+  background: rgba(26, 26, 46, 0.56);
+  backdrop-filter: blur(14px);
+}
+
+.filter-drawer-backdrop.is-open,
+.onboarding-modal.is-open {
+  display: block;
+}
+
+.filter-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  width: min(100%, 320px);
+  height: 100%;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  overflow-y: auto;
+  background: #fff;
+  padding: 1.1rem;
+  box-shadow: -20px 0 60px rgba(26, 26, 46, 0.22);
+  transform: translateX(100%);
+  transition: transform 220ms ease;
+}
+
+.filter-drawer-backdrop.is-open .filter-drawer {
+  transform: translateX(0);
+}
+
+.drawer-header,
+.drawer-actions,
+.settings-row,
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.drawer-header h2,
+.filter-group h3,
+.settings-card h2 {
+  margin: 0;
+}
+
+.filter-group {
+  display: grid;
+  gap: 0.65rem;
+  padding-block: 0.4rem;
+}
+
+.range-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.filter-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--rose);
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+  padding: 0.55rem 0.8rem;
+  font-weight: 800;
+}
+
+.filter-pill.active {
+  border-color: transparent;
+  background: rgba(255, 68, 88, 0.12);
+  color: var(--rose);
+}
+
+.onboarding-card {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  max-width: 34rem;
+  height: min(100%, 46rem);
+  margin: auto;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  border-radius: 1.8rem;
+  background: #fff;
+  padding: 1.2rem;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
+}
+
+.onboarding-progress {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.35rem;
+}
+
+.onboarding-progress span {
+  height: 0.36rem;
+  border-radius: 999px;
+  background: #ececf5;
+}
+
+.onboarding-progress span.active {
+  background: var(--gradient-brand);
+}
+
+.onboarding-step {
+  display: grid;
+  align-content: center;
+  gap: 1rem;
+  animation: onboardingSlide 220ms ease both;
+}
+
+@keyframes onboardingSlide {
+  from { opacity: 0; transform: translateX(1.4rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.onboarding-step h2 {
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 3.4rem);
+}
+
+.onboarding-step p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.onboarding-step input,
+.onboarding-step textarea,
+.onboarding-step select,
+.profile-form select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--soft);
+  padding: 0.95rem 1rem;
+}
+
+#onboardingNext {
+  width: 100%;
+  min-height: 3.25rem;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 900;
+}
+
+.settings-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.settings-card {
+  display: grid;
+  gap: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: #fff;
+  padding: 1rem;
+  box-shadow: 0 14px 38px rgba(26, 26, 46, 0.07);
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-flex;
+  width: 3.2rem;
+  height: 1.8rem;
+}
+
+.toggle-switch input {
+  position: absolute;
+  opacity: 0;
+}
+
+.toggle-switch span {
+  width: 100%;
+  border-radius: 999px;
+  background: #d9d9e7;
+  transition: background 160ms ease;
+}
+
+.toggle-switch span::after {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.22rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(26, 26, 46, 0.22);
+  transition: transform 160ms ease;
+  content: "";
+}
+
+.toggle-switch input:checked + span {
+  background: var(--gradient-brand);
+}
+
+.toggle-switch input:checked + span::after {
+  transform: translateX(1.36rem);
+}
+
+.blocked-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.blocked-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 0.7rem;
+}
+
+.danger-button {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 68, 88, 0.12);
+  color: var(--rose);
+  padding: 0.72rem 0.95rem;
+  font-weight: 900;
+}
+
+.mobile-account-card {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  #discoverPanel,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 5.7rem;
+  }
+
+  .app-shell {
+    display: block;
+  }
+
+  .sidebar {
+    display: none !important;
+  }
+
+  .workspace {
+    padding: 0.85rem 0.85rem 6.3rem;
+  }
+
+  .topbar {
+    margin: -0.85rem -0.85rem 0.75rem;
+    padding: 0.85rem;
+  }
+
+  .hero-kpis {
+    display: none;
+  }
+
+  .topbar-copy h1 {
+    font-size: 1.45rem;
+    line-height: 1;
+  }
+
+  .status-pill {
+    display: none;
+  }
+
+  .filters {
+    margin-inline: -0.85rem;
+    padding-inline: 0.85rem;
+    overflow-x: auto;
+  }
+
+  .profile-card {
+    width: 100%;
+    min-height: calc(100vh - 14.8rem);
+  }
+
+  .insight-panel {
+    display: none;
+  }
+
+  .mobile-account-card {
+    display: grid;
+  }
+
+  body.is-authenticated .mobile-account-card {
+    display: none;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: 5.8rem;
+    z-index: 10;
+  }
+
+  .action-button {
+    width: 3.45rem;
+    height: 3.45rem;
+    min-width: 3.45rem;
+    min-height: 3.45rem;
+  }
+
+  .mobile-bottom-nav {
+    position: fixed;
+    right: 0.75rem;
+    bottom: 0.65rem;
+    left: 0.75rem;
+    z-index: 80;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.25rem;
+    border: 1px solid rgba(26, 26, 46, 0.1);
+    border-radius: 1.45rem;
+    background: rgba(255, 255, 255, 0.93);
+    padding: 0.35rem;
+    box-shadow: 0 20px 50px rgba(26, 26, 46, 0.22);
+    backdrop-filter: blur(18px);
+  }
+
+  .mobile-bottom-nav button {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    gap: 0.08rem;
+    place-items: center;
+    border: 0;
+    border-radius: 1.05rem;
+    background: transparent;
+    color: var(--muted);
+    padding: 0.45rem 0.1rem;
+    font-weight: 800;
+  }
+
+  .mobile-bottom-nav button.active {
+    background: rgba(255, 68, 88, 0.1);
+    color: var(--rose);
+  }
+
+  .mobile-bottom-nav button[data-count]::after {
+    position: absolute;
+    top: 0.24rem;
+    right: 0.42rem;
+    min-width: 1rem;
+    border-radius: 999px;
+    background: var(--rose);
+    color: #fff;
+    padding: 0.05rem 0.28rem;
+    font-size: 0.62rem;
+    font-weight: 900;
+    content: attr(data-count);
+  }
+
+  .mobile-bottom-nav small {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.64rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .messages-layout {
+    min-height: calc(100vh - 7rem);
+  }
+
+  .chat-window {
+    border-radius: 1rem;
+  }
+
+  .onboarding-card {
+    inset: 0.7rem;
+    height: auto;
+    border-radius: 1.4rem;
+  }
+}
+
 </style>
   </head>
   <body>
@@ -2456,6 +3469,10 @@ blockquote {
             <span>À propos</span>
             <strong id="aboutCount">1</strong>
           </button>
+          <button class="nav-item" data-panel="settings" type="button">
+            <span>Paramètres</span>
+            <strong id="settingsCount">⚙</strong>
+          </button>
         </nav>
 
         <section class="quality-panel" aria-labelledby="qualityTitle">
@@ -2475,6 +3492,18 @@ blockquote {
             <input id="authName" name="name" type="text" autocomplete="name" placeholder="Nom public" />
             <input id="authEmail" name="email" type="email" autocomplete="email" placeholder="Email" />
             <input id="authPassword" name="password" type="password" autocomplete="current-password" placeholder="Mot de passe" />
+            <select id="authGender" name="gender" aria-label="Ton sexe">
+              <option value="">Je suis...</option>
+              <option value="femme">Femme</option>
+              <option value="homme">Homme</option>
+              <option value="autre">Autre</option>
+            </select>
+            <select id="authLookingFor" name="looking_for" aria-label="Profils recherchés">
+              <option value="">Je veux voir...</option>
+              <option value="femme">Des femmes</option>
+              <option value="homme">Des hommes</option>
+              <option value="tous">Tout le monde</option>
+            </select>
             <div class="auth-actions">
               <button id="loginButton" type="button">Connexion</button>
               <button id="signupButton" type="button">Inscription</button>
@@ -2497,6 +3526,9 @@ blockquote {
           </div>
           <div class="topbar-actions">
             <span class="status-pill">Bêta privée</span>
+            <button class="icon-button" id="filterDrawerButton" type="button" title="Filtres avancés">
+              <span aria-hidden="true">🎛️</span>
+            </button>
             <button class="icon-button" id="safeModeButton" type="button" aria-pressed="false" title="Activer le mode respect">
               <span aria-hidden="true">✓</span>
             </button>
@@ -2535,6 +3567,10 @@ blockquote {
               <button class="action-button report" id="reportButton" type="button" title="Signaler ce profil">
                 <span aria-hidden="true">!</span>
                 <small>Signaler</small>
+              </button>
+              <button class="action-button block" id="blockButton" type="button" title="Bloquer ce profil">
+                <span aria-hidden="true">🚫</span>
+                <small>Bloquer</small>
               </button>
             </div>
           </div>
@@ -2579,6 +3615,24 @@ blockquote {
                   <input id="profileAge" name="age" type="number" min="18" max="99" placeholder="18+" />
                 </label>
                 <label>
+                  Je suis
+                  <select id="profileGender" name="gender">
+                    <option value="">À compléter</option>
+                    <option value="femme">Femme</option>
+                    <option value="homme">Homme</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </label>
+                <label>
+                  Je veux voir
+                  <select id="profileLookingFor" name="looking_for">
+                    <option value="">Automatique</option>
+                    <option value="femme">Des femmes</option>
+                    <option value="homme">Des hommes</option>
+                    <option value="tous">Tout le monde</option>
+                  </select>
+                </label>
+                <label>
                   Ville
                   <input id="profileCity" name="city" type="text" maxlength="80" placeholder="Ta ville" />
                 </label>
@@ -2607,11 +3661,38 @@ blockquote {
           </article>
 
           <aside class="profile-status-stack">
+            <article class="about-card mobile-account-card" id="mobileAccountCard">
+              <p class="eyebrow">Compte mbifê</p>
+              <h2>Connexion</h2>
+              <p class="muted-copy" id="mobileAuthStatus">Connecte-toi pour synchroniser likes, matches et messages.</p>
+              <div class="auth-form">
+                <input id="mobileAuthName" type="text" autocomplete="name" placeholder="Nom public" />
+                <input id="mobileAuthEmail" type="email" autocomplete="email" placeholder="Email" />
+                <input id="mobileAuthPassword" type="password" autocomplete="current-password" placeholder="Mot de passe" />
+                <select id="mobileAuthGender" aria-label="Ton sexe">
+                  <option value="">Je suis...</option>
+                  <option value="femme">Femme</option>
+                  <option value="homme">Homme</option>
+                  <option value="autre">Autre</option>
+                </select>
+                <select id="mobileAuthLookingFor" aria-label="Profils recherchés">
+                  <option value="">Je veux voir...</option>
+                  <option value="femme">Des femmes</option>
+                  <option value="homme">Des hommes</option>
+                  <option value="tous">Tout le monde</option>
+                </select>
+                <div class="auth-actions">
+                  <button id="mobileLoginButton" type="button">Connexion</button>
+                  <button id="mobileSignupButton" type="button">Inscription</button>
+                </div>
+              </div>
+            </article>
             <article class="about-card">
               <p class="eyebrow">Statut</p>
               <h2 id="profileStatusTitle">Profil local</h2>
               <p class="muted-copy" id="profileStatusText">Connecte-toi pour synchroniser ton profil avec Supabase.</p>
               <button class="ghost-button profile-logout" id="profileLogoutButton" type="button" hidden>Se déconnecter</button>
+              <button class="ghost-button" data-profile-settings type="button">Ouvrir les paramètres</button>
             </article>
             <article class="about-card">
               <p class="eyebrow">Production</p>
@@ -2778,7 +3859,123 @@ blockquote {
             </article>
           </aside>
         </section>
+
+        <section class="panel settings-layout" id="settingsPanel" aria-label="Paramètres">
+          <div class="section-heading">
+            <p class="eyebrow">Contrôle</p>
+            <h2>Paramètres mbifê</h2>
+          </div>
+          <div class="settings-grid">
+            <article class="settings-card">
+              <div class="settings-card-header">
+                <div>
+                  <p class="eyebrow">Visibilité</p>
+                  <h2>Profil visible</h2>
+                </div>
+                <label class="toggle-switch">
+                  <input id="profileVisibleToggle" type="checkbox" checked />
+                  <span></span>
+                </label>
+              </div>
+              <p class="muted-copy">Désactive cette option si tu veux mettre ton profil en pause pendant les tests.</p>
+            </article>
+
+            <article class="settings-card">
+              <div class="settings-card-header">
+                <div>
+                  <p class="eyebrow">Alertes</p>
+                  <h2>Notifications</h2>
+                </div>
+                <label class="toggle-switch">
+                  <input id="notificationsToggle" type="checkbox" />
+                  <span></span>
+                </label>
+              </div>
+              <p class="muted-copy">Reçois une alerte quand un nouveau message ou un match arrive.</p>
+            </article>
+
+            <article class="settings-card">
+              <p class="eyebrow">Bloqués</p>
+              <h2>Profils bloqués</h2>
+              <div class="blocked-list" id="blockedList"></div>
+            </article>
+
+            <article class="settings-card">
+              <p class="eyebrow">Compte</p>
+              <h2>Zone sensible</h2>
+              <p class="muted-copy">Tu peux désactiver ton compte de test et te déconnecter proprement.</p>
+              <button class="danger-button" id="deactivateAccountButton" type="button">Désactiver mon compte</button>
+            </article>
+
+            <article class="settings-card">
+              <p class="eyebrow">À propos</p>
+              <h2>mbifê v1.0</h2>
+              <p class="muted-copy">Rencontres sincères, profils plus clairs, messages privés, demandes de like et blocage local.</p>
+            </article>
+          </div>
+        </section>
       </main>
+    </div>
+
+    <nav class="mobile-bottom-nav" aria-label="Navigation mobile">
+      <button class="active" data-panel="discover" type="button"><span>🔥</span><small>Découvrir</small></button>
+      <button data-panel="matches" type="button"><span>⭐</span><small>Matches</small></button>
+      <button data-panel="messages" type="button"><span>💬</span><small>Messages</small></button>
+      <button data-panel="viral" type="button"><span>📢</span><small>Annonces</small></button>
+      <button data-panel="profile" type="button"><span>👤</span><small>Profil</small></button>
+    </nav>
+
+    <div class="filter-drawer-backdrop" id="filterDrawerBackdrop" aria-hidden="true">
+      <aside class="filter-drawer" aria-label="Filtres avancés">
+        <div class="drawer-header">
+          <h2>Filtres</h2>
+          <button class="icon-button" id="filterDrawerClose" type="button" aria-label="Fermer les filtres">×</button>
+        </div>
+        <div class="drawer-body">
+          <div class="filter-group">
+            <h3>Âge</h3>
+            <div class="range-pair">
+              <label>Min <input id="filterAgeMin" type="range" min="18" max="99" value="18" /></label>
+              <label>Max <input id="filterAgeMax" type="range" min="18" max="99" value="99" /></label>
+            </div>
+            <p class="muted-copy"><span id="filterAgeLabel">18 - 99 ans</span></p>
+          </div>
+          <div class="filter-group">
+            <h3>Distance</h3>
+            <input id="filterDistance" type="range" min="5" max="999" step="5" value="999" />
+            <p class="muted-copy"><span id="filterDistanceLabel">999 km max</span></p>
+          </div>
+          <div class="filter-group">
+            <h3>Genre</h3>
+            <div class="pill-row" data-filter-pills="genres">
+              <button class="filter-pill" data-value="femme" type="button">Femme</button>
+              <button class="filter-pill" data-value="homme" type="button">Homme</button>
+              <button class="filter-pill" data-value="autre" type="button">Autre</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <h3>Intention</h3>
+            <div class="pill-row" data-filter-pills="intentions">
+              <button class="filter-pill" data-value="sérieux" type="button">Sérieux</button>
+              <button class="filter-pill" data-value="amitié" type="button">Amitié</button>
+              <button class="filter-pill" data-value="discussion" type="button">Discussion</button>
+              <button class="filter-pill" data-value="sortie" type="button">Sortie</button>
+            </div>
+          </div>
+        </div>
+        <div class="drawer-actions">
+          <button class="ghost-button" id="resetFilters" type="button">Réinitialiser</button>
+          <button class="primary-button" id="applyFilters" type="button">Appliquer</button>
+        </div>
+      </aside>
+    </div>
+
+    <div class="onboarding-modal" id="onboardingModal" aria-hidden="true">
+      <div class="onboarding-card" role="dialog" aria-modal="true" aria-label="Créer ton profil mbifê">
+        <div class="onboarding-progress" id="onboardingProgress"></div>
+        <div class="onboarding-step" id="onboardingStep"></div>
+        <button id="onboardingNext" type="button">Continuer</button>
+      </div>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -2809,6 +4006,23 @@ const supabaseConfig = {
 const state = {
   activePanel: "discover",
   activeFilter: "all",
+  filters: readStoredJson("mbifeFilters", {
+    ageMin: 18,
+    ageMax: 99,
+    distanceMax: 999,
+    genres: [],
+    intentions: [],
+  }),
+  blockedUsers: new Set(readStoredJson("mbife_blocked", [])),
+  blockedProfiles: readStoredJson("mbifeBlockedProfiles", {}),
+  profileVisible: localStorage.getItem("mbifeProfileVisible") !== "false",
+  onboardingStep: 0,
+  swipe: {
+    active: false,
+    startX: 0,
+    startY: 0,
+    currentX: 0,
+  },
   index: 0,
   history: [],
   matches: [],
@@ -2892,15 +4106,27 @@ const authForm = document.querySelector("#authForm");
 const authName = document.querySelector("#authName");
 const authEmail = document.querySelector("#authEmail");
 const authPassword = document.querySelector("#authPassword");
+const authGender = document.querySelector("#authGender");
+const authLookingFor = document.querySelector("#authLookingFor");
 const loginButton = document.querySelector("#loginButton");
 const signupButton = document.querySelector("#signupButton");
 const logoutButton = document.querySelector("#logoutButton");
 const profileLogoutButton = document.querySelector("#profileLogoutButton");
+const mobileAuthStatus = document.querySelector("#mobileAuthStatus");
+const mobileAuthName = document.querySelector("#mobileAuthName");
+const mobileAuthEmail = document.querySelector("#mobileAuthEmail");
+const mobileAuthPassword = document.querySelector("#mobileAuthPassword");
+const mobileAuthGender = document.querySelector("#mobileAuthGender");
+const mobileAuthLookingFor = document.querySelector("#mobileAuthLookingFor");
+const mobileLoginButton = document.querySelector("#mobileLoginButton");
+const mobileSignupButton = document.querySelector("#mobileSignupButton");
 const profileForm = document.querySelector("#profileForm");
 const profilePreview = document.querySelector("#profilePreview");
 const profilePhoto = document.querySelector("#profilePhoto");
 const profileName = document.querySelector("#profileName");
 const profileAge = document.querySelector("#profileAge");
+const profileGender = document.querySelector("#profileGender");
+const profileLookingFor = document.querySelector("#profileLookingFor");
 const profileCity = document.querySelector("#profileCity");
 const profileDistance = document.querySelector("#profileDistance");
 const profileBio = document.querySelector("#profileBio");
@@ -2909,12 +4135,183 @@ const profileInterests = document.querySelector("#profileInterests");
 const profileStatusTitle = document.querySelector("#profileStatusTitle");
 const profileStatusText = document.querySelector("#profileStatusText");
 const refreshBackendButton = document.querySelector("#refreshBackendButton");
+const mobileNavButtons = document.querySelectorAll(".mobile-bottom-nav button");
+const filterDrawerButton = document.querySelector("#filterDrawerButton");
+const filterDrawerBackdrop = document.querySelector("#filterDrawerBackdrop");
+const filterDrawerClose = document.querySelector("#filterDrawerClose");
+const filterAgeMin = document.querySelector("#filterAgeMin");
+const filterAgeMax = document.querySelector("#filterAgeMax");
+const filterAgeLabel = document.querySelector("#filterAgeLabel");
+const filterDistance = document.querySelector("#filterDistance");
+const filterDistanceLabel = document.querySelector("#filterDistanceLabel");
+const applyFiltersButton = document.querySelector("#applyFilters");
+const resetFiltersButton = document.querySelector("#resetFilters");
+const blockButton = document.querySelector("#blockButton");
+const blockedList = document.querySelector("#blockedList");
+const profileVisibleToggle = document.querySelector("#profileVisibleToggle");
+const notificationsToggle = document.querySelector("#notificationsToggle");
+const deactivateAccountButton = document.querySelector("#deactivateAccountButton");
+const onboardingModal = document.querySelector("#onboardingModal");
+const onboardingProgress = document.querySelector("#onboardingProgress");
+const onboardingStep = document.querySelector("#onboardingStep");
+const onboardingNext = document.querySelector("#onboardingNext");
 
 function readStoredJson(key, fallback) {
   try {
     return JSON.parse(localStorage.getItem(key) || "") || fallback;
   } catch {
     return fallback;
+  }
+}
+
+function writeStoredJson(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function profileBlockKeys(profile) {
+  if (!profile) return [];
+  return [profile.id, profile.userId, profile.user_id].filter(Boolean).map(String);
+}
+
+function isBlockedProfile(profile) {
+  return profileBlockKeys(profile).some((key) => state.blockedUsers.has(key));
+}
+
+function saveBlockedUsers() {
+  writeStoredJson("mbife_blocked", [...state.blockedUsers]);
+  writeStoredJson("mbifeBlockedProfiles", state.blockedProfiles);
+}
+
+function profilePassesSearchFilters(profile) {
+  if (!profile || isBlockedProfile(profile)) {
+    return false;
+  }
+
+  const filters = state.filters || {};
+  const age = Number(profile.age || 0);
+  const distance = Number(profile.distance || 0);
+  const gender = String(profile.gender || "").toLowerCase();
+  const lookingFor = String(profile.lookingFor || "").toLowerCase();
+  const myGender = currentProfileGender();
+  const myLookingFor = currentProfileLookingFor();
+  const intent = String(profile.intent || "").toLowerCase();
+  const tags = (profile.tags || []).join(" ").toLowerCase();
+
+  if (myLookingFor && myLookingFor !== "tous" && gender && gender !== myLookingFor) {
+    return false;
+  }
+
+  if (myGender && lookingFor && lookingFor !== "tous" && lookingFor !== myGender) {
+    return false;
+  }
+
+  if (age && (age < Number(filters.ageMin || 18) || age > Number(filters.ageMax || 99))) {
+    return false;
+  }
+
+  if (distance > Number(filters.distanceMax || 999)) {
+    return false;
+  }
+
+  if (filters.genres?.length && gender && !filters.genres.includes(gender)) {
+    return false;
+  }
+
+  if (filters.intentions?.length) {
+    const hasIntent = filters.intentions.some((item) => intent.includes(item) || tags.includes(item));
+    if (!hasIntent) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function getFilteredProfilesBase() {
+  return allProfiles().filter(profilePassesSearchFilters);
+}
+
+function normalizeGender(value) {
+  const raw = String(value || "").trim().toLowerCase();
+  if (["femme", "female", "woman", "f"].includes(raw)) return "femme";
+  if (["homme", "male", "man", "h", "m"].includes(raw)) return "homme";
+  if (["autre", "non-binaire", "non binaire", "other"].includes(raw)) return "autre";
+  return "";
+}
+
+function normalizeLookingFor(value) {
+  const normalized = normalizeGender(value);
+  const raw = String(value || "").trim().toLowerCase();
+  if (["tous", "tout", "all", "everyone"].includes(raw)) return "tous";
+  return normalized;
+}
+
+function oppositeGender(gender) {
+  if (gender === "femme") return "homme";
+  if (gender === "homme") return "femme";
+  return "tous";
+}
+
+function profileMetaFromTags(tags = []) {
+  const meta = {};
+  (tags || []).forEach((tag) => {
+    const value = String(tag || "");
+    if (value.startsWith("gender:")) meta.gender = normalizeGender(value.replace("gender:", ""));
+    if (value.startsWith("looking_for:")) meta.lookingFor = normalizeLookingFor(value.replace("looking_for:", ""));
+  });
+  return meta;
+}
+
+function mergeProfileTags(existingTags = [], gender = "", lookingFor = "") {
+  const clean = (existingTags || [])
+    .map((tag) => String(tag || "").trim())
+    .filter(Boolean)
+    .filter((tag) => !tag.startsWith("gender:") && !tag.startsWith("looking_for:"));
+  const base = clean.length ? clean : ["serious", "verified"];
+  if (gender) base.push(`gender:${gender}`);
+  if (lookingFor) base.push(`looking_for:${lookingFor}`);
+  return [...new Set(base)];
+}
+
+function currentProfileGender() {
+  const meta = profileMetaFromTags(state.currentProfileRecord?.tags || []);
+  return normalizeGender(
+    profileGender?.value ||
+      authGender?.value ||
+      state.currentProfileRecord?.gender ||
+      state.currentProfileRecord?.genre ||
+      meta.gender,
+  );
+}
+
+function currentProfileLookingFor() {
+  const meta = profileMetaFromTags(state.currentProfileRecord?.tags || []);
+  const gender = currentProfileGender();
+  return normalizeLookingFor(
+    profileLookingFor?.value ||
+      authLookingFor?.value ||
+      state.currentProfileRecord?.looking_for ||
+      state.currentProfileRecord?.lookingFor ||
+      meta.lookingFor ||
+      oppositeGender(gender),
+  );
+}
+
+function hydrateGenderFields(gender, lookingFor) {
+  const normalizedGender = normalizeGender(gender);
+  const normalizedLookingFor = normalizeLookingFor(lookingFor || oppositeGender(normalizedGender));
+  [authGender, mobileAuthGender, profileGender].forEach((select) => {
+    if (select && normalizedGender) select.value = normalizedGender;
+  });
+  [authLookingFor, mobileAuthLookingFor, profileLookingFor].forEach((select) => {
+    if (select && normalizedLookingFor) select.value = normalizedLookingFor;
+  });
+}
+
+function applyDefaultLookingFor(genderSelect, lookingForSelect) {
+  const gender = normalizeGender(genderSelect?.value);
+  if (gender && lookingForSelect && !lookingForSelect.value) {
+    lookingForSelect.value = oppositeGender(gender);
   }
 }
 
@@ -3191,6 +4588,11 @@ function renderAuthState() {
 
   const user = currentUser();
   document.body.classList.toggle("is-authenticated", Boolean(user));
+  if (mobileAuthStatus) {
+    mobileAuthStatus.textContent = user
+      ? `Connecté: ${user.email}`
+      : "Connecte-toi pour synchroniser likes, matches et messages.";
+  }
 
   if (profileLogoutButton) {
     profileLogoutButton.hidden = !user;
@@ -3229,19 +4631,47 @@ function renderAuthState() {
 }
 
 function readAuthFields() {
+  const gender = normalizeGender(authGender?.value || "");
+  const lookingFor = normalizeLookingFor(authLookingFor?.value || oppositeGender(gender));
   return {
     name: authName.value.trim() || "Nouveau membre mbifê",
     email: authEmail.value.trim(),
     password: authPassword.value,
+    gender,
+    lookingFor,
   };
 }
 
+function copyMobileAuthFields() {
+  if (mobileAuthName?.value) authName.value = mobileAuthName.value;
+  if (mobileAuthEmail?.value) authEmail.value = mobileAuthEmail.value;
+  if (mobileAuthPassword?.value) authPassword.value = mobileAuthPassword.value;
+  if (mobileAuthGender?.value) authGender.value = mobileAuthGender.value;
+  if (mobileAuthLookingFor?.value) authLookingFor.value = mobileAuthLookingFor.value;
+}
+
 async function signupWithSupabase() {
-  const { name, email, password } = readAuthFields();
+  const { name, email, password, gender, lookingFor } = readAuthFields();
 
   if (!email || password.length < 6) {
     const message = "Email et mot de passe de 6 caractères minimum.";
     authStatus.textContent = message;
+    showToast(message);
+    return;
+  }
+
+  if (!gender) {
+    const message = "Choisis ton sexe pour créer ton compte.";
+    authStatus.textContent = message;
+    if (mobileAuthStatus) mobileAuthStatus.textContent = message;
+    showToast(message);
+    return;
+  }
+
+  if (!lookingFor) {
+    const message = "Choisis les profils que tu veux voir.";
+    authStatus.textContent = message;
+    if (mobileAuthStatus) mobileAuthStatus.textContent = message;
     showToast(message);
     return;
   }
@@ -3254,7 +4684,7 @@ async function signupWithSupabase() {
       body: {
         email,
         password,
-        data: { display_name: name },
+        data: { display_name: name, gender, looking_for: lookingFor },
       },
       useUserToken: false,
     });
@@ -3267,6 +4697,7 @@ async function signupWithSupabase() {
 
     if (session) {
       saveAuthSession(session);
+      hydrateGenderFields(gender, lookingFor);
       await ensureRemoteProfile(name);
       await syncRemoteData();
       startRemoteRefresh();
@@ -3401,7 +4832,11 @@ async function ensureRemoteProfile(displayName) {
         intent: "Rencontrer quelqu'un avec sincérité et respect.",
         city: "À compléter",
         interests: ["discussion", "respect", "découverte"],
-        tags: ["serious", "verified"],
+        tags: mergeProfileTags(
+          ["serious", "verified"],
+          normalizeGender(authGender?.value || user.user_metadata?.gender || ""),
+          normalizeLookingFor(authLookingFor?.value || user.user_metadata?.looking_for || oppositeGender(normalizeGender(authGender?.value || user.user_metadata?.gender || ""))),
+        ),
         compatibility_score: 82,
         is_verified: true,
       },
@@ -3443,6 +4878,8 @@ function parseList(value) {
 }
 
 function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url || "") {
+  const gender = normalizeGender(profileGender?.value || authGender?.value || "");
+  const lookingFor = normalizeLookingFor(profileLookingFor?.value || authLookingFor?.value || oppositeGender(gender));
   return {
     display_name: profileName.value.trim() || authName.value.trim() || "Membre mbifê",
     age: profileAge.value ? Number(profileAge.value) : null,
@@ -3451,7 +4888,7 @@ function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url |
     bio: profileBio.value.trim() || "Je découvre mbifê et je cherche une vraie connexion.",
     intent: profileIntent.value.trim() || "Rencontrer quelqu'un avec sincérité et respect.",
     interests: parseList(profileInterests.value || "discussion, respect, découverte"),
-    tags: ["serious", "verified"],
+    tags: mergeProfileTags(state.currentProfileRecord?.tags || ["serious", "verified"], gender, lookingFor),
     photo_url: photoUrl,
     compatibility_score: state.currentProfileRecord?.compatibility_score || 84,
     is_verified: true,
@@ -3466,9 +4903,15 @@ function renderProfileForm() {
 
   const record = state.currentProfileRecord || {};
   const user = currentUser();
+  const meta = profileMetaFromTags(record.tags || []);
+  const savedGender = normalizeGender(record.gender || record.genre || meta.gender || authGender?.value || "");
+  const savedLookingFor = normalizeLookingFor(record.looking_for || record.lookingFor || meta.lookingFor || oppositeGender(savedGender));
 
   profileName.value = record.display_name || authName.value || "";
   profileAge.value = record.age || "";
+  if (profileGender) profileGender.value = savedGender || "";
+  if (profileLookingFor) profileLookingFor.value = savedLookingFor || "";
+  hydrateGenderFields(savedGender, savedLookingFor);
   profileCity.value = record.city || "";
   profileDistance.value = record.distance_km ?? "";
   profileBio.value = record.bio || "";
@@ -3666,6 +5109,9 @@ function computeCompatibility(myProfile, theirRow) {
 function normalizeRemoteProfile(row, myProfile) {
   const compat = computeCompatibility(myProfile, row);
   const interests = row.interests?.length ? row.interests : ["discussion", "respect", "découverte"];
+  const meta = profileMetaFromTags(row.tags || []);
+  const gender = normalizeGender(row.gender || row.genre || row.sexe || meta.gender);
+  const lookingFor = normalizeLookingFor(row.looking_for || row.lookingFor || meta.lookingFor || oppositeGender(gender));
 
   const sharedPrompts = compat.sharedInterests.length
     ? [
@@ -3682,6 +5128,9 @@ function normalizeRemoteProfile(row, myProfile) {
   return {
     id: row.id,
     remote: true,
+    userId: row.user_id,
+    gender,
+    lookingFor,
     name: row.display_name || "Membre mbifê",
     age: row.age || 24,
     city: row.city || "Ville à compléter",
@@ -3941,6 +5390,42 @@ function saveUnreadThreads() {
   localStorage.setItem("mbifeUnreadThreads", JSON.stringify(state.unreadThreads));
 }
 
+function setNotificationsActive(active) {
+  state.notificationsReady = Boolean(active);
+  localStorage.setItem("mbifeNotificationsReady", active ? "true" : "false");
+
+  const buttons = [notificationButton, document.querySelector("#notificationButton")].filter(Boolean);
+  buttons.forEach((button) => {
+    button.textContent = active ? "Notifs ✓" : "Notifications";
+    button.style.color = active ? "var(--mint)" : "";
+  });
+
+  if (notificationsToggle) {
+    notificationsToggle.checked = Boolean(active);
+  }
+}
+
+function fireBrowserNotification(title, detail) {
+  if (!state.notificationsReady || !("Notification" in window) || Notification.permission !== "granted") {
+    return;
+  }
+
+  try {
+    const notification = new Notification(`mbifê · ${title}`, {
+      body: detail,
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
+      tag: `mbife-${String(title).slice(0, 30)}-${String(detail).slice(0, 30)}`,
+    });
+    notification.onclick = () => {
+      window.focus();
+      setPanel("messages");
+    };
+  } catch {
+    // Certains navigateurs Android limitent les notifications depuis une page active.
+  }
+}
+
 function clearUnreadForConversation(conversationId) {
   if (!conversationId?.startsWith("remote:")) {
     return;
@@ -3964,10 +5449,10 @@ function showMessageNotice(title, detail) {
   }
 
   showToast(`${title}: ${detail}`);
-
-  if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
-    new Notification(title, { body: detail });
+  if ("vibrate" in navigator && state.notificationsReady) {
+    navigator.vibrate([80, 40, 80]);
   }
+  fireBrowserNotification(title, detail);
 }
 
 function trackNewMatches() {
@@ -3995,9 +5480,6 @@ function trackNewLikes(likes) {
     const action = like.action === "spark" ? "t'a envoyé un Super like ✦" : "a aimé ton profil ♥";
     const title = profileName ? profileName : "Quelqu'un";
     showMessageNotice(title, action);
-    if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
-      new Notification(title, { body: action });
-    }
     setPanel("matches");
   }
 
@@ -4292,21 +5774,23 @@ async function requestMessageNotifications() {
     return;
   }
 
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") {
+    setNotificationsActive(false);
+    showToast("Notifications refusées");
+    return;
+  }
+
+  setNotificationsActive(true);
+  showToast("Notifications activées");
+
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-    // Fallback : notifications simples sans push
-    const permission = await Notification.requestPermission();
-    showToast(permission === "granted" ? "Notifications activées" : "Notifications refusées");
+    recordRemoteEvent("notifications_enabled", { mode: "browser_fallback" });
     return;
   }
 
   // Web Push complet
   try {
-    const permission = await Notification.requestPermission();
-    if (permission !== "granted") {
-      showToast("Notifications refusées");
-      return;
-    }
-
     const registration = await navigator.serviceWorker.ready;
     let subscription = await registration.pushManager.getSubscription();
 
@@ -4318,53 +5802,47 @@ async function requestMessageNotifications() {
     }
 
     await savePushSubscription(subscription);
-    state.notificationsReady = true;
     localStorage.setItem("mbifeSeenMessageIds", JSON.stringify(state.seenMessageIds));
-
-    // Mettre à jour le bouton
-    const btn = document.querySelector("#notificationButton");
-    if (btn) {
-      btn.textContent = "Notifs ✓";
-      btn.style.color = "var(--mint)";
-    }
 
     showToast("Notifications push activées");
     recordRemoteEvent("push_subscribed", { endpoint: subscription.endpoint.slice(0, 40) });
   } catch (error) {
-    showToast("Erreur notifications : " + (error.message || "inconnue"));
+    setNotificationsActive(true);
+    showToast("Notifications navigateur activées");
+    recordRemoteEvent("notifications_enabled", { mode: "browser_fallback_after_push_error", error: error.message || "" });
   }
 }
 
 async function unsubscribePushNotifications() {
+  setNotificationsActive(false);
   try {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      showToast("Notifications désactivées");
+      return;
+    }
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
       await removePushSubscription(subscription.endpoint);
       await subscription.unsubscribe();
     }
-    const btn = document.querySelector("#notificationButton");
-    if (btn) {
-      btn.textContent = "Notifications";
-      btn.style.color = "";
-    }
     showToast("Notifications désactivées");
-  } catch { /* silencieux */ }
+  } catch {
+    showToast("Notifications désactivées");
+  }
 }
 
 async function checkAndRestorePushState() {
-  if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+  if (!("Notification" in window)) return;
   if (Notification.permission !== "granted") return;
+  setNotificationsActive(localStorage.getItem("mbifeNotificationsReady") !== "false");
+
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
-      const btn = document.querySelector("#notificationButton");
-      if (btn) {
-        btn.textContent = "Notifs ✓";
-        btn.style.color = "var(--mint)";
-      }
-      state.notificationsReady = true;
+      setNotificationsActive(true);
     }
   } catch { /* silencieux */ }
 }
@@ -4412,7 +5890,7 @@ function startRemoteRefresh() {
 }
 
 function filteredProfiles() {
-  const availableProfiles = allProfiles();
+  const availableProfiles = getFilteredProfilesBase();
 
   if (state.activeFilter === "all") {
     return availableProfiles;
@@ -4423,6 +5901,9 @@ function filteredProfiles() {
 
 function currentProfile() {
   const list = filteredProfiles();
+  if (!list.length) {
+    return null;
+  }
   return list[state.index % list.length];
 }
 
@@ -4457,11 +5938,13 @@ function renderProfile() {
   const list = filteredProfiles();
 
   if (list.length === 0) {
+    document.querySelector("#discoverCount").textContent = "0";
     profileCard.innerHTML = `
+      <div class="skeleton-card"></div>
       <div class="profile-content">
         <div class="intent-card">
           <span>Aucun profil</span>
-          <strong>Essaie un autre filtre.</strong>
+          <strong>Essaie un autre filtre ou débloque un profil.</strong>
         </div>
       </div>
     `;
@@ -4469,16 +5952,22 @@ function renderProfile() {
   }
 
   const profile = currentProfile();
+  const isCompleteProfile = Boolean(
+    profile.verified ||
+      (profile.photo && profile.bio && profile.intent && profile.interests?.length >= 2),
+  );
   profileCard.innerHTML = `
     <img class="profile-photo" src="${profile.photo}" alt="Portrait de ${profile.name}" />
     <div class="photo-wash"></div>
+    <div class="swipe-overlay like">LIKE</div>
+    <div class="swipe-overlay nope">NOPE</div>
+    <div class="compatibility-orb" style="--score-deg:${profile.score * 3.6}deg">${profile.score}%</div>
     <div class="profile-content">
       <div class="profile-topline">
         <div class="badge-row">
-          ${profile.verified ? '<span class="badge verified">Profil vérifié</span>' : ""}
+          ${isCompleteProfile ? '<span class="badge verified">✓ Vérifié</span>' : ""}
           ${profileBackendBadge(profile)}
           <span class="badge">${profile.city}</span>
-          <span class="badge">${profile.score}% compatible</span>
         </div>
         <span class="distance">${profile.distance} km</span>
       </div>
@@ -4682,8 +6171,26 @@ async function reportCurrentProfile() {
   }
 }
 
+function animateActionButton(action) {
+  const button = {
+    pass: document.querySelector("#passButton"),
+    like: document.querySelector("#likeButton"),
+    spark: document.querySelector("#sparkButton"),
+  }[action];
+
+  if (!button) return;
+  button.classList.remove("bounce");
+  void button.offsetWidth;
+  button.classList.add("bounce");
+}
+
 function advanceProfile(action) {
   const profile = currentProfile();
+  if (!profile) {
+    showToast("Aucun profil disponible avec ces filtres");
+    return;
+  }
+  animateActionButton(action);
   state.history.push({ index: state.index, filter: state.activeFilter });
 
   if (action === "like" || action === "spark") {
@@ -4729,8 +6236,8 @@ function renderMatches() {
   const remoteMatchedProfiles = state.remoteMatches
     .map((match) => match.otherProfile)
     .filter(Boolean);
-  const matchedProfiles = [...remoteMatchedProfiles, ...localMatchedProfiles];
-  const incomingLikes = state.remoteIncomingLikes || [];
+  const matchedProfiles = [...remoteMatchedProfiles, ...localMatchedProfiles].filter((profile) => !isBlockedProfile(profile));
+  const incomingLikes = (state.remoteIncomingLikes || []).filter((like) => !isBlockedProfile(like.profile));
 
   document.querySelector("#matchCount").textContent = matchedProfiles.length + incomingLikes.length;
 
@@ -4762,7 +6269,18 @@ function renderMatches() {
     return;
   }
 
-  matchGrid.innerHTML = matchedProfiles
+  const newestMatches = matchedProfiles.slice(0, 8)
+    .map(
+      (profile) => `
+        <button class="new-match" type="button" data-open-match="${profile.id}">
+          <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+          <small>${profile.name}</small>
+        </button>
+      `,
+    )
+    .join("");
+
+  const conversationsHtml = matchedProfiles
     .map(
       (profile) => `
         <article class="mini-card">
@@ -4775,6 +6293,15 @@ function renderMatches() {
       `,
     )
     .join("");
+
+  matchGrid.innerHTML = `
+    <section class="match-showcase">
+      <h3>Nouveaux matches</h3>
+      <div class="new-match-strip">${newestMatches}</div>
+    </section>
+    <h3 class="conversation-section-title">Conversations</h3>
+    ${conversationsHtml}
+  `;
 
   renderDateIdeas(matchedProfiles[matchedProfiles.length - 1]);
 }
@@ -5135,9 +6662,9 @@ function drawShareCanvas(profile) {
   ctx.fill();
 
   ctx.fillStyle = "#1c1b22";
-  ctx.font = "900 54px Inter, system-ui, sans-serif";
+  ctx.font = "900 54px Playfair Display, Georgia, serif";
   ctx.fillText("mbifê", 86, 132);
-  ctx.font = "700 24px Inter, system-ui, sans-serif";
+  ctx.font = "700 24px DM Sans, system-ui, sans-serif";
   ctx.fillStyle = "#696675";
   ctx.fillText("Carte de compatibilité à partager", 88, 170);
 
@@ -5145,32 +6672,32 @@ function drawShareCanvas(profile) {
   roundedRect(ctx, 88, 214, 172, 172, 22);
   ctx.fill();
   ctx.fillStyle = "#fffaf3";
-  ctx.font = "900 72px Inter, system-ui, sans-serif";
+  ctx.font = "900 72px Playfair Display, Georgia, serif";
   ctx.fillText(profile.name.slice(0, 1).toUpperCase(), 140, 326);
 
   ctx.fillStyle = "#1c1b22";
-  ctx.font = "900 54px Inter, system-ui, sans-serif";
+  ctx.font = "900 54px Playfair Display, Georgia, serif";
   ctx.fillText(`${profile.name}, ${profile.age}`, 292, 270);
-  ctx.font = "800 26px Inter, system-ui, sans-serif";
+  ctx.font = "800 26px DM Sans, system-ui, sans-serif";
   ctx.fillStyle = "#e6536a";
   ctx.fillText(`${profile.score}% compatible`, 294, 314);
   ctx.fillStyle = "#696675";
-  ctx.font = "700 24px Inter, system-ui, sans-serif";
+  ctx.font = "700 24px DM Sans, system-ui, sans-serif";
   ctx.fillText(`${profile.city} · ${profile.distance} km`, 294, 354);
 
   ctx.fillStyle = "#583456";
-  ctx.font = "800 33px Inter, system-ui, sans-serif";
+  ctx.font = "800 33px DM Sans, system-ui, sans-serif";
   wrapCanvasText(ctx, profile.intent, 88, 465, width - 176, 44);
 
   ctx.fillStyle = "#1c1b22";
   roundedRect(ctx, 88, 606, width - 176, 118, 18);
   ctx.fill();
   ctx.fillStyle = "#fffaf3";
-  ctx.font = "850 27px Inter, system-ui, sans-serif";
+  ctx.font = "850 27px DM Sans, system-ui, sans-serif";
   wrapCanvasText(ctx, profile.prompts[0], 116, 657, width - 232, 36);
 
   ctx.fillStyle = "#696675";
-  ctx.font = "750 23px Inter, system-ui, sans-serif";
+  ctx.font = "750 23px DM Sans, system-ui, sans-serif";
   ctx.fillText(`Code VIP ${state.inviteCode}`, 88, 792);
   ctx.fillText("Swipe moins. Rencontre mieux.", 88, 832);
 }
@@ -5352,8 +6879,33 @@ function chooseChallenge(optionId) {
   }
 }
 
+function formatMessageTime(value) {
+  if (!value) {
+    return "maintenant";
+  }
+
+  try {
+    return new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" }).format(new Date(value));
+  } catch {
+    return "maintenant";
+  }
+}
+
+function renderMessageRow({ side, body, createdAt, avatar, name }) {
+  const isMe = side === "me";
+  return `
+    <div class="message-row ${isMe ? "me" : "them"}">
+      ${isMe ? "" : `<img class="message-avatar" src="${avatar}" alt="Portrait de ${name || "match"}" />`}
+      <div class="bubble-wrap">
+        <div class="bubble ${isMe ? "me" : "them"}">${renderMessageContent(body)}</div>
+        <time class="message-time">${formatMessageTime(createdAt)}</time>
+      </div>
+    </div>
+  `;
+}
+
 function renderConversations() {
-  const sortedRemoteMatches = [...state.remoteMatches].sort((a, b) => {
+  const sortedRemoteMatches = [...state.remoteMatches].filter((match) => !isBlockedProfile(match.otherProfile)).sort((a, b) => {
     const aMessages = state.remoteMessages[a.id] || [];
     const bMessages = state.remoteMessages[b.id] || [];
     const aTime = aMessages[aMessages.length - 1]?.created_at || a.created_at || "";
@@ -5388,7 +6940,10 @@ function renderConversations() {
     `;
   });
 
-  const localRows = conversations.map((conversation) => {
+  const localRows = conversations.filter((conversation) => {
+    const profile = profiles.find((item) => item.id === conversation.id);
+    return profile && !isBlockedProfile(profile);
+  }).map((conversation) => {
     const profile = profiles.find((item) => item.id === conversation.id);
     const lastMessage = conversation.messages[conversation.messages.length - 1][1];
     const active = conversation.id === state.activeConversation ? "active" : "";
@@ -5438,10 +6993,22 @@ function renderChat() {
       ? messages
           .map(
             (message) =>
-              `<div class="bubble ${message.sender_id === user?.id ? "me" : "them"}">${renderMessageContent(message.body)}</div>`,
+              renderMessageRow({
+                side: message.sender_id === user?.id ? "me" : "them",
+                body: message.body,
+                createdAt: message.created_at,
+                avatar: profile.photo,
+                name: profile.name,
+              }),
           )
           .join("")
-      : `<div class="bubble them">Vous avez matché. Lance une conversation simple et respectueuse.</div>`;
+      : renderMessageRow({
+          side: "them",
+          body: "Vous avez matché. Lance une conversation simple et respectueuse.",
+          createdAt: "",
+          avatar: profile.photo,
+          name: profile.name,
+        });
     chatThread.scrollTop = chatThread.scrollHeight;
     document.querySelector("#chatBackButton")?.addEventListener("click", closeChatView);
     return;
@@ -5466,7 +7033,15 @@ function renderChat() {
     <span class="chat-status">Démo</span>
   `;
   chatThread.innerHTML = conversation.messages
-    .map(([side, text]) => `<div class="bubble ${side}">${renderMessageContent(text)}</div>`)
+    .map(([side, text]) =>
+      renderMessageRow({
+        side,
+        body: text,
+        createdAt: "",
+        avatar: profile.photo,
+        name: profile.name,
+      }),
+    )
     .join("");
   chatThread.scrollTop = chatThread.scrollHeight;
   document.querySelector("#chatBackButton")?.addEventListener("click", closeChatView);
@@ -5543,9 +7118,15 @@ function setPanel(panel) {
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.classList.toggle("active", button.dataset.panel === panel);
   });
+  mobileNavButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.panel === panel);
+  });
   document.querySelectorAll(".panel").forEach((section) => {
     section.classList.toggle("active", section.id === `${panel}Panel`);
   });
+  if (panel === "settings") {
+    renderSettings();
+  }
 }
 
 function syncFilterButtons() {
@@ -5569,11 +7150,334 @@ function renderAll() {
   renderViralLab();
   renderSupabaseStatus();
   renderAuthState();
+  renderSettings();
+  syncMobileNav();
+}
+
+function syncMobileNav() {
+  const countByPanel = {
+    matches: document.querySelector("#matchCount")?.textContent || "",
+    messages: document.querySelector("#messageCount")?.textContent || "",
+    viral: document.querySelector("#viralCount")?.textContent || "",
+  };
+  mobileNavButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.panel === state.activePanel);
+    const count = Number(countByPanel[button.dataset.panel] || 0);
+    if (count > 0) {
+      button.dataset.count = count > 99 ? "99+" : String(count);
+    } else {
+      delete button.dataset.count;
+    }
+  });
+}
+
+function openFilterDrawer() {
+  syncFilterDrawerInputs();
+  filterDrawerBackdrop?.classList.add("is-open");
+  filterDrawerBackdrop?.setAttribute("aria-hidden", "false");
+}
+
+function closeFilterDrawer() {
+  filterDrawerBackdrop?.classList.remove("is-open");
+  filterDrawerBackdrop?.setAttribute("aria-hidden", "true");
+}
+
+function updateFilterLabels() {
+  const min = Math.min(Number(filterAgeMin?.value || 18), Number(filterAgeMax?.value || 99));
+  const max = Math.max(Number(filterAgeMin?.value || 18), Number(filterAgeMax?.value || 99));
+  if (filterAgeLabel) filterAgeLabel.textContent = `${min} - ${max} ans`;
+  if (filterDistanceLabel) filterDistanceLabel.textContent = `${filterDistance?.value || 999} km max`;
+}
+
+function syncFilterDrawerInputs() {
+  if (!filterAgeMin || !filterAgeMax || !filterDistance) return;
+  filterAgeMin.value = String(state.filters.ageMin || 18);
+  filterAgeMax.value = String(state.filters.ageMax || 99);
+  filterDistance.value = String(state.filters.distanceMax || 999);
+  document.querySelectorAll("[data-filter-pills] .filter-pill").forEach((button) => {
+    const key = button.closest("[data-filter-pills]")?.dataset.filterPills;
+    button.classList.toggle("active", Boolean(key && state.filters[key]?.includes(button.dataset.value)));
+  });
+  updateFilterLabels();
+}
+
+function readFilterDrawerState() {
+  const ageMin = Math.min(Number(filterAgeMin?.value || 18), Number(filterAgeMax?.value || 99));
+  const ageMax = Math.max(Number(filterAgeMin?.value || 18), Number(filterAgeMax?.value || 99));
+  const selected = (key) =>
+    [...document.querySelectorAll(`[data-filter-pills="${key}"] .filter-pill.active`)].map((button) => button.dataset.value);
+
+  return {
+    ageMin,
+    ageMax,
+    distanceMax: Number(filterDistance?.value || 999),
+    genres: selected("genres"),
+    intentions: selected("intentions"),
+  };
+}
+
+function applyFilterDrawer() {
+  state.filters = readFilterDrawerState();
+  writeStoredJson("mbifeFilters", state.filters);
+  state.index = 0;
+  closeFilterDrawer();
+  renderAll();
+  showToast("Filtres appliqués");
+}
+
+function resetFilterDrawer() {
+  state.filters = { ageMin: 18, ageMax: 99, distanceMax: 999, genres: [], intentions: [] };
+  writeStoredJson("mbifeFilters", state.filters);
+  syncFilterDrawerInputs();
+  state.index = 0;
+  renderAll();
+  showToast("Filtres réinitialisés");
+}
+
+function blockCurrentProfile() {
+  const profile = currentProfile();
+  if (!profile) {
+    showToast("Aucun profil à bloquer");
+    return;
+  }
+
+  const keys = profileBlockKeys(profile);
+  keys.forEach((key) => state.blockedUsers.add(key));
+  state.blockedProfiles[profile.id] = {
+    id: profile.id,
+    name: profile.name,
+    photo: profile.photo,
+    keys,
+  };
+  saveBlockedUsers();
+  recordRemoteEvent("profile_blocked", {
+    profile_id: profile.id,
+    profile_name: profile.name,
+    mode: profile.remote ? "supabase" : "local",
+  });
+  showToast(`${profile.name} est bloqué`);
+  state.index = 0;
+  renderAll();
+}
+
+function unblockProfile(profileId) {
+  const blocked = state.blockedProfiles[profileId];
+  (blocked?.keys || [profileId]).forEach((key) => state.blockedUsers.delete(key));
+  delete state.blockedProfiles[profileId];
+  saveBlockedUsers();
+  renderAll();
+  showToast("Profil débloqué");
+}
+
+async function syncProfileVisibility() {
+  localStorage.setItem("mbifeProfileVisible", String(state.profileVisible));
+
+  if (!hasSupabaseConfig() || !currentUser()) {
+    showToast(state.profileVisible ? "Profil visible" : "Profil mis en pause");
+    return;
+  }
+
+  try {
+    await supabaseFetch(`/rest/v1/profiles?user_id=eq.${encodeURIComponent(currentUser().id)}`, {
+      method: "PATCH",
+      prefer: "return=minimal",
+      body: { is_active: state.profileVisible },
+    });
+    showToast(state.profileVisible ? "Profil visible en ligne" : "Profil masqué en ligne");
+  } catch (error) {
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
+    showToast("Visibilité gardée localement");
+  }
+}
+
+function renderSettings() {
+  if (profileVisibleToggle) {
+    profileVisibleToggle.checked = state.profileVisible;
+  }
+  if (notificationsToggle) {
+    notificationsToggle.checked =
+      typeof Notification !== "undefined" && Notification.permission === "granted" && state.notificationsReady;
+  }
+  if (!blockedList) {
+    return;
+  }
+
+  const blocked = Object.values(state.blockedProfiles || {});
+  blockedList.innerHTML = blocked.length
+    ? blocked
+        .map(
+          (profile) => `
+            <div class="blocked-item">
+              <span>${escapeHtml(profile.name || "Profil bloqué")}</span>
+              <button class="ghost-button" type="button" data-unblock="${escapeHtml(profile.id)}">Débloquer</button>
+            </div>
+          `,
+        )
+        .join("")
+    : `<p class="muted-copy">Aucun profil bloqué pour le moment.</p>`;
+}
+
+const onboardingSteps = [
+  {
+    title: "Ta meilleure photo",
+    copy: "Choisis une image claire. Elle pourra être finalisée dans Mon profil.",
+    html: '<input id="onboardPhoto" type="file" accept="image/png,image/jpeg,image/webp" />',
+  },
+  {
+    title: "Ton prénom",
+    copy: "Un nom simple aide les autres à te reconnaître.",
+    html: '<input id="onboardName" type="text" maxlength="80" placeholder="Ex: Aziz" />',
+  },
+  {
+    title: "Ton âge",
+    copy: "mbifê est réservé aux 18 ans et plus.",
+    html: '<input id="onboardAge" type="number" min="18" max="99" placeholder="18+" />',
+  },
+  {
+    title: "Ton genre",
+    copy: "Tu peux modifier ce choix plus tard.",
+    html: '<select id="onboardGender"><option value="">Je suis...</option><option value="femme">Femme</option><option value="homme">Homme</option><option value="autre">Autre</option></select>',
+  },
+  {
+    title: "Tu cherches quoi ?",
+    copy: "Une intention claire rend les matches plus sincères.",
+    html: '<select id="onboardLookingFor"><option value="">Je veux voir...</option><option value="femme">Des femmes</option><option value="homme">Des hommes</option><option value="tous">Tout le monde</option></select><input id="onboardIntent" type="text" maxlength="220" placeholder="Relation sérieuse, amitié, discussion..." />',
+  },
+  {
+    title: "Ta bio",
+    copy: "Deux phrases vraies valent mieux qu’un long discours.",
+    html: '<textarea id="onboardBio" rows="4" maxlength="360" placeholder="Parle de toi simplement..."></textarea>',
+  },
+];
+
+function renderOnboardingStep() {
+  if (!onboardingModal || !onboardingProgress || !onboardingStep || !onboardingNext) return;
+  const step = onboardingSteps[state.onboardingStep] || onboardingSteps[0];
+  onboardingProgress.innerHTML = onboardingSteps
+    .map((_, index) => `<span class="${index <= state.onboardingStep ? "active" : ""}"></span>`)
+    .join("");
+  onboardingStep.innerHTML = `
+    <div>
+      <p class="eyebrow">Étape ${state.onboardingStep + 1} / ${onboardingSteps.length}</p>
+      <h2>${step.title}</h2>
+      <p>${step.copy}</p>
+    </div>
+    ${step.html}
+  `;
+  onboardingNext.textContent = state.onboardingStep === onboardingSteps.length - 1 ? "Terminer" : "Continuer";
+}
+
+function saveOnboardingFields() {
+  const name = document.querySelector("#onboardName")?.value.trim();
+  const age = document.querySelector("#onboardAge")?.value;
+  const intent = document.querySelector("#onboardIntent")?.value.trim();
+  const bio = document.querySelector("#onboardBio")?.value.trim();
+  const gender = normalizeGender(document.querySelector("#onboardGender")?.value);
+  const lookingFor = normalizeLookingFor(document.querySelector("#onboardLookingFor")?.value || oppositeGender(gender));
+
+  if (name && profileName) profileName.value = name;
+  if (age && profileAge) profileAge.value = age;
+  if (intent && profileIntent) profileIntent.value = intent;
+  if (bio && profileBio) profileBio.value = bio;
+  if (gender) {
+    hydrateGenderFields(gender, lookingFor);
+    localStorage.setItem("mbifeOnboardingGender", gender);
+    localStorage.setItem("mbifeOnboardingLookingFor", lookingFor);
+  }
+}
+
+function nextOnboardingStep() {
+  saveOnboardingFields();
+  if (state.onboardingStep < onboardingSteps.length - 1) {
+    state.onboardingStep += 1;
+    renderOnboardingStep();
+    return;
+  }
+
+  localStorage.setItem("mbife_onboarding_done", "true");
+  onboardingModal?.classList.remove("is-open");
+  onboardingModal?.setAttribute("aria-hidden", "true");
+  showToast("Profil prêt à compléter");
+}
+
+function showOnboardingIfNeeded() {
+  if (localStorage.getItem("mbife_onboarding_done") || !onboardingModal) {
+    return;
+  }
+  renderOnboardingStep();
+  onboardingModal.classList.add("is-open");
+  onboardingModal.setAttribute("aria-hidden", "false");
+}
+
+function resetSwipeCard() {
+  if (!profileCard) return;
+  profileCard.style.transition = "";
+  profileCard.style.transform = "";
+  profileCard.querySelector(".swipe-overlay.like")?.style.setProperty("opacity", "0");
+  profileCard.querySelector(".swipe-overlay.nope")?.style.setProperty("opacity", "0");
+}
+
+function completeSwipe(action) {
+  if (!profileCard) return;
+  profileCard.style.transition = "transform 220ms ease, opacity 220ms ease";
+  profileCard.classList.add(action === "like" ? "is-flying-like" : "is-flying-pass");
+  window.setTimeout(() => {
+    profileCard.classList.remove("is-flying-like", "is-flying-pass");
+    resetSwipeCard();
+    advanceProfile(action);
+  }, 220);
+}
+
+function handleSwipeStart(event) {
+  if (!currentProfile() || !event.touches?.length) return;
+  state.swipe.active = true;
+  state.swipe.startX = event.touches[0].clientX;
+  state.swipe.startY = event.touches[0].clientY;
+  state.swipe.currentX = state.swipe.startX;
+  profileCard.style.transition = "none";
+}
+
+function handleSwipeMove(event) {
+  if (!state.swipe.active || !event.touches?.length) return;
+  const touch = event.touches[0];
+  const deltaX = touch.clientX - state.swipe.startX;
+  const deltaY = touch.clientY - state.swipe.startY;
+
+  if (Math.abs(deltaX) < 12 && Math.abs(deltaY) > 24) {
+    return;
+  }
+
+  state.swipe.currentX = touch.clientX;
+  const rotation = deltaX * 0.08;
+  const opacity = Math.min(Math.abs(deltaX) / 120, 1);
+  profileCard.style.transform = `translateX(${deltaX}px) rotate(${rotation}deg)`;
+  profileCard.querySelector(".swipe-overlay.like")?.style.setProperty("opacity", deltaX > 0 ? String(opacity) : "0");
+  profileCard.querySelector(".swipe-overlay.nope")?.style.setProperty("opacity", deltaX < 0 ? String(opacity) : "0");
+}
+
+function handleSwipeEnd() {
+  if (!state.swipe.active) return;
+  const deltaX = state.swipe.currentX - state.swipe.startX;
+  state.swipe.active = false;
+
+  if (Math.abs(deltaX) >= 90) {
+    completeSwipe(deltaX > 0 ? "like" : "pass");
+    return;
+  }
+
+  resetSwipeCard();
 }
 
 document.querySelectorAll(".nav-item").forEach((button) => {
   button.addEventListener("click", () => setPanel(button.dataset.panel));
 });
+
+mobileNavButtons.forEach((button) => {
+  button.addEventListener("click", () => setPanel(button.dataset.panel));
+});
+
+document.querySelector("[data-profile-settings]")?.addEventListener("click", () => setPanel("settings"));
 
 document.querySelectorAll(".filter-chip").forEach((button) => {
   button.addEventListener("click", () => {
@@ -5584,11 +7488,31 @@ document.querySelectorAll(".filter-chip").forEach((button) => {
   });
 });
 
+filterDrawerButton?.addEventListener("click", openFilterDrawer);
+filterDrawerClose?.addEventListener("click", closeFilterDrawer);
+filterDrawerBackdrop?.addEventListener("click", (event) => {
+  if (event.target === filterDrawerBackdrop) {
+    closeFilterDrawer();
+  }
+});
+filterAgeMin?.addEventListener("input", updateFilterLabels);
+filterAgeMax?.addEventListener("input", updateFilterLabels);
+filterDistance?.addEventListener("input", updateFilterLabels);
+document.querySelectorAll("[data-filter-pills] .filter-pill").forEach((button) => {
+  button.addEventListener("click", () => button.classList.toggle("active"));
+});
+applyFiltersButton?.addEventListener("click", applyFilterDrawer);
+resetFiltersButton?.addEventListener("click", resetFilterDrawer);
+authGender?.addEventListener("change", () => applyDefaultLookingFor(authGender, authLookingFor));
+mobileAuthGender?.addEventListener("change", () => applyDefaultLookingFor(mobileAuthGender, mobileAuthLookingFor));
+profileGender?.addEventListener("change", () => applyDefaultLookingFor(profileGender, profileLookingFor));
+
 document.querySelector("#passButton").addEventListener("click", () => advanceProfile("pass"));
 document.querySelector("#likeButton").addEventListener("click", () => advanceProfile("like"));
 document.querySelector("#sparkButton").addEventListener("click", () => advanceProfile("spark"));
 document.querySelector("#undoButton").addEventListener("click", undoProfile);
 document.querySelector("#reportButton").addEventListener("click", reportCurrentProfile);
+blockButton?.addEventListener("click", blockCurrentProfile);
 promptButton.addEventListener("click", nextPrompt);
 composer.addEventListener("submit", submitMessage);
 photoMessageButton?.addEventListener("click", () => messagePhotoInput?.click());
@@ -5628,10 +7552,54 @@ messagePhotoInput?.addEventListener("change", () => {
 });
 loginButton.addEventListener("click", loginWithSupabase);
 signupButton.addEventListener("click", signupWithSupabase);
+mobileLoginButton?.addEventListener("click", () => {
+  copyMobileAuthFields();
+  loginWithSupabase();
+});
+mobileSignupButton?.addEventListener("click", () => {
+  copyMobileAuthFields();
+  signupWithSupabase();
+});
 logoutButton.addEventListener("click", logoutFromSupabase);
 profileLogoutButton?.addEventListener("click", logoutFromSupabase);
 profileForm.addEventListener("submit", saveProfile);
 refreshBackendButton.addEventListener("click", refreshBackendData);
+profileVisibleToggle?.addEventListener("change", (event) => {
+  state.profileVisible = event.target.checked;
+  syncProfileVisibility();
+});
+notificationsToggle?.addEventListener("change", async (event) => {
+  if (typeof Notification === "undefined") {
+    event.target.checked = false;
+    showToast("Notifications non disponibles sur ce navigateur");
+    return;
+  }
+  if (event.target.checked) {
+    await requestMessageNotifications();
+  } else {
+    await unsubscribePushNotifications();
+    state.notificationsReady = false;
+  }
+  renderSettings();
+});
+deactivateAccountButton?.addEventListener("click", () => {
+  if (window.confirm("Désactiver ce compte de test et te déconnecter ?")) {
+    state.profileVisible = false;
+    localStorage.setItem("mbifeProfileVisible", "false");
+    logoutFromSupabase();
+  }
+});
+blockedList?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-unblock]");
+  if (button) {
+    unblockProfile(button.dataset.unblock);
+  }
+});
+onboardingNext?.addEventListener("click", nextOnboardingStep);
+profileCard?.addEventListener("touchstart", handleSwipeStart, { passive: true });
+profileCard?.addEventListener("touchmove", handleSwipeMove, { passive: true });
+profileCard?.addEventListener("touchend", handleSwipeEnd);
+profileCard?.addEventListener("touchcancel", handleSwipeEnd);
 profilePhoto.addEventListener("change", () => {
   const file = profilePhoto.files?.[0];
 
@@ -5702,6 +7670,26 @@ incomingLikeList?.addEventListener("click", (event) => {
   }
 });
 
+matchGrid?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-open-match]");
+  if (!button) return;
+  const profileId = button.dataset.openMatch;
+  const remoteMatch = state.remoteMatches.find((match) => match.otherProfile?.id === profileId);
+  const localConversation = conversations.find((conversation) => conversation.id === profileId);
+
+  if (remoteMatch) {
+    state.activeConversation = `remote:${remoteMatch.id}`;
+  } else if (localConversation) {
+    state.activeConversation = localConversation.id;
+  } else {
+    return;
+  }
+
+  setPanel("messages");
+  renderConversations();
+  openChatView();
+});
+
 
 document.querySelector("#safeModeButton").addEventListener("click", (event) => {
   state.safeMode = !state.safeMode;
@@ -5720,6 +7708,9 @@ window.addEventListener("keydown", (event) => {
 });
 
 renderAll();
+syncMobileNav();
+syncFilterDrawerInputs();
+showOnboardingIfNeeded();
 restoreAuthSession();
 checkSupabaseStatus();
 loadRemoteAnnonces();
