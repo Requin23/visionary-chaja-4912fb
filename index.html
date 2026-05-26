@@ -3280,6 +3280,30 @@ h2,
   display: none;
 }
 
+.location-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  border: 1px solid rgba(0, 201, 167, 0.22);
+  border-radius: 1rem;
+  background: rgba(0, 201, 167, 0.06);
+  padding: 0.85rem;
+}
+
+.location-control strong {
+  display: block;
+  margin-bottom: 0.18rem;
+}
+
+.location-control p {
+  margin: 0;
+}
+
+.location-control button {
+  flex: 0 0 auto;
+}
+
 @media (max-width: 900px) {
   #discoverPanel,
   .settings-grid {
@@ -3428,6 +3452,148 @@ h2,
     inset: 0.7rem;
     height: auto;
     border-radius: 1.4rem;
+  }
+}
+
+/* Android compact layout fixes */
+.actions {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: none;
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .topbar-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .topbar-actions {
+    flex: 0 0 auto;
+    gap: 0.32rem;
+  }
+
+  .icon-button,
+  #filterDrawerButton {
+    width: 2.45rem;
+    height: 2.45rem;
+    min-width: 2.45rem;
+  }
+
+  .profile-card {
+    min-height: clamp(26rem, calc(100dvh - 15rem), 39rem);
+  }
+
+  .actions {
+    width: 100%;
+    gap: clamp(0.2rem, 1.6vw, 0.55rem);
+    padding-inline: 0.05rem;
+  }
+
+  .action-button {
+    flex: 0 0 3.15rem;
+    width: 3.15rem;
+    height: 3.15rem;
+    min-width: 3.15rem;
+    min-height: 3.15rem;
+  }
+
+  .action-button.report,
+  .action-button.secondary,
+  .action-button.block {
+    flex-basis: 2.62rem;
+    width: 2.62rem;
+    height: 2.62rem;
+    min-width: 2.62rem;
+    min-height: 2.62rem;
+  }
+
+  .action-button span {
+    font-size: 1.35rem;
+  }
+
+  .profile-layout,
+  .profile-editor,
+  .profile-status-stack,
+  .message-sidebar,
+  .chat-window,
+  .composer,
+  .composer-main {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-form select,
+  .profile-form select,
+  .profile-form input,
+  .profile-form textarea {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .location-control {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .location-control button {
+    width: 100%;
+  }
+
+  .bubble-wrap {
+    max-width: calc(100% - 2.7rem);
+  }
+}
+
+@media (max-width: 390px) {
+  .workspace {
+    padding-inline: 0.65rem;
+  }
+
+  .topbar-copy h1 {
+    font-size: 1.25rem;
+  }
+
+  .profile-card {
+    min-height: clamp(24rem, calc(100dvh - 14.4rem), 35rem);
+  }
+
+  .actions {
+    gap: 0.18rem;
+  }
+
+  .action-button {
+    flex-basis: 2.95rem;
+    width: 2.95rem;
+    height: 2.95rem;
+    min-width: 2.95rem;
+    min-height: 2.95rem;
+  }
+
+  .action-button.report,
+  .action-button.secondary,
+  .action-button.block {
+    flex-basis: 2.4rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    min-width: 2.4rem;
+    min-height: 2.4rem;
+  }
+
+  .mobile-bottom-nav {
+    right: 0.42rem;
+    left: 0.42rem;
   }
 }
 
@@ -3637,9 +3803,16 @@ h2,
                   <input id="profileCity" name="city" type="text" maxlength="80" placeholder="Ta ville" />
                 </label>
                 <label>
-                  Distance affichée
-                  <input id="profileDistance" name="distance_km" type="number" min="0" max="999" placeholder="0" />
+                  Distance de secours
+                  <input id="profileDistance" name="distance_km" type="number" min="0" max="999" placeholder="Calculée avec ta localisation" />
                 </label>
+              </div>
+              <div class="location-control">
+                <div>
+                  <strong>Localisation approximative</strong>
+                  <p class="muted-copy" id="locationStatus">Non activée. Ta position exacte ne sera jamais affichée.</p>
+                </div>
+                <button class="ghost-button" id="useLocationButton" type="button">Utiliser ma position</button>
               </div>
               <label>
                 Bio
@@ -3891,7 +4064,8 @@ h2,
                   <span></span>
                 </label>
               </div>
-              <p class="muted-copy">Reçois une alerte quand un nouveau message ou un match arrive.</p>
+              <p class="muted-copy" id="notificationStatus">Reçois une alerte quand un nouveau message ou un match arrive.</p>
+              <button class="ghost-button" id="testNotificationButton" type="button">Tester une notification</button>
             </article>
 
             <article class="settings-card">
@@ -4016,6 +4190,8 @@ const state = {
   blockedUsers: new Set(readStoredJson("mbife_blocked", [])),
   blockedProfiles: readStoredJson("mbifeBlockedProfiles", {}),
   profileVisible: localStorage.getItem("mbifeProfileVisible") !== "false",
+  approxLocation: readStoredJson("mbifeApproxLocation", null),
+  enhancedSchemaUnavailable: false,
   onboardingStep: 0,
   swipe: {
     active: false,
@@ -4052,10 +4228,12 @@ const state = {
   seenMessageIds: readStoredJson("mbifeSeenMessageIds", {}),
   seenMatchIds: readStoredJson("mbifeSeenMatchIds", []),
   seenLikeIds: readStoredJson("mbifeSeenLikeIds", []),
-  notificationsReady: Boolean(localStorage.getItem("mbifeSeenMessageIds")),
+  notificationsReady: localStorage.getItem("mbifeNotificationsReady") === "true",
+  messagesReady: Boolean(localStorage.getItem("mbifeSeenMessageIds")),
   matchesReady: Boolean(localStorage.getItem("mbifeSeenMatchIds")),
   likesReady: Boolean(localStorage.getItem("mbifeSeenLikeIds")),
   likesRealtimeChannel: null,
+  activityPollBusy: false,
   pendingAttachment: null,
   mediaRecorder: null,
   recordingChunks: [],
@@ -4132,6 +4310,8 @@ const profileDistance = document.querySelector("#profileDistance");
 const profileBio = document.querySelector("#profileBio");
 const profileIntent = document.querySelector("#profileIntent");
 const profileInterests = document.querySelector("#profileInterests");
+const locationStatus = document.querySelector("#locationStatus");
+const useLocationButton = document.querySelector("#useLocationButton");
 const profileStatusTitle = document.querySelector("#profileStatusTitle");
 const profileStatusText = document.querySelector("#profileStatusText");
 const refreshBackendButton = document.querySelector("#refreshBackendButton");
@@ -4150,6 +4330,8 @@ const blockButton = document.querySelector("#blockButton");
 const blockedList = document.querySelector("#blockedList");
 const profileVisibleToggle = document.querySelector("#profileVisibleToggle");
 const notificationsToggle = document.querySelector("#notificationsToggle");
+const notificationStatus = document.querySelector("#notificationStatus");
+const testNotificationButton = document.querySelector("#testNotificationButton");
 const deactivateAccountButton = document.querySelector("#deactivateAccountButton");
 const onboardingModal = document.querySelector("#onboardingModal");
 const onboardingProgress = document.querySelector("#onboardingProgress");
@@ -4197,7 +4379,7 @@ function profilePassesSearchFilters(profile) {
   const intent = String(profile.intent || "").toLowerCase();
   const tags = (profile.tags || []).join(" ").toLowerCase();
 
-  if (myLookingFor && myLookingFor !== "tous" && gender && gender !== myLookingFor) {
+  if (myLookingFor && myLookingFor !== "tous" && gender !== myLookingFor) {
     return false;
   }
 
@@ -4313,6 +4495,105 @@ function applyDefaultLookingFor(genderSelect, lookingForSelect) {
   if (gender && lookingForSelect && !lookingForSelect.value) {
     lookingForSelect.value = oppositeGender(gender);
   }
+}
+
+function roundedCoordinate(value) {
+  return Math.round(Number(value) * 100) / 100;
+}
+
+function validCoordinates(location) {
+  return (
+    location &&
+    location.approx_latitude !== null &&
+    location.approx_latitude !== undefined &&
+    location.approx_longitude !== null &&
+    location.approx_longitude !== undefined &&
+    Number.isFinite(Number(location.approx_latitude)) &&
+    Number.isFinite(Number(location.approx_longitude))
+  );
+}
+
+function locationFromRecord(record) {
+  if (validCoordinates(state.approxLocation) && state.approxLocation.saved === false) {
+    return state.approxLocation;
+  }
+  if (
+    record?.approx_latitude !== null &&
+    record?.approx_latitude !== undefined &&
+    record?.approx_longitude !== null &&
+    record?.approx_longitude !== undefined &&
+    Number.isFinite(Number(record?.approx_latitude)) &&
+    Number.isFinite(Number(record?.approx_longitude))
+  ) {
+    return {
+      approx_latitude: Number(record.approx_latitude),
+      approx_longitude: Number(record.approx_longitude),
+      location_updated_at: record.location_updated_at || "",
+      saved: true,
+    };
+  }
+  return validCoordinates(state.approxLocation) ? state.approxLocation : null;
+}
+
+function approximateDistanceKm(first, second) {
+  if (!validCoordinates(first) || !validCoordinates(second)) {
+    return null;
+  }
+
+  const toRad = (degrees) => (degrees * Math.PI) / 180;
+  const lat1 = toRad(Number(first.approx_latitude));
+  const lat2 = toRad(Number(second.approx_latitude));
+  const deltaLat = lat2 - lat1;
+  const deltaLng = toRad(Number(second.approx_longitude) - Number(first.approx_longitude));
+  const haversine =
+    Math.sin(deltaLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+  return Math.max(1, Math.round(6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))));
+}
+
+function renderLocationStatus() {
+  if (!locationStatus) return;
+  const saved = locationFromRecord(state.currentProfileRecord);
+
+  if (!validCoordinates(saved)) {
+    locationStatus.textContent = "Non activée. Ta position exacte ne sera jamais affichée.";
+    return;
+  }
+
+  locationStatus.textContent = saved.saved
+    ? "Active. Les distances utilisent une zone approximative d'environ 1 km."
+    : "Position prête. Enregistre ton profil pour activer les distances.";
+}
+
+function requestApproxLocation() {
+  if (!navigator.geolocation) {
+    showToast("Localisation indisponible sur cet appareil");
+    return;
+  }
+
+  useLocationButton.disabled = true;
+  useLocationButton.textContent = "Localisation...";
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      state.approxLocation = {
+        approx_latitude: roundedCoordinate(position.coords.latitude),
+        approx_longitude: roundedCoordinate(position.coords.longitude),
+        location_updated_at: new Date().toISOString(),
+        saved: false,
+      };
+      writeStoredJson("mbifeApproxLocation", state.approxLocation);
+      renderLocationStatus();
+      useLocationButton.disabled = false;
+      useLocationButton.textContent = "Actualiser ma position";
+      showToast("Position approximative prête. Enregistre ton profil.");
+    },
+    () => {
+      useLocationButton.disabled = false;
+      useLocationButton.textContent = "Utiliser ma position";
+      showToast("Autorisation de localisation refusée");
+    },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+  );
 }
 
 function getStoredInviteCode() {
@@ -4880,6 +5161,7 @@ function parseList(value) {
 function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url || "") {
   const gender = normalizeGender(profileGender?.value || authGender?.value || "");
   const lookingFor = normalizeLookingFor(profileLookingFor?.value || authLookingFor?.value || oppositeGender(gender));
+  const location = locationFromRecord(state.currentProfileRecord);
   return {
     display_name: profileName.value.trim() || authName.value.trim() || "Membre mbifê",
     age: profileAge.value ? Number(profileAge.value) : null,
@@ -4889,6 +5171,15 @@ function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url |
     intent: profileIntent.value.trim() || "Rencontrer quelqu'un avec sincérité et respect.",
     interests: parseList(profileInterests.value || "discussion, respect, découverte"),
     tags: mergeProfileTags(state.currentProfileRecord?.tags || ["serious", "verified"], gender, lookingFor),
+    gender: gender || null,
+    looking_for: lookingFor || null,
+    ...(validCoordinates(location)
+      ? {
+          approx_latitude: location.approx_latitude,
+          approx_longitude: location.approx_longitude,
+          location_updated_at: location.location_updated_at || new Date().toISOString(),
+        }
+      : {}),
     photo_url: photoUrl,
     compatibility_score: state.currentProfileRecord?.compatibility_score || 84,
     is_verified: true,
@@ -4920,9 +5211,10 @@ function renderProfileForm() {
   profilePreview.src =
     record.photo_url ||
     "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85";
+  renderLocationStatus();
 
   const disabled = !hasSupabaseConfig() || !user;
-  profileForm.querySelectorAll("input, textarea, button").forEach((element) => {
+  profileForm.querySelectorAll("input, textarea, select, button").forEach((element) => {
     element.disabled = disabled;
   });
 
@@ -5021,24 +5313,64 @@ async function saveProfile(event) {
 
     const draft = profileDraftFromForm(photoUrl);
     const existingId = state.currentProfileRecord?.id;
-    const [saved] = await supabaseJson("/rest/v1/profiles?on_conflict=user_id", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=representation",
-      body: [
-        {
-          id: existingId,
-          user_id: user.id,
-          ...draft,
-        },
-      ],
-    });
+    state.enhancedSchemaUnavailable = false;
+    let saved;
+    try {
+      [saved] = await supabaseJson("/rest/v1/profiles?on_conflict=user_id", {
+        method: "POST",
+        prefer: "resolution=merge-duplicates,return=representation",
+        body: [
+          {
+            id: existingId,
+            user_id: user.id,
+            ...draft,
+          },
+        ],
+      });
+    } catch (enhancedError) {
+      const needsSchema =
+        /(gender|looking_for|approx_latitude|approx_longitude|location_updated_at|schema cache)/i.test(
+          String(enhancedError.message || ""),
+        );
+      if (!needsSchema) throw enhancedError;
+
+      const compatibleDraft = { ...draft };
+      delete compatibleDraft.gender;
+      delete compatibleDraft.looking_for;
+      delete compatibleDraft.approx_latitude;
+      delete compatibleDraft.approx_longitude;
+      delete compatibleDraft.location_updated_at;
+      [saved] = await supabaseJson("/rest/v1/profiles?on_conflict=user_id", {
+        method: "POST",
+        prefer: "resolution=merge-duplicates,return=representation",
+        body: [
+          {
+            id: existingId,
+            user_id: user.id,
+            ...compatibleDraft,
+          },
+        ],
+      });
+      state.enhancedSchemaUnavailable = true;
+    }
 
     state.currentProfileRecord = saved;
+    if (validCoordinates(saved)) {
+      state.approxLocation = {
+        approx_latitude: Number(saved.approx_latitude),
+        approx_longitude: Number(saved.approx_longitude),
+        location_updated_at: saved.location_updated_at || new Date().toISOString(),
+        saved: true,
+      };
+      writeStoredJson("mbifeApproxLocation", state.approxLocation);
+    }
     localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(saved));
     renderProfileForm();
     await syncRemoteData();
 
-    if (photoWarning) {
+    if (state.enhancedSchemaUnavailable) {
+      showToast("Profil sauvegardé. Lance le SQL localisation/notifications pour activer les distances.");
+    } else if (photoWarning) {
       renderSupabaseStatus();
       if (profileStatusTitle && profileStatusText) {
         profileStatusTitle.textContent = "Profil sauvegardé sans photo";
@@ -5112,6 +5444,10 @@ function normalizeRemoteProfile(row, myProfile) {
   const meta = profileMetaFromTags(row.tags || []);
   const gender = normalizeGender(row.gender || row.genre || row.sexe || meta.gender);
   const lookingFor = normalizeLookingFor(row.looking_for || row.lookingFor || meta.lookingFor || oppositeGender(gender));
+  const distance = approximateDistanceKm(locationFromRecord(myProfile), {
+    approx_latitude: row.approx_latitude,
+    approx_longitude: row.approx_longitude,
+  });
 
   const sharedPrompts = compat.sharedInterests.length
     ? [
@@ -5134,7 +5470,8 @@ function normalizeRemoteProfile(row, myProfile) {
     name: row.display_name || "Membre mbifê",
     age: row.age || 24,
     city: row.city || "Ville à compléter",
-    distance: row.distance_km || 0,
+    distance: distance ?? row.distance_km ?? 0,
+    hasApproxLocation: distance !== null,
     tags: row.tags?.length ? row.tags : ["serious"],
     verified: Boolean(row.is_verified),
     score: compat.score,
@@ -5195,6 +5532,32 @@ async function loadRemoteLikes() {
     );
   } catch {
     state.remoteLikes = [];
+  }
+}
+
+async function loadRemoteBlocks() {
+  const user = currentUser();
+  if (!hasSupabaseConfig() || !user) return;
+
+  try {
+    const rows = await supabaseJson(
+      `/rest/v1/blocks?blocker_user_id=eq.${encodeURIComponent(user.id)}&select=blocked_user_id,blocked_profile_id`,
+    );
+    (rows || []).forEach((block) => {
+      const id = block.blocked_profile_id || block.blocked_user_id;
+      [block.blocked_user_id, block.blocked_profile_id].filter(Boolean).forEach((key) => state.blockedUsers.add(String(key)));
+      if (id && !state.blockedProfiles[id]) {
+        state.blockedProfiles[id] = {
+          id,
+          name: "Utilisateur bloqué",
+          userId: block.blocked_user_id,
+          keys: [block.blocked_user_id, block.blocked_profile_id].filter(Boolean),
+        };
+      }
+    });
+    saveBlockedUsers();
+  } catch {
+    // Le blocage local reste fonctionnel tant que la migration SQL n'est pas exécutée.
   }
 }
 
@@ -5403,6 +5766,11 @@ function setNotificationsActive(active) {
   if (notificationsToggle) {
     notificationsToggle.checked = Boolean(active);
   }
+  if (notificationStatus) {
+    notificationStatus.textContent = active
+      ? "Alertes activées. Elles arrivent dans l'app; l'alerte téléphone fermée nécessite le push serveur."
+      : "Active les alertes pour les nouveaux messages, likes et matches.";
+  }
 }
 
 function fireBrowserNotification(title, detail) {
@@ -5424,6 +5792,14 @@ function fireBrowserNotification(title, detail) {
   } catch {
     // Certains navigateurs Android limitent les notifications depuis une page active.
   }
+}
+
+function testNotificationDelivery() {
+  if (!state.notificationsReady) {
+    showToast("Active d'abord les notifications");
+    return;
+  }
+  showMessageNotice("Test notification", "mbifê peut t'alerter sur cet appareil.");
 }
 
 function clearUnreadForConversation(conversationId) {
@@ -5588,7 +5964,7 @@ function trackIncomingMessages(grouped) {
     const known = new Set(nextSeen[matchId] || []);
     const incoming = messages.filter((message) => message.sender_id !== user?.id && !known.has(message.id));
 
-    if (state.notificationsReady && incoming.length && state.activeConversation !== `remote:${matchId}`) {
+    if (state.messagesReady && incoming.length && state.activeConversation !== `remote:${matchId}`) {
       state.unreadThreads[matchId] = (state.unreadThreads[matchId] || 0) + incoming.length;
       const match = state.remoteMatches.find((item) => item.id === matchId);
       const profileName = match?.otherProfile?.name || "Nouveau message";
@@ -5600,7 +5976,7 @@ function trackIncomingMessages(grouped) {
 
   state.seenMessageIds = nextSeen;
   localStorage.setItem("mbifeSeenMessageIds", JSON.stringify(state.seenMessageIds));
-  state.notificationsReady = true;
+  state.messagesReady = true;
   saveUnreadThreads();
 }
 
@@ -5791,7 +6167,11 @@ async function requestMessageNotifications() {
 
   // Web Push complet
   try {
-    const registration = await navigator.serviceWorker.ready;
+    await navigator.serviceWorker.register("/sw.js");
+    const registration = await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((_, reject) => window.setTimeout(() => reject(new Error("Service worker indisponible")), 6000)),
+    ]);
     let subscription = await registration.pushManager.getSubscription();
 
     if (!subscription) {
@@ -5820,7 +6200,11 @@ async function unsubscribePushNotifications() {
       showToast("Notifications désactivées");
       return;
     }
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) {
+      showToast("Notifications désactivées");
+      return;
+    }
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
       await removePushSubscription(subscription.endpoint);
@@ -5839,7 +6223,8 @@ async function checkAndRestorePushState() {
 
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
   try {
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) return;
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
       setNotificationsActive(true);
@@ -5854,6 +6239,7 @@ async function syncRemoteData() {
     return;
   }
 
+  await loadRemoteBlocks();
   await loadRemoteProfiles();
   await loadRemoteLikes();
   await loadRemoteMatches();
@@ -5878,15 +6264,20 @@ function startRemoteRefresh() {
     return;
   }
 
-  state.refreshTimer = window.setInterval(() => {
-    loadRemoteMessages()
-      .then(() => {
-        renderConversations();
-      })
-      .catch(() => {
-        // La prochaine action utilisateur affichera l'erreur si nécessaire.
-      });
-  }, 10000);
+  state.refreshTimer = window.setInterval(async () => {
+    if (state.activityPollBusy) return;
+    state.activityPollBusy = true;
+    try {
+      await loadRemoteMatches();
+      await loadIncomingLikes();
+      renderMatches();
+      renderConversations();
+    } catch {
+      // La prochaine action utilisateur affichera l'erreur si nécessaire.
+    } finally {
+      state.activityPollBusy = false;
+    }
+  }, 6000);
 }
 
 function filteredProfiles() {
@@ -5944,7 +6335,7 @@ function renderProfile() {
       <div class="profile-content">
         <div class="intent-card">
           <span>Aucun profil</span>
-          <strong>Essaie un autre filtre ou débloque un profil.</strong>
+          <strong>Demande à tes amis de renseigner leur sexe et leurs préférences, ou essaie un autre filtre.</strong>
         </div>
       </div>
     `;
@@ -5969,7 +6360,7 @@ function renderProfile() {
           ${profileBackendBadge(profile)}
           <span class="badge">${profile.city}</span>
         </div>
-        <span class="distance">${profile.distance} km</span>
+        <span class="distance">${profile.hasApproxLocation ? "~" : ""}${profile.distance} km</span>
       </div>
       <div class="profile-title">
         <h2>${profile.name}</h2>
@@ -6397,7 +6788,7 @@ function renderAnnoncesFeed() {
             <button class="annonce-like-btn${liked ? " liked" : ""}" data-annonce-like="${escapeHtml(ann.id)}" type="button">
               ♥ ${likeCount > 0 ? likeCount : "J'aime"}
             </button>
-            ${canReply ? `<button class="annonce-reply-btn" data-annonce-reply="${escapeHtml(ann.id)}" data-author-id="${escapeHtml(ann.author_id)}" type="button">↩ Répondre en privé</button>` : ""}
+            ${canReply ? `<button class="annonce-reply-btn" data-annonce-reply="${escapeHtml(ann.id)}" data-author-id="${escapeHtml(ann.author_id)}" type="button">Demander à discuter</button>` : ""}
           </div>
         </article>
       `;
@@ -6516,33 +6907,42 @@ async function replyToAnnonce(authorId) {
     return;
   }
 
-  // Try to find or create a match between the two users
   try {
-    const existing = await supabaseJson(
-      `/rest/v1/matches?select=id&or=(and(user1_id.eq.${encodeURIComponent(user.id)},user2_id.eq.${encodeURIComponent(authorId)}),and(user1_id.eq.${encodeURIComponent(authorId)},user2_id.eq.${encodeURIComponent(user.id)}))&limit=1`,
+    const existingMatch = state.remoteMatches.find(
+      (match) => match.user_a_id === authorId || match.user_b_id === authorId,
     );
-
-    let matchId;
-    if (existing?.length) {
-      matchId = existing[0].id;
-    } else {
-      const created = await supabaseJson("/rest/v1/matches", {
-        method: "POST",
-        prefer: "return=representation",
-        body: { user1_id: user.id, user2_id: authorId },
-      });
-      matchId = created?.[0]?.id;
-    }
-
-    if (matchId) {
-      state.activeConversation = `remote:${matchId}`;
+    if (existingMatch) {
+      state.activeConversation = `remote:${existingMatch.id}`;
       setPanel("messages");
-      await loadRemoteMessages();
       renderConversations();
-      showToast("Conversation ouverte !");
+      openChatView();
+      return;
     }
+
+    const profileRows = await supabaseJson(
+      `/rest/v1/profiles?user_id=eq.${encodeURIComponent(authorId)}&select=*&limit=1`,
+    );
+    if (!profileRows?.[0]) {
+      showToast("Ce profil n'est plus disponible.");
+      return;
+    }
+    const profile = normalizeRemoteProfile(profileRows[0], state.currentProfileRecord);
+    await saveProfileAction("like", profile);
+    await syncRemoteData();
+    const match = state.remoteMatches.find(
+      (item) => item.user_a_id === authorId || item.user_b_id === authorId,
+    );
+    if (match) {
+      state.activeConversation = `remote:${match.id}`;
+      setPanel("messages");
+      openChatView();
+      showToast("Match accepté, conversation ouverte.");
+      return;
+    }
+    setPanel("matches");
+    showToast("Demande envoyée. Vous pourrez écrire après acceptation.");
   } catch (err) {
-    showToast("Impossible d'ouvrir la conversation : " + err.message.slice(0, 80));
+    showToast("Impossible d'envoyer la demande : " + err.message.slice(0, 80));
   }
 }
 
@@ -7234,7 +7634,7 @@ function resetFilterDrawer() {
   showToast("Filtres réinitialisés");
 }
 
-function blockCurrentProfile() {
+async function blockCurrentProfile() {
   const profile = currentProfile();
   if (!profile) {
     showToast("Aucun profil à bloquer");
@@ -7247,9 +7647,27 @@ function blockCurrentProfile() {
     id: profile.id,
     name: profile.name,
     photo: profile.photo,
+    userId: profile.userId,
     keys,
   };
   saveBlockedUsers();
+  if (hasSupabaseConfig() && currentUser() && profile.remote && profile.userId) {
+    try {
+      await supabaseFetch("/rest/v1/blocks?on_conflict=blocker_user_id,blocked_user_id", {
+        method: "POST",
+        prefer: "resolution=merge-duplicates,return=minimal",
+        body: [
+          {
+            blocker_user_id: currentUser().id,
+            blocked_user_id: profile.userId,
+            blocked_profile_id: profile.id,
+          },
+        ],
+      });
+    } catch {
+      showToast("Bloqué sur cet appareil. Lance le SQL pour synchroniser le blocage.");
+    }
+  }
   recordRemoteEvent("profile_blocked", {
     profile_id: profile.id,
     profile_name: profile.name,
@@ -7260,11 +7678,21 @@ function blockCurrentProfile() {
   renderAll();
 }
 
-function unblockProfile(profileId) {
+async function unblockProfile(profileId) {
   const blocked = state.blockedProfiles[profileId];
   (blocked?.keys || [profileId]).forEach((key) => state.blockedUsers.delete(key));
   delete state.blockedProfiles[profileId];
   saveBlockedUsers();
+  if (hasSupabaseConfig() && currentUser() && blocked?.userId) {
+    try {
+      await supabaseFetch(
+        `/rest/v1/blocks?blocker_user_id=eq.${encodeURIComponent(currentUser().id)}&blocked_user_id=eq.${encodeURIComponent(blocked.userId)}`,
+        { method: "DELETE", prefer: "return=minimal" },
+      );
+    } catch {
+      // Le déblocage local reste immédiat.
+    }
+  }
   renderAll();
   showToast("Profil débloqué");
 }
@@ -7298,6 +7726,12 @@ function renderSettings() {
   if (notificationsToggle) {
     notificationsToggle.checked =
       typeof Notification !== "undefined" && Notification.permission === "granted" && state.notificationsReady;
+  }
+  if (notificationStatus) {
+    const permitted = typeof Notification !== "undefined" && Notification.permission === "granted";
+    notificationStatus.textContent = permitted && state.notificationsReady
+      ? "Alertes activées. Le test ci-dessous vérifie cet appareil."
+      : "Active les alertes pour les nouveaux messages, likes et matches.";
   }
   if (!blockedList) {
     return;
@@ -7564,6 +7998,7 @@ logoutButton.addEventListener("click", logoutFromSupabase);
 profileLogoutButton?.addEventListener("click", logoutFromSupabase);
 profileForm.addEventListener("submit", saveProfile);
 refreshBackendButton.addEventListener("click", refreshBackendData);
+useLocationButton?.addEventListener("click", requestApproxLocation);
 profileVisibleToggle?.addEventListener("change", (event) => {
   state.profileVisible = event.target.checked;
   syncProfileVisibility();
@@ -7582,6 +8017,7 @@ notificationsToggle?.addEventListener("change", async (event) => {
   }
   renderSettings();
 });
+testNotificationButton?.addEventListener("click", testNotificationDelivery);
 deactivateAccountButton?.addEventListener("click", () => {
   if (window.confirm("Désactiver ce compte de test et te déconnecter ?")) {
     state.profileVisible = false;
@@ -7707,10 +8143,21 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+window.addEventListener("online", () => {
+  if (currentUser()) syncRemoteData();
+});
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && currentUser()) syncRemoteData();
+});
+
 renderAll();
 syncMobileNav();
 syncFilterDrawerInputs();
 showOnboardingIfNeeded();
+const requestedPanel = new URLSearchParams(window.location.search).get("panel");
+if (["discover", "profile", "matches", "messages", "viral", "settings", "about"].includes(requestedPanel)) {
+  setPanel(requestedPanel);
+}
 restoreAuthSession();
 checkSupabaseStatus();
 loadRemoteAnnonces();
@@ -7719,6 +8166,12 @@ checkAndRestorePushState();
 
 // PWA — Service Worker
 if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    if (event.data?.type === "NOTIFICATION_CLICK") {
+      setPanel("messages");
+      syncRemoteData();
+    }
+  });
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch(() => {});
   });
