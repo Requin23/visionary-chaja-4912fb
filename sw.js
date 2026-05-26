@@ -1,15 +1,20 @@
-const CACHE = "mbife-v1";
-const ASSETS = [
+const CACHE = "mbife-v2";
+const CORE_ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
+];
+const OPTIONAL_ASSETS = [
   "/icon-192.png",
   "/icon-512.png",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE).then(async (cache) => {
+      await cache.addAll(CORE_ASSETS);
+      await Promise.all(OPTIONAL_ASSETS.map((asset) => cache.add(asset).catch(() => null)));
+    })
   );
   self.skipWaiting();
 });
