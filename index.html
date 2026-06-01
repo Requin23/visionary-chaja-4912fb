@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- PWA -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="/manifest.json?v=2026-06-01-1" />
     <meta name="theme-color" content="#e6536a" />
     <meta name="mobile-web-app-capable" content="yes" />
 
@@ -4155,6 +4155,8 @@ h2,
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>
+const APP_VERSION = "2026-06-01-1";
+
 const profiles = [];
 
 const conversations = [];
@@ -4228,6 +4230,7 @@ const state = {
   seenMessageIds: readStoredJson("mbifeSeenMessageIds", {}),
   seenMatchIds: readStoredJson("mbifeSeenMatchIds", []),
   seenLikeIds: readStoredJson("mbifeSeenLikeIds", []),
+  seenNotificationIds: readStoredJson("mbifeSeenNotificationIds", []),
   notificationsReady: localStorage.getItem("mbifeNotificationsReady") === "true",
   messagesReady: Boolean(localStorage.getItem("mbifeSeenMessageIds")),
   matchesReady: Boolean(localStorage.getItem("mbifeSeenMatchIds")),
@@ -4983,6 +4986,7 @@ async function signupWithSupabase() {
       await syncRemoteData();
       startRemoteRefresh();
       subscribeLikesRealtime();
+      subscribeNotificationsRealtime();
       showToast("Compte créé et connecté");
     } else {
       authStatus.textContent = "Compte créé. Vérifie ton email, puis reviens cliquer sur Connexion.";
@@ -5024,6 +5028,7 @@ async function loginWithSupabase() {
     startRemoteRefresh();
     showToast(profileReady ? "Connexion réussie" : "Connexion réussie, profil à configurer");
     subscribeLikesRealtime();
+    subscribeNotificationsRealtime();
     recordRemoteEvent("auth_login", { email });
   } catch (error) {
     showAuthError(error, "Connexion refusée");
@@ -5054,6 +5059,11 @@ async function logoutFromSupabase() {
     state.likesRealtimeChannel.close();
     state.likesRealtimeChannel = null;
   }
+  if (state.notificationsRealtimeChannel) {
+    state.notificationsRealtimeChannel.onclose = null;
+    state.notificationsRealtimeChannel.close();
+    state.notificationsRealtimeChannel = null;
+  }
   state.likesReady = false;
   state.seenLikeIds = [];
   renderAll();
@@ -5082,6 +5092,7 @@ async function restoreAuthSession() {
   await syncRemoteData();
   startRemoteRefresh();
   subscribeLikesRealtime();
+  subscribeNotificationsRealtime();
 }
 
 async function ensureRemoteProfile(displayName) {
@@ -5773,18 +5784,32 @@ function setNotificationsActive(active) {
   }
 }
 
-function fireBrowserNotification(title, detail) {
+async function fireBrowserNotification(title, detail) {
   if (!state.notificationsReady || !("Notification" in window) || Notification.permission !== "granted") {
     return;
   }
 
+  const options = {
+    body: detail,
+    icon: "/icon-192.png",
+    badge: "/icon-192.png",
+    tag: `mbife-${String(title).slice(0, 30)}-${String(detail).slice(0, 30)}`,
+    renotify: true,
+    data: { url: "/?panel=messages" },
+  };
+
   try {
-    const notification = new Notification(`mbifê · ${title}`, {
-      body: detail,
-      icon: "/icon-192.png",
-      badge: "/icon-192.png",
-      tag: `mbife-${String(title).slice(0, 30)}-${String(detail).slice(0, 30)}`,
-    });
+    if ("serviceWorker" in navigator) {
+      const registration = await registerMbifeServiceWorker();
+      await registration?.showNotification(`mbifê · ${title}`, options);
+      return;
+    }
+  } catch {
+    // Fallback navigateur ci-dessous.
+  }
+
+  try {
+    const notification = new Notification(`mbifê · ${title}`, options);
     notification.onclick = () => {
       window.focus();
       setPanel("messages");
@@ -5863,6 +5888,102 @@ function trackNewLikes(likes) {
   state.seenLikeIds = [...new Set([...state.seenLikeIds, ...allIds])];
   localStorage.setItem("mbifeSeenLikeIds", JSON.stringify(state.seenLikeIds));
   state.likesReady = true;
+}
+
+function trackRemoteNotification(notification) {
+  if (!notification?.id || state.seenNotificationIds.includes(notification.id)) {
+    return;
+  }
+
+  state.seenNotificationIds = [...new Set([...state.seenNotificationIds, notification.id])].slice(-200);
+  localStorage.setItem("mbifeSeenNotificationIds", JSON.stringify(state.seenNotificationIds));
+
+  if (!state.notificationsReady) {
+    return;
+  }
+
+  const title = notification.title || "mbifê";
+  const detail = notification.body || "Tu as une nouvelle activité.";
+
+  if (notification.kind === "message" && notification.data?.match_id && notification.source_id) {
+    const matchId = notification.data.match_id;
+    const known = new Set(state.seenMessageIds[matchId] || []);
+    known.add(notification.source_id);
+    state.seenMessageIds[matchId] = [...known];
+    localStorage.setItem("mbifeSeenMessageIds", JSON.stringify(state.seenMessageIds));
+
+    if (state.activeConversation !== `remote:${matchId}`) {
+      state.unreadThreads[matchId] = (state.unreadThreads[matchId] || 0) + 1;
+      saveUnreadThreads();
+    }
+  }
+
+  if (notification.kind === "match" && notification.source_id) {
+    state.seenMatchIds = [...new Set([...state.seenMatchIds, notification.source_id])];
+    localStorage.setItem("mbifeSeenMatchIds", JSON.stringify(state.seenMatchIds));
+  }
+
+  if ((notification.kind === "like" || notification.kind === "spark") && notification.source_id) {
+    state.seenLikeIds = [...new Set([...state.seenLikeIds, notification.source_id])];
+    localStorage.setItem("mbifeSeenLikeIds", JSON.stringify(state.seenLikeIds));
+  }
+
+  showMessageNotice(title, detail);
+  if (notification.kind === "message") {
+    loadRemoteMatches().then(() => renderConversations()).catch(() => {});
+  }
+  if (notification.kind === "like" || notification.kind === "spark" || notification.kind === "match") {
+    loadIncomingLikes().then(() => renderMatches()).catch(() => {});
+    loadRemoteMatches().then(() => renderMatches()).catch(() => {});
+  }
+}
+
+function subscribeNotificationsRealtime() {
+  const user = currentUser();
+  if (!hasSupabaseConfig() || !user) return;
+  if (state.notificationsRealtimeChannel) return;
+
+  try {
+    const host = supabaseConfig.url.replace(/\/$/, "").replace(/^https?:\/\//, "");
+    const ws = new WebSocket(
+      `wss://${host}/realtime/v1/websocket?apikey=${encodeURIComponent(supabaseConfig.anonKey)}&vsn=1.0.0`,
+    );
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        topic: `realtime:public:notifications:user_id=eq.${user.id}`,
+        event: "phx_join",
+        payload: {},
+        ref: "notification-sub",
+      }));
+      ws.notificationsPing = window.setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ topic: "phoenix", event: "heartbeat", payload: {}, ref: "notif-hb" }));
+        }
+      }, 25000);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (
+          (msg.event === "INSERT" || msg.event === "postgres_changes") &&
+          (msg.payload?.record || msg.payload?.data?.record)
+        ) {
+          trackRemoteNotification(msg.payload?.record || msg.payload?.data?.record);
+        }
+      } catch { /* ignore bad frames */ }
+    };
+
+    ws.onclose = () => {
+      window.clearInterval(ws.notificationsPing);
+      state.notificationsRealtimeChannel = null;
+      window.setTimeout(() => subscribeNotificationsRealtime(), 5000);
+    };
+
+    ws.onerror = () => ws.close();
+    state.notificationsRealtimeChannel = ws;
+  } catch { /* WS not available */ }
 }
 
 function subscribeLikesRealtime() {
@@ -6103,13 +6224,21 @@ async function toggleVoiceRecording() {
 }
 
 // ── Web Push ────────────────────────────────────────────────
-const VAPID_PUBLIC_KEY = "BJdddOYFym5K-VKIIlz6k7rOprrx9IRDal7BprsfvYusFvnHOrZel2l3Qhsyza0kXjMyndaEnsG9Rv3owkfqSWw";
+const VAPID_PUBLIC_KEY = "BD-vU_PhNflROCvPIfDkKPxsyy3StLRB4ovL881NI6fsq_63I6_ke4ZKgZMNzpotMf-HKKXHlaul-Vy8EpX8Dr4";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = atob(base64);
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
+}
+
+function pushKeysMatch(subscription, applicationServerKey) {
+  const existingKey = subscription?.options?.applicationServerKey;
+  if (!existingKey) return true;
+  const existing = new Uint8Array(existingKey);
+  if (existing.length !== applicationServerKey.length) return false;
+  return existing.every((value, index) => value === applicationServerKey[index]);
 }
 
 async function savePushSubscription(subscription) {
@@ -6126,6 +6255,7 @@ async function savePushSubscription(subscription) {
         endpoint: sub.endpoint,
         p256dh: sub.keys?.p256dh || "",
         auth: sub.keys?.auth || "",
+        user_agent: navigator.userAgent || "",
       }],
     });
   } catch (error) {
@@ -6144,6 +6274,31 @@ async function removePushSubscription(endpoint) {
   } catch { /* silencieux */ }
 }
 
+async function registerMbifeServiceWorker() {
+  if (!("serviceWorker" in navigator)) {
+    return null;
+  }
+
+  const registration = await navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" });
+  registration.update?.().catch(() => {});
+
+  if (registration.waiting) {
+    registration.waiting.postMessage({ type: "SKIP_WAITING" });
+  }
+
+  registration.addEventListener("updatefound", () => {
+    const worker = registration.installing;
+    if (!worker) return;
+    worker.addEventListener("statechange", () => {
+      if (worker.state === "installed" && navigator.serviceWorker.controller) {
+        worker.postMessage({ type: "SKIP_WAITING" });
+      }
+    });
+  });
+
+  return registration;
+}
+
 async function requestMessageNotifications() {
   if (!("Notification" in window)) {
     showToast("Notifications non disponibles sur ce navigateur");
@@ -6158,6 +6313,7 @@ async function requestMessageNotifications() {
   }
 
   setNotificationsActive(true);
+  subscribeNotificationsRealtime();
   showToast("Notifications activées");
 
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
@@ -6167,17 +6323,24 @@ async function requestMessageNotifications() {
 
   // Web Push complet
   try {
-    await navigator.serviceWorker.register("/sw.js");
+    await registerMbifeServiceWorker();
     const registration = await Promise.race([
       navigator.serviceWorker.ready,
       new Promise((_, reject) => window.setTimeout(() => reject(new Error("Service worker indisponible")), 6000)),
     ]);
+    const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
     let subscription = await registration.pushManager.getSubscription();
+
+    if (subscription && !pushKeysMatch(subscription, applicationServerKey)) {
+      await removePushSubscription(subscription.endpoint);
+      await subscription.unsubscribe();
+      subscription = null;
+    }
 
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        applicationServerKey,
       });
     }
 
@@ -8166,14 +8329,21 @@ checkAndRestorePushState();
 
 // PWA — Service Worker
 if ("serviceWorker" in navigator) {
+  let mbifeRefreshAfterUpdate = false;
   navigator.serviceWorker.addEventListener("message", (event) => {
     if (event.data?.type === "NOTIFICATION_CLICK") {
       setPanel("messages");
       syncRemoteData();
     }
   });
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (mbifeRefreshAfterUpdate) return;
+    mbifeRefreshAfterUpdate = true;
+    showToast("Mise à jour installée");
+    window.setTimeout(() => window.location.reload(), 650);
+  });
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    registerMbifeServiceWorker().catch(() => {});
   });
 }
 
