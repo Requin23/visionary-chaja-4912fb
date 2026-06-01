@@ -1,4 +1,5 @@
-const CACHE = "mbife-v2";
+const VERSION = "2026-06-01-1";
+const CACHE = `mbife-${VERSION}`;
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -28,6 +29,12 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
@@ -36,6 +43,19 @@ self.addEventListener("fetch", (event) => {
     url.hostname.includes("unsplash.com") ||
     event.request.method !== "GET"
   ) {
+    return;
+  }
+
+  if (event.request.mode === "navigate" || url.pathname === "/" || url.pathname === "/index.html") {
+    event.respondWith(
+      fetch(event.request, { cache: "no-store" })
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/index.html")))
+    );
     return;
   }
 
