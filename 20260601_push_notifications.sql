@@ -159,7 +159,7 @@ declare
   v_kind text;
 begin
   select user_id into v_target_user from public.profiles where id = new.target_profile_id;
-  select coalesce(name, 'Quelqu''un') into v_liker_name from public.profiles where user_id = new.liker_user_id limit 1;
+  select coalesce(display_name, 'Quelqu''un') into v_liker_name from public.profiles where user_id = new.liker_user_id limit 1;
   v_kind := case when coalesce(new.action, '') = 'spark' then 'spark' else 'like' end;
 
   if v_target_user is not null and v_target_user <> new.liker_user_id then
@@ -218,7 +218,7 @@ declare
 begin
   select user_a_id, user_b_id into v_user_a, v_user_b from public.matches where id = new.match_id;
   v_target_user := case when new.sender_id = v_user_a then v_user_b else v_user_a end;
-  select coalesce(name, 'Nouveau message') into v_sender_name from public.profiles where user_id = new.sender_id limit 1;
+  select coalesce(display_name, 'Nouveau message') into v_sender_name from public.profiles where user_id = new.sender_id limit 1;
 
   if v_target_user is not null and v_target_user <> new.sender_id then
     perform public.enqueue_notification(

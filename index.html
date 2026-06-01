@@ -1938,6 +1938,54 @@ blockquote {
     grid-template-columns: 1fr;
   }
 
+  #matchesPanel .match-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  #matchesPanel .mini-card img {
+    aspect-ratio: 1 / 1;
+  }
+
+  #matchesPanel .mini-card div {
+    padding: 0.55rem;
+  }
+
+  #matchesPanel .mini-card strong {
+    font-size: 0.9rem;
+  }
+
+  #matchesPanel .mini-card span {
+    font-size: 0.76rem;
+    line-height: 1.25;
+  }
+
+  #matchesPanel .date-lab {
+    padding: 0.8rem;
+  }
+
+  #matchesPanel .date-option {
+    padding: 0.62rem;
+  }
+
+  .new-match-strip {
+    grid-auto-columns: 4.25rem;
+    gap: 0.65rem;
+  }
+
+  .new-match img {
+    width: 3.45rem;
+    height: 3.45rem;
+  }
+
+  .new-match small {
+    max-width: 4.25rem;
+    overflow: hidden;
+    font-size: 0.72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .like-request-card {
     grid-template-columns: 3.7rem minmax(0, 1fr);
   }
@@ -1945,6 +1993,14 @@ blockquote {
   .like-request-card img {
     width: 3.7rem;
     height: 3.7rem;
+  }
+
+  .like-request-body strong {
+    font-size: 0.92rem;
+  }
+
+  .like-request-body p {
+    font-size: 0.78rem;
   }
 
   .form-grid {
