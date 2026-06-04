@@ -1,4 +1,4 @@
-const VERSION = "2026-06-04-1";
+const VERSION = "2026-06-04-2";
 const CACHE = `mbife-${VERSION}`;
 const CORE_ASSETS = [
   "/",
