@@ -4298,29 +4298,116 @@ h2,
 
           <aside class="profile-status-stack">
             <article class="about-card mobile-account-card" id="mobileAccountCard">
-              <p class="eyebrow">Compte mbifê</p>
-              <h2>Connexion</h2>
-              <p class="muted-copy" id="mobileAuthStatus">Connecte-toi pour synchroniser likes, matches et messages.</p>
-              <div class="auth-form">
-                <input id="mobileAuthName" type="text" autocomplete="name" placeholder="Nom public" />
-                <input id="mobileAuthEmail" type="email" autocomplete="email" placeholder="Email" />
-                <input id="mobileAuthPassword" type="password" autocomplete="current-password" placeholder="Mot de passe" />
-                <select id="mobileAuthGender" aria-label="Ton sexe">
-                  <option value="">Je suis...</option>
-                  <option value="femme">Femme</option>
-                  <option value="homme">Homme</option>
-                  <option value="autre">Autre</option>
-                </select>
-                <select id="mobileAuthLookingFor" aria-label="Profils recherchés">
-                  <option value="">Je veux voir...</option>
-                  <option value="femme">Des femmes</option>
-                  <option value="homme">Des hommes</option>
-                  <option value="tous">Tout le monde</option>
-                </select>
-                <div class="auth-actions">
-                  <button id="mobileLoginButton" type="button">Connexion</button>
-                  <button id="mobileSignupButton" type="button">Inscription</button>
+              <!-- Header -->
+              <div class="auth-panel-head" style="margin-bottom:0.75rem">
+                <p class="eyebrow" style="margin:0">Compte mbifê</p>
+                <p class="auth-hint" id="mobileAuthStatus">Connecte-toi pour synchroniser.</p>
+              </div>
+
+              <!-- Onglets -->
+              <div class="auth-tabs" id="mAuthTabs" role="tablist">
+                <button class="auth-tab active" id="mTabLogin"  role="tab" aria-selected="true"  type="button">Connexion</button>
+                <button class="auth-tab"        id="mTabSignup" role="tab" aria-selected="false" type="button">Inscription</button>
+              </div>
+
+              <!-- Points progression -->
+              <div class="auth-dots" id="mAuthDots" hidden>
+                <div class="auth-dot active"></div>
+                <div class="auth-dot"></div>
+              </div>
+
+              <!-- Champs cachés pour compatibilité JS -->
+              <input id="mobileAuthName"       type="text"     style="display:none" autocomplete="name" />
+              <input id="mobileAuthEmail"      type="email"    style="display:none" autocomplete="email" />
+              <input id="mobileAuthPassword"   type="password" style="display:none" autocomplete="current-password" />
+              <select id="mobileAuthGender"    aria-label="Ton sexe"          style="display:none">
+                <option value="">Je suis...</option>
+                <option value="femme">Femme</option>
+                <option value="homme">Homme</option>
+                <option value="autre">Autre</option>
+              </select>
+              <select id="mobileAuthLookingFor" aria-label="Profils recherchés" style="display:none">
+                <option value="">Je veux voir...</option>
+                <option value="femme">Des femmes</option>
+                <option value="homme">Des hommes</option>
+                <option value="tous">Tout le monde</option>
+              </select>
+
+              <!-- ══ CONNEXION ══ -->
+              <div id="mLoginPanel">
+                <div class="auth-step slide-in-left" style="gap:0.44rem;display:grid">
+                  <div class="auth-field">
+                    <input id="mLoginEmail" type="email" autocomplete="email" placeholder=" " />
+                    <label for="mLoginEmail">Email</label>
+                    <span class="auth-field-icon" aria-hidden="true"></span>
+                  </div>
+                  <div class="auth-field" style="position:relative">
+                    <input id="mLoginPwd" type="password" autocomplete="current-password" placeholder=" " />
+                    <label for="mLoginPwd">Mot de passe</label>
+                    <button class="auth-pwd-toggle" type="button" id="mLoginPwdToggle" aria-label="Afficher" tabindex="-1">👁</button>
+                  </div>
+                  <button class="auth-cta" id="mobileLoginButton" type="button">Se connecter</button>
                 </div>
+                <div class="auth-divider">ou</div>
+                <button class="google-button" id="mobileGoogleButton" type="button">
+                  <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+                  Continuer avec Google
+                </button>
+              </div>
+
+              <!-- ══ INSCRIPTION ══ -->
+              <div id="mSignupPanel" hidden>
+                <!-- Étape 1 -->
+                <div class="auth-step" id="mSignupStep1" style="gap:0.44rem;display:grid">
+                  <div class="auth-field">
+                    <input id="mSignupEmail" type="email" autocomplete="email" placeholder=" " />
+                    <label for="mSignupEmail">Email</label>
+                    <span class="auth-field-icon" aria-hidden="true"></span>
+                  </div>
+                  <div class="auth-field" style="position:relative">
+                    <input id="mSignupPwd" type="password" autocomplete="new-password" placeholder=" " />
+                    <label for="mSignupPwd">Mot de passe</label>
+                    <button class="auth-pwd-toggle" type="button" id="mSignupPwdToggle" aria-label="Afficher" tabindex="-1">👁</button>
+                  </div>
+                  <div class="pwd-strength" id="mPwdStrength" data-level="0">
+                    <span></span><span></span><span></span><span></span>
+                  </div>
+                  <p class="auth-hint" id="mPwdHint">6 caractères min · Mélange lettres et chiffres</p>
+                  <button class="auth-next" id="mSignupNextBtn" type="button" disabled>Continuer →</button>
+                </div>
+                <!-- Étape 2 -->
+                <div class="auth-step hidden" id="mSignupStep2" style="gap:0.44rem;display:grid">
+                  <div class="auth-field">
+                    <input id="mSignupName" type="text" autocomplete="name" placeholder=" " maxlength="80" />
+                    <label for="mSignupName">Nom public</label>
+                  </div>
+                  <div class="auth-field">
+                    <select id="mSignupGender">
+                      <option value="" disabled selected></option>
+                      <option value="femme">Femme</option>
+                      <option value="homme">Homme</option>
+                      <option value="autre">Autre</option>
+                    </select>
+                    <label for="mSignupGender">Je suis…</label>
+                  </div>
+                  <div class="auth-field">
+                    <select id="mSignupLookingFor">
+                      <option value="" disabled selected></option>
+                      <option value="femme">Des femmes</option>
+                      <option value="homme">Des hommes</option>
+                      <option value="tous">Tout le monde</option>
+                    </select>
+                    <label for="mSignupLookingFor">Je veux voir…</label>
+                  </div>
+                  <button class="auth-cta" id="mobileSignupButton" type="button">Créer mon compte</button>
+                  <button class="auth-next" id="mSignupBackBtn" type="button"
+                    style="background:var(--soft);color:var(--ink);box-shadow:none;margin-top:0">← Retour</button>
+                </div>
+                <div class="auth-divider" id="mSignupDivider">ou</div>
+                <button class="google-button" id="mobileGoogleButton2" type="button">
+                  <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+                  S'inscrire avec Google
+                </button>
               </div>
             </article>
             <article class="about-card">
@@ -5364,6 +5451,16 @@ function renderAuthState() {
     if (authDots)    authDots.hidden    = true;
     logoutButton.hidden = false;
     if (authPanel) authPanel.style.display = "grid";
+    // Mobile : masquer la carte auth, afficher le statut
+    const mCard = document.querySelector("#mobileAccountCard");
+    if (mCard) {
+      mCard.querySelector("#mLoginPanel")  && (mCard.querySelector("#mLoginPanel").hidden  = true);
+      mCard.querySelector("#mSignupPanel") && (mCard.querySelector("#mSignupPanel").hidden = true);
+      mCard.querySelector("#mAuthTabs")    && (mCard.querySelector("#mAuthTabs").hidden    = true);
+      mCard.querySelector("#mAuthDots")    && (mCard.querySelector("#mAuthDots").hidden    = true);
+      const mStatus = mCard.querySelector("#mobileAuthStatus");
+      if (mStatus) mStatus.textContent = `Connecté · ${user.email}`;
+    }
     return;
   }
 
@@ -5374,6 +5471,15 @@ function renderAuthState() {
   if (authDots)    authDots.hidden    = true;
   if (authPanel) authPanel.style.display = "grid";
   logoutButton.hidden = true;
+  // Mobile : réafficher la carte auth
+  const mCard = document.querySelector("#mobileAccountCard");
+  if (mCard) {
+    mCard.querySelector("#mLoginPanel")  && (mCard.querySelector("#mLoginPanel").hidden  = false);
+    mCard.querySelector("#mSignupPanel") && (mCard.querySelector("#mSignupPanel").hidden = true);
+    mCard.querySelector("#mAuthTabs")    && (mCard.querySelector("#mAuthTabs").hidden    = false);
+    const mStatus = mCard.querySelector("#mobileAuthStatus");
+    if (mStatus) mStatus.textContent = "Connecte-toi pour synchroniser.";
+  }
 }
 
 function readAuthFields() {
@@ -8778,20 +8884,192 @@ messagePhotoInput?.addEventListener("change", () => {
   });
 
   // ── Google button 2 ───────────────────────────────
-  googleBtn2El?.addEventListener("click", () => loginWithGoogle());
+  // (câblé globalement via loginWithGoogle)
+
+})();
+
+// ══════════════════════════════════════════════════════
+// GOOGLE OAUTH
+// ══════════════════════════════════════════════════════
+function loginWithGoogle() {
+  if (!hasSupabaseConfig()) {
+    showToast("Configure Supabase avant de continuer avec Google.");
+    return;
+  }
+
+  // En mode PWA standalone, window.location.origin suffit
+  // redirect_to doit correspondre exactement à une URL autorisée dans Supabase
+  const redirectTo = "https://visionary-chaja-4912fb.vercel.app/";
+  const base = supabaseConfig.url.replace(/\/$/, "");
+
+  const params = new URLSearchParams({
+    provider:    "google",
+    redirect_to: redirectTo,
+  });
+
+  window.location.href = `${base}/auth/v1/authorize?${params}`;
+}
+
+// Câbler tous les boutons Google (desktop + mobile, connexion + inscription)
+document.querySelector("#googleButton")?.addEventListener("click", loginWithGoogle);
+document.querySelector("#googleButton2")?.addEventListener("click", loginWithGoogle);
+document.querySelector("#mobileGoogleButton")?.addEventListener("click", loginWithGoogle);
+document.querySelector("#mobileGoogleButton2")?.addEventListener("click", loginWithGoogle);
+
+// ══════════════════════════════════════════════════════
+// CONTRÔLEUR AUTH MOBILE
+// ══════════════════════════════════════════════════════
+(function initMobileAuthUI() {
+  const mTabLogin    = document.querySelector("#mTabLogin");
+  const mTabSignup   = document.querySelector("#mTabSignup");
+  const mLoginPanel  = document.querySelector("#mLoginPanel");
+  const mSignupPanel = document.querySelector("#mSignupPanel");
+  const mAuthDots    = document.querySelector("#mAuthDots");
+
+  const mStep1       = document.querySelector("#mSignupStep1");
+  const mStep2       = document.querySelector("#mSignupStep2");
+  const mNextBtn     = document.querySelector("#mSignupNextBtn");
+  const mBackBtn     = document.querySelector("#mSignupBackBtn");
+  const mDivider     = document.querySelector("#mSignupDivider");
+  const mGoogleBtn2  = document.querySelector("#mobileGoogleButton2");
+
+  const mLoginEmail  = document.querySelector("#mLoginEmail");
+  const mLoginPwd    = document.querySelector("#mLoginPwd");
+  const mLoginTog    = document.querySelector("#mLoginPwdToggle");
+
+  const mSignupEmail = document.querySelector("#mSignupEmail");
+  const mSignupPwd   = document.querySelector("#mSignupPwd");
+  const mSignupTog   = document.querySelector("#mSignupPwdToggle");
+  const mSignupName  = document.querySelector("#mSignupName");
+  const mSignupGender= document.querySelector("#mSignupGender");
+  const mSignupLF    = document.querySelector("#mSignupLookingFor");
+  const mPwdStrength = document.querySelector("#mPwdStrength");
+  const mPwdHint     = document.querySelector("#mPwdHint");
+
+  function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
+
+  function pwdLevel(p) {
+    if (!p || p.length < 6) return 0;
+    let s = 1;
+    if (p.length >= 8) s++;
+    if (/[A-Z]/.test(p) || /[0-9]/.test(p)) s++;
+    if (/[^a-zA-Z0-9]/.test(p)) s++;
+    return s;
+  }
+
+  function setDots(step) {
+    mAuthDots?.querySelectorAll(".auth-dot").forEach((d, i) => {
+      d.classList.toggle("active", i === step - 1);
+    });
+  }
+
+  function togglePwd(input, btn) {
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    btn.textContent = show ? "🙈" : "👁";
+  }
+
+  // Onglets
+  function showMTab(tab) {
+    const isLogin = tab === "login";
+    mTabLogin?.classList.toggle("active", isLogin);
+    mTabSignup?.classList.toggle("active", !isLogin);
+    mTabLogin?.setAttribute("aria-selected", isLogin);
+    mTabSignup?.setAttribute("aria-selected", !isLogin);
+    if (mLoginPanel)  mLoginPanel.hidden  = !isLogin;
+    if (mSignupPanel) mSignupPanel.hidden  = isLogin;
+    if (mAuthDots)    mAuthDots.hidden     = isLogin;
+    if (!isLogin) setDots(1);
+  }
+
+  mTabLogin?.addEventListener("click",  () => showMTab("login"));
+  mTabSignup?.addEventListener("click", () => showMTab("signup"));
+
+  // Show/hide mdp
+  mLoginTog?.addEventListener("click",  () => togglePwd(mLoginPwd, mLoginTog));
+  mSignupTog?.addEventListener("click", () => togglePwd(mSignupPwd, mSignupTog));
+
+  // Validation email connexion
+  mLoginEmail?.addEventListener("input", () => {
+    const ok = validEmail(mLoginEmail.value);
+    mLoginEmail.classList.toggle("valid",   ok);
+    mLoginEmail.classList.toggle("invalid", !ok && mLoginEmail.value.length > 3);
+  });
+
+  // Validation step 1 inscription
+  function checkMStep1() {
+    const emailOk = validEmail(mSignupEmail?.value || "");
+    const pwdOk   = (mSignupPwd?.value || "").length >= 6;
+    if (mNextBtn) mNextBtn.disabled = !(emailOk && pwdOk);
+    if (mSignupEmail) {
+      mSignupEmail.classList.toggle("valid",   emailOk);
+      mSignupEmail.classList.toggle("invalid", !emailOk && mSignupEmail.value.length > 3);
+    }
+  }
+
+  mSignupEmail?.addEventListener("input", checkMStep1);
+  mSignupPwd?.addEventListener("input", () => {
+    const val = mSignupPwd.value;
+    const level = pwdLevel(val);
+    if (mPwdStrength) mPwdStrength.dataset.level = level;
+    if (mPwdHint) {
+      const msgs = ["6 caractères min · Mélange lettres et chiffres", "Trop court", "Faible — essaie mieux", "Bien — presque parfait", "Excellent 💪"];
+      mPwdHint.textContent = msgs[level] || "";
+      mPwdHint.className = "auth-hint" + (level >= 3 ? " ok" : level <= 1 && val.length ? " error" : "");
+    }
+    checkMStep1();
+  });
+
+  // Navigation étapes
+  mNextBtn?.addEventListener("click", () => {
+    mStep1?.classList.add("hidden");
+    mStep2?.classList.remove("hidden");
+    mStep2?.classList.add("slide-in-right");
+    if (mDivider)   mDivider.hidden  = true;
+    if (mGoogleBtn2) mGoogleBtn2.hidden = true;
+    setDots(2);
+  });
+
+  mBackBtn?.addEventListener("click", () => {
+    mStep2?.classList.add("hidden");
+    mStep1?.classList.remove("hidden");
+    mStep1?.classList.add("slide-in-left");
+    if (mDivider)   mDivider.hidden  = false;
+    if (mGoogleBtn2) mGoogleBtn2.hidden = false;
+    setDots(1);
+  });
+
+  // Auto-fill "Je veux voir"
+  mSignupGender?.addEventListener("change", () => {
+    if (mSignupLF && !mSignupLF.value) {
+      const opp = { femme: "homme", homme: "femme", autre: "tous" };
+      mSignupLF.value = opp[mSignupGender.value] || "";
+    }
+  });
+
+  // Bouton connexion mobile
+  document.querySelector("#mobileLoginButton")?.addEventListener("click", () => {
+    if (mobileAuthEmail) mobileAuthEmail.value = mLoginEmail?.value.trim() || "";
+    if (mobileAuthPassword) mobileAuthPassword.value = mLoginPwd?.value || "";
+    copyMobileAuthFields();
+    loginWithSupabase();
+  });
+
+  // Bouton inscription mobile
+  document.querySelector("#mobileSignupButton")?.addEventListener("click", () => {
+    if (mobileAuthEmail)      mobileAuthEmail.value      = mSignupEmail?.value.trim() || "";
+    if (mobileAuthPassword)   mobileAuthPassword.value   = mSignupPwd?.value          || "";
+    if (mobileAuthName)       mobileAuthName.value       = mSignupName?.value.trim()  || "";
+    if (mobileAuthGender)     mobileAuthGender.value     = mSignupGender?.value       || "";
+    if (mobileAuthLookingFor) mobileAuthLookingFor.value = mSignupLF?.value           || "";
+    copyMobileAuthFields();
+    signupWithSupabase();
+  });
 
 })();
 
 loginButton.addEventListener("click", loginWithSupabase);
 signupButton.addEventListener("click", signupWithSupabase);
-mobileLoginButton?.addEventListener("click", () => {
-  copyMobileAuthFields();
-  loginWithSupabase();
-});
-mobileSignupButton?.addEventListener("click", () => {
-  copyMobileAuthFields();
-  signupWithSupabase();
-});
 logoutButton.addEventListener("click", logoutFromSupabase);
 profileLogoutButton?.addEventListener("click", logoutFromSupabase);
 profileForm.addEventListener("submit", saveProfile);
@@ -8947,6 +9225,87 @@ window.addEventListener("online", () => {
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && currentUser()) syncRemoteData();
 });
+
+// ══════════════════════════════════════════════════════
+// OAUTH CALLBACK — gère les deux flows Supabase :
+//   • Implicit  : #access_token=xxx&token_type=bearer&...
+//   • PKCE/Code : ?code=xxx  (échangé contre un token)
+// ══════════════════════════════════════════════════════
+(function handleOAuthCallback() {
+
+  // ── Flow implicit (fragment) ──────────────────────
+  const hash = window.location.hash.slice(1);
+  if (hash) {
+    const p = new URLSearchParams(hash);
+    const accessToken  = p.get("access_token");
+    const refreshToken = p.get("refresh_token") || "";
+    const tokenType    = p.get("token_type");
+    const expiresIn    = Number(p.get("expires_in") || 3600);
+
+    if (accessToken && tokenType === "bearer") {
+      // Nettoyer l'URL immédiatement
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+
+      // Sauvegarder la session puis charger l'utilisateur
+      saveAuthSession({ access_token: accessToken, refresh_token: refreshToken, token_type: tokenType, expires_in: expiresIn });
+
+      supabaseJson("/auth/v1/user")
+        .then((user) => {
+          if (user) {
+            saveAuthSession({ access_token: accessToken, refresh_token: refreshToken, token_type: tokenType, expires_in: expiresIn, user });
+            tryEnsureRemoteProfile(user.user_metadata?.full_name || user.user_metadata?.display_name || user.email?.split("@")[0] || "Membre mbifê");
+            syncRemoteData();
+            startRemoteRefresh();
+            subscribeLikesRealtime();
+            subscribeNotificationsRealtime();
+            showToast("Connexion Google réussie ✓");
+          }
+        })
+        .catch(() => showToast("Connecté via Google"));
+
+      return;
+    }
+  }
+
+  // ── Flow PKCE / Authorization Code ────────────────
+  const searchParams = new URLSearchParams(window.location.search);
+  const code = searchParams.get("code");
+
+  if (code && hasSupabaseConfig()) {
+    // Nettoyer l'URL immédiatement
+    searchParams.delete("code");
+    searchParams.delete("state");
+    const cleanSearch = searchParams.toString();
+    history.replaceState(null, "", window.location.pathname + (cleanSearch ? "?" + cleanSearch : ""));
+
+    // Échanger le code contre un token via l'endpoint Supabase
+    fetch(`${supabaseConfig.url}/auth/v1/token?grant_type=pkce`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: supabaseConfig.anonKey,
+      },
+      body: JSON.stringify({ auth_code: code }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.access_token) {
+          saveAuthSession(data);
+          tryEnsureRemoteProfile(data.user?.user_metadata?.full_name || data.user?.email?.split("@")[0] || "Membre mbifê");
+          syncRemoteData();
+          startRemoteRefresh();
+          subscribeLikesRealtime();
+          subscribeNotificationsRealtime();
+          showToast("Connexion Google réussie ✓");
+        } else {
+          // Fallback : tenter de récupérer la session via cookie de session Supabase
+          restoreAuthSession();
+        }
+      })
+      .catch(() => restoreAuthSession());
+  }
+
+})();
 
 renderAll();
 syncMobileNav();
