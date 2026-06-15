@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- PWA -->
-    <link rel="manifest" href="/manifest.json?v=2026-06-04-2" />
+    <link rel="manifest" href="/manifest.json?v=2026-06-15-1" />
     <meta name="theme-color" content="#e6536a" />
     <meta name="mobile-web-app-capable" content="yes" />
 
@@ -173,370 +173,238 @@ canvas {
 }
 
 .quality-panel h2,
-/* ═══════════════════════════════
-   AUTH PANEL — Floating animated card
-   ═══════════════════════════════ */
-.quality-panel p {
+.auth-panel h2 {
+  margin: 0 0 0.7rem;
+  font-size: 1rem;
+}
+
+.quality-panel p,
+.auth-panel p {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.45;
 }
 
 .auth-panel {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 1.1rem;
-  background: rgba(255,255,255,0.97);
-  box-shadow:
-    0 4px 6px -1px rgba(26,26,46,0.06),
-    0 20px 48px -8px rgba(230,83,106,0.13),
-    inset 0 1px 0 rgba(255,255,255,0.9);
-  padding: 0;
-  backdrop-filter: blur(20px);
-  animation: authFloat 7s ease-in-out infinite;
-}
-
-@keyframes authFloat {
-  0%,100% { transform: translateY(0);   box-shadow: 0 4px 6px -1px rgba(26,26,46,0.06), 0 20px 48px -8px rgba(230,83,106,0.13), inset 0 1px 0 rgba(255,255,255,0.9); }
-  50%      { transform: translateY(-4px); box-shadow: 0 8px 14px -2px rgba(26,26,46,0.08), 0 30px 60px -8px rgba(230,83,106,0.20), inset 0 1px 0 rgba(255,255,255,0.9); }
-}
-
-/* Shimmer gradient bar on top */
-.auth-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  border-radius: 1.1rem 1.1rem 0 0;
-  background: linear-gradient(90deg, var(--rose), #ff8c42, var(--gold), var(--mint), var(--rose));
-  background-size: 200% 100%;
-  animation: shimmerBar 3s linear infinite;
-}
-
-@keyframes shimmerBar {
-  0%   { background-position: 0% 0%; }
-  100% { background-position: 200% 0%; }
-}
-
-.auth-panel-inner {
-  padding: 1.15rem 1rem 1rem;
   display: grid;
-  gap: 0;
+  gap: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: white;
+  padding: 1rem;
 }
 
-.auth-panel-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+.auth-panel p {
+  margin: 0;
+}
+
+.auth-form {
+  display: grid;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
 }
 
-.auth-panel-head h2 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 900;
+.auth-form input,
+.auth-form select {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--soft);
+  padding: 0.68rem 0.75rem;
 }
 
-#authStatus {
-  margin: 0;
-  font-size: 0.72rem;
-  color: var(--muted);
-  line-height: 1.3;
-  text-align: right;
-  max-width: 9rem;
-}
-
-/* Tab switcher */
-.auth-tabs {
+.auth-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.2rem;
-  background: var(--soft);
-  border-radius: 0.65rem;
-  padding: 0.18rem;
-  margin-bottom: 0.85rem;
+  gap: 0.45rem;
 }
 
-.auth-tab {
+.auth-actions button,
+.auth-logout {
+  min-height: 2.55rem;
+  border-radius: 0.5rem;
+  font-weight: 850;
+}
+
+.auth-actions button {
   border: 0;
-  border-radius: 0.48rem;
-  background: transparent;
-  color: var(--muted);
-  padding: 0.4rem 0.5rem;
-  font-size: 0.78rem;
-  font-weight: 800;
-  transition: background 200ms ease, color 200ms ease, box-shadow 200ms ease;
+  background: var(--ink);
+  color: white;
 }
 
-.auth-tab.active {
-  background: white;
-  color: var(--rose);
-  box-shadow: 0 2px 8px rgba(26,26,46,0.09);
-}
-
-/* Step progress dots */
-.auth-dots {
-  display: flex;
-  gap: 0.32rem;
-  justify-content: center;
-  margin-bottom: 0.65rem;
-}
-
-.auth-dot {
-  width: 0.38rem;
-  height: 0.38rem;
-  border-radius: 50%;
-  background: #ece6dc;
-  transition: background 240ms ease, width 240ms ease;
-}
-
-.auth-dot.active {
-  width: 1.1rem;
-  border-radius: 999px;
+.auth-actions button:last-child {
   background: var(--rose);
 }
 
-/* Auth step container */
-.auth-step {
+.auth-card-head {
   display: grid;
-  gap: 0.44rem;
+  gap: 0.55rem;
 }
 
-.auth-step.hidden { display: none; }
-
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(16px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-16px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-.auth-step.slide-in-right { animation: slideInRight 260ms ease forwards; }
-.auth-step.slide-in-left  { animation: slideInLeft  260ms ease forwards; }
-
-/* Floating label field */
-.auth-field {
-  position: relative;
-}
-
-.auth-field label {
-  position: absolute;
-  top: 50%;
-  left: 0.74rem;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 600;
-  background: transparent;
-  padding: 0 0.15rem;
-  z-index: 1;
-  transition: top 170ms ease, font-size 170ms ease, color 170ms ease, transform 170ms ease;
-}
-
-.auth-field input:focus ~ label,
-.auth-field input:not(:placeholder-shown) ~ label {
-  top: 2px;
-  transform: translateY(0);
-  font-size: 0.64rem;
-  color: var(--rose);
-  background: white;
-}
-
-.auth-field select ~ label {
-  top: 2px;
-  transform: translateY(0);
-  font-size: 0.64rem;
-  color: var(--muted);
-  background: white;
-}
-
-.auth-field select:focus ~ label { color: var(--rose); }
-
-.auth-field input,
-.auth-field select {
-  width: 100%;
-  min-width: 0;
-  border: 1.5px solid var(--line);
-  border-radius: 0.6rem;
-  background: white;
-  color: var(--ink);
-  padding: 1.1rem 2.2rem 0.3rem 0.74rem;
-  font-size: 0.86rem;
-  font-weight: 500;
-  outline: none;
-  appearance: none;
-  transition: border-color 170ms ease, box-shadow 170ms ease;
-}
-
-.auth-field select {
-  padding-top: 1.05rem;
-  padding-bottom: 0.35rem;
-}
-
-.auth-field input:focus,
-.auth-field select:focus {
-  border-color: var(--rose);
-  box-shadow: 0 0 0 3px rgba(230,83,106,0.11);
-}
-
-.auth-field input.valid   { border-color: var(--mint); }
-.auth-field input.invalid { border-color: #e05252; }
-
-/* Validation icon */
-.auth-field-icon {
-  position: absolute;
-  top: 50%;
-  right: 0.68rem;
-  transform: translateY(-50%);
-  font-size: 0.76rem;
-  pointer-events: none;
-  transition: opacity 170ms ease;
-  opacity: 0;
-}
-
-.auth-field input.valid   ~ .auth-field-icon { opacity: 1; color: var(--mint); }
-.auth-field input.valid   ~ .auth-field-icon::after { content: "✓"; }
-.auth-field input.invalid ~ .auth-field-icon { opacity: 1; color: #e05252; }
-.auth-field input.invalid ~ .auth-field-icon::after { content: "✗"; }
-
-/* Password toggle */
-.auth-pwd-toggle {
-  position: absolute;
-  top: 50%;
-  right: 0.55rem;
-  transform: translateY(-50%);
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.82rem;
-  padding: 0.18rem;
-  cursor: pointer;
-  line-height: 1;
-  z-index: 2;
-}
-
-/* Password strength bar */
-.pwd-strength {
-  display: flex;
-  gap: 0.2rem;
-  height: 0.2rem;
-  margin-top: 0.28rem;
-}
-
-.pwd-strength span {
-  flex: 1;
+.auth-mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
   border-radius: 999px;
-  background: #ece6dc;
-  transition: background 240ms ease;
+  background: var(--soft);
+  padding: 0.25rem;
 }
 
-.pwd-strength[data-level="1"] span:nth-child(1)  { background: #e05252; }
-.pwd-strength[data-level="2"] span:nth-child(-n+2){ background: var(--gold); }
-.pwd-strength[data-level="3"] span:nth-child(-n+3){ background: #6ab04c; }
-.pwd-strength[data-level="4"] span                { background: var(--mint); }
-
-/* Hint */
-.auth-hint {
-  font-size: 0.68rem;
+.auth-mode-tabs button {
+  min-height: 2.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
   color: var(--muted);
+  font-weight: 850;
+}
+
+.auth-mode-tabs button.active {
+  background: var(--surface);
+  color: var(--rose);
+  box-shadow: 0 10px 24px rgba(26, 26, 46, 0.1);
+}
+
+.auth-field {
+  display: grid;
+  gap: 0.28rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.auth-field span {
+  padding-left: 0.2rem;
+}
+
+.auth-hint,
+.auth-service-note {
   margin: 0;
-  line-height: 1.4;
-}
-.auth-hint.error { color: #e05252; }
-.auth-hint.ok    { color: var(--mint); }
-
-/* Primary CTA */
-.auth-cta {
-  width: 100%;
-  border: 0;
-  border-radius: 0.65rem;
-  background: linear-gradient(135deg, var(--rose), #ff7a45);
-  color: white;
-  padding: 0.7rem 1rem;
-  font-size: 0.88rem;
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  box-shadow: 0 6px 18px rgba(230,83,106,0.28);
-  transition: opacity 160ms ease, transform 160ms ease, box-shadow 160ms ease;
-  margin-top: 0.25rem;
-}
-
-.auth-cta:hover { opacity: 0.91; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(230,83,106,0.36); }
-.auth-cta:active { transform: translateY(0); }
-.auth-cta:disabled { opacity: 0.48; transform: none; box-shadow: none; cursor: default; }
-
-/* Secondary / step CTA */
-.auth-next {
-  width: 100%;
-  border: 0;
-  border-radius: 0.65rem;
-  background: var(--ink);
-  color: white;
-  padding: 0.7rem 1rem;
-  font-size: 0.88rem;
-  font-weight: 900;
-  transition: opacity 160ms ease, transform 160ms ease;
-  margin-top: 0.25rem;
-}
-
-.auth-next:hover { opacity: 0.86; transform: translateY(-1px); }
-.auth-next:disabled { opacity: 0.42; transform: none; cursor: default; }
-
-/* Divider */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
   color: var(--muted);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin: 0.6rem 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
-.auth-divider::before,
-.auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
-/* Google button */
-.google-button {
-  display: flex;
+.auth-service-note {
+  border-radius: 0.8rem;
+  background: rgba(0, 201, 167, 0.1);
+  padding: 0.68rem 0.75rem;
+  color: #136f62;
+}
+
+.google-auth-button,
+.auth-resend-button,
+.auth-reset-button {
+  min-height: 2.6rem;
+  border-radius: 999px;
+  font-weight: 850;
+}
+
+.google-auth-button {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  border: 1.5px solid var(--line);
-  border-radius: 0.65rem;
-  background: white;
+  border: 1px solid var(--line);
+  background: #fff;
   color: var(--ink);
-  padding: 0.6rem 1rem;
-  font-size: 0.8rem;
-  font-weight: 800;
-  transition: background 160ms, border-color 160ms, box-shadow 160ms;
+  box-shadow: 0 12px 28px rgba(26, 26, 46, 0.08);
 }
-.google-button svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
-.google-button:hover { background: var(--soft); border-color: rgba(66,133,244,0.3); box-shadow: 0 3px 10px rgba(66,133,244,0.09); }
 
-/* Logout */
-.auth-logout {
-  width: 100%;
-  min-height: 2.3rem;
-  border: 1.5px solid var(--line);
-  border-radius: 0.55rem;
+.google-auth-button span {
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border-radius: 999px;
+  background: conic-gradient(from -40deg, #4285f4, #34a853, #fbbc05, #ea4335, #4285f4);
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.auth-secondary-actions {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.auth-resend-button,
+.auth-reset-button {
+  border: 0;
   background: transparent;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 800;
-  transition: background 160ms, color 160ms, border-color 160ms;
-  margin-top: 0.25rem;
+  color: var(--rose);
 }
-.auth-logout:hover { background: #fff0f2; color: var(--rose); border-color: rgba(230,83,106,0.28); }
 
-/* Legacy .auth-form kept hidden — replaced by new UI */
-.auth-form { display: none !important; }
+.auth-form[data-mode="login"] .signup-only {
+  display: none;
+}
+
+.auth-form[data-mode="signup"] .login-only {
+  display: none;
+}
+
+body.auth-gated {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(255, 68, 88, 0.16), transparent 22rem),
+    radial-gradient(circle at 88% 14%, rgba(0, 201, 167, 0.12), transparent 24rem),
+    linear-gradient(135deg, #fff 0%, #f7f7fc 48%, #fff4f5 100%);
+}
+
+body.auth-gated .app-shell {
+  display: grid;
+  min-height: 100dvh;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+
+body.auth-gated .workspace,
+body.auth-gated .side-nav,
+body.auth-gated .quality-panel,
+body.auth-gated .mobile-bottom-nav {
+  display: none;
+}
+
+body.auth-gated .sidebar {
+  position: relative;
+  width: min(100%, 31rem);
+  min-height: auto;
+  border: 0;
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 28px 80px rgba(26, 26, 46, 0.16);
+  padding: clamp(1rem, 4vw, 1.35rem);
+}
+
+body.auth-gated .brand {
+  min-width: 0;
+}
+
+body.auth-gated .brand > div:last-child,
+body.auth-gated .auth-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+body.auth-gated .auth-panel {
+  display: grid !important;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+body.auth-gated .auth-panel h2 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.65rem, 7vw, 2.35rem);
+}
+
+body.auth-gated .auth-actions button,
+body.auth-gated .google-auth-button,
+body.auth-gated .auth-resend-button,
+body.auth-gated .auth-reset-button {
+  min-height: 3rem;
+}
 
 .quality-meter {
   height: 0.45rem;
@@ -2241,54 +2109,6 @@ blockquote {
     grid-template-columns: 1fr;
   }
 
-  #matchesPanel .match-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.6rem;
-  }
-
-  #matchesPanel .mini-card img {
-    aspect-ratio: 1 / 1;
-  }
-
-  #matchesPanel .mini-card div {
-    padding: 0.55rem;
-  }
-
-  #matchesPanel .mini-card strong {
-    font-size: 0.9rem;
-  }
-
-  #matchesPanel .mini-card span {
-    font-size: 0.76rem;
-    line-height: 1.25;
-  }
-
-  #matchesPanel .date-lab {
-    padding: 0.8rem;
-  }
-
-  #matchesPanel .date-option {
-    padding: 0.62rem;
-  }
-
-  .new-match-strip {
-    grid-auto-columns: 4.25rem;
-    gap: 0.65rem;
-  }
-
-  .new-match img {
-    width: 3.45rem;
-    height: 3.45rem;
-  }
-
-  .new-match small {
-    max-width: 4.25rem;
-    overflow: hidden;
-    font-size: 0.72rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .like-request-card {
     grid-template-columns: 3.7rem minmax(0, 1fr);
   }
@@ -2296,14 +2116,6 @@ blockquote {
   .like-request-card img {
     width: 3.7rem;
     height: 3.7rem;
-  }
-
-  .like-request-body strong {
-    font-size: 0.92rem;
-  }
-
-  .like-request-body p {
-    font-size: 0.78rem;
   }
 
   .form-grid {
@@ -3956,9 +3768,44 @@ h2,
   }
 }
 
+body.auth-gated .auth-form,
+body.auth-gated .auth-actions,
+body.auth-gated .auth-secondary-actions {
+  grid-template-columns: 1fr;
+}
+
+body.auth-gated #authName,
+body.auth-gated .auth-actions,
+body.auth-gated .google-auth-button,
+body.auth-gated .auth-secondary-actions,
+body.auth-gated .auth-service-note {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 620px) {
+  body.auth-gated .app-shell {
+    padding: 0.75rem;
+  }
+
+  body.auth-gated .sidebar {
+    width: 100%;
+    border-radius: 1rem;
+  }
+
+  body.auth-gated .auth-panel h2 {
+    font-size: 1.6rem;
+  }
+
+  body.auth-gated .auth-panel p,
+  body.auth-gated .auth-hint,
+  body.auth-gated .auth-service-note {
+    font-size: 0.86rem;
+  }
+}
+
 </style>
   </head>
-  <body>
+  <body class="auth-gated">
     <div class="app-shell">
       <aside class="sidebar" aria-label="Navigation mbifê">
         <div class="brand">
@@ -4009,136 +3856,57 @@ h2,
         </section>
 
         <section class="auth-panel" aria-labelledby="authTitle">
-          <div class="auth-panel-inner">
-
-            <!-- Header -->
-            <div class="auth-panel-head">
-              <h2 id="authTitle">Compte mbifê</h2>
-              <p id="authStatus">Supabase connecté</p>
+          <div class="auth-card-head">
+            <h2 id="authTitle">Compte mbifê</h2>
+            <p id="authStatus">Supabase connecté</p>
+            <div class="auth-mode-tabs" role="tablist" aria-label="Mode de connexion">
+              <button class="active" data-auth-mode="login" type="button">Connexion</button>
+              <button data-auth-mode="signup" type="button">Inscription</button>
             </div>
-
-            <!-- Onglets Connexion / Inscription -->
-            <div class="auth-tabs" id="authTabs" role="tablist">
-              <button class="auth-tab active" id="tabLogin"  role="tab" aria-selected="true"  type="button">Connexion</button>
-              <button class="auth-tab"        id="tabSignup" role="tab" aria-selected="false" type="button">Inscription</button>
-            </div>
-
-            <!-- Points de progression (inscription uniquement) -->
-            <div class="auth-dots" id="authDots" hidden>
-              <div class="auth-dot active" data-step="0"></div>
-              <div class="auth-dot"        data-step="1"></div>
-            </div>
-
-            <!-- ══ PANNEAU CONNEXION ══ -->
-            <div id="loginPanel">
-              <!-- authForm conservé pour compatibilité JS existant, masqué via CSS -->
-              <form id="authForm" class="auth-form">
-                <input id="authName"      name="name"        type="text"     autocomplete="name"             placeholder="Nom public" />
-                <input id="authEmail"     name="email"       type="email"    autocomplete="email"            placeholder="Email" />
-                <input id="authPassword"  name="password"    type="password" autocomplete="current-password" placeholder="Mot de passe" />
-                <select id="authGender"     name="gender"       aria-label="Ton sexe" style="display:none">
-                  <option value="">Je suis...</option>
-                  <option value="femme">Femme</option>
-                  <option value="homme">Homme</option>
-                  <option value="autre">Autre</option>
-                </select>
-                <select id="authLookingFor" name="looking_for" aria-label="Profils recherchés" style="display:none">
-                  <option value="">Je veux voir...</option>
-                  <option value="femme">Des femmes</option>
-                  <option value="homme">Des hommes</option>
-                  <option value="tous">Tout le monde</option>
-                </select>
-                <div class="auth-actions" style="display:none">
-                  <button id="loginButton"  type="button">Connexion</button>
-                  <button id="signupButton" type="button">Inscription</button>
-                </div>
-              </form>
-
-              <!-- Nouveau formulaire connexion -->
-              <div class="auth-step slide-in-left" id="loginStep">
-                <div class="auth-field">
-                  <input id="loginEmailNew" type="email" autocomplete="email" placeholder=" " />
-                  <label for="loginEmailNew">Email</label>
-                  <span class="auth-field-icon" aria-hidden="true"></span>
-                </div>
-                <div class="auth-field" style="position:relative">
-                  <input id="loginPwdNew" type="password" autocomplete="current-password" placeholder=" " />
-                  <label for="loginPwdNew">Mot de passe</label>
-                  <button class="auth-pwd-toggle" type="button" id="loginPwdToggle" aria-label="Afficher" tabindex="-1">👁</button>
-                </div>
-                <button class="auth-cta" id="loginCta" type="button">Se connecter</button>
-              </div>
-
-              <div class="auth-divider">ou</div>
-              <button class="google-button" id="googleButton" type="button">
-                <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-                Continuer avec Google
-              </button>
-            </div>
-
-            <!-- ══ PANNEAU INSCRIPTION ══ -->
-            <div id="signupPanel" hidden>
-
-              <!-- Étape 1 : email + mot de passe -->
-              <div class="auth-step" id="signupStep1">
-                <div class="auth-field">
-                  <input id="signupEmail" type="email" autocomplete="email" placeholder=" " />
-                  <label for="signupEmail">Email</label>
-                  <span class="auth-field-icon" aria-hidden="true"></span>
-                </div>
-                <div class="auth-field" style="position:relative">
-                  <input id="signupPwd" type="password" autocomplete="new-password" placeholder=" " />
-                  <label for="signupPwd">Mot de passe</label>
-                  <button class="auth-pwd-toggle" type="button" id="signupPwdToggle" aria-label="Afficher" tabindex="-1">👁</button>
-                </div>
-                <div class="pwd-strength" id="pwdStrength" data-level="0">
-                  <span></span><span></span><span></span><span></span>
-                </div>
-                <p class="auth-hint" id="pwdHint">6 caractères min · Mélange lettres et chiffres</p>
-                <button class="auth-next" id="signupNextBtn" type="button" disabled>Continuer →</button>
-              </div>
-
-              <!-- Étape 2 : profil -->
-              <div class="auth-step hidden" id="signupStep2">
-                <div class="auth-field">
-                  <input id="signupName" type="text" autocomplete="name" placeholder=" " maxlength="80" />
-                  <label for="signupName">Nom public</label>
-                  <span class="auth-field-icon" aria-hidden="true"></span>
-                </div>
-                <div class="auth-field">
-                  <select id="signupGender">
-                    <option value="" disabled selected></option>
-                    <option value="femme">Femme</option>
-                    <option value="homme">Homme</option>
-                    <option value="autre">Autre</option>
-                  </select>
-                  <label for="signupGender">Je suis…</label>
-                </div>
-                <div class="auth-field">
-                  <select id="signupLookingFor">
-                    <option value="" disabled selected></option>
-                    <option value="femme">Des femmes</option>
-                    <option value="homme">Des hommes</option>
-                    <option value="tous">Tout le monde</option>
-                  </select>
-                  <label for="signupLookingFor">Je veux voir…</label>
-                </div>
-                <button class="auth-cta" id="signupCta" type="button">Créer mon compte</button>
-                <button class="auth-next" id="signupBackBtn" type="button"
-                  style="background:var(--soft);color:var(--ink);box-shadow:none;margin-top:0">← Retour</button>
-              </div>
-
-              <div class="auth-divider" id="signupDivider">ou</div>
-              <button class="google-button" id="googleButton2" type="button">
-                <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-                S'inscrire avec Google
-              </button>
-            </div>
-
-            <!-- Bouton déconnexion (affiché quand connecté) -->
-            <button class="auth-logout" id="logoutButton" type="button" hidden>Se déconnecter</button>
-
           </div>
+          <form id="authForm" class="auth-form" data-mode="login">
+            <label class="auth-field signup-only">
+              <span>Nom public</span>
+              <input id="authName" name="name" type="text" autocomplete="name" placeholder="Ex: Aziz" />
+            </label>
+            <label class="auth-field">
+              <span>Email</span>
+              <input id="authEmail" name="email" type="email" autocomplete="email" placeholder="ton@email.com" />
+            </label>
+            <label class="auth-field">
+              <span>Mot de passe</span>
+              <input id="authPassword" name="password" type="password" autocomplete="current-password" placeholder="6 caractères minimum" />
+            </label>
+            <label class="auth-field signup-only">
+              <span>Je suis</span>
+              <select id="authGender" name="gender" aria-label="Ton sexe">
+                <option value="">Choisir</option>
+                <option value="femme">Femme</option>
+                <option value="homme">Homme</option>
+                <option value="autre">Autre</option>
+              </select>
+            </label>
+            <label class="auth-field signup-only">
+              <span>Je veux voir</span>
+              <select id="authLookingFor" name="looking_for" aria-label="Profils recherchés">
+                <option value="">Automatique</option>
+                <option value="femme">Des femmes</option>
+                <option value="homme">Des hommes</option>
+                <option value="tous">Tout le monde</option>
+              </select>
+            </label>
+            <div class="auth-actions">
+              <button id="loginButton" type="button">Connexion</button>
+              <button id="signupButton" type="button">Inscription</button>
+            </div>
+            <button class="google-auth-button" id="googleAuthButton" type="button"><span>G</span> Continuer avec Google</button>
+            <div class="auth-secondary-actions">
+              <button class="auth-resend-button signup-only" id="resendEmailButton" type="button">Renvoyer l'email de confirmation</button>
+              <button class="auth-reset-button login-only" id="resetPasswordButton" type="button">Mot de passe oublié</button>
+            </div>
+            <p class="auth-service-note">Email vérifié et Google sont gérés par Supabase Auth gratuitement pour commencer.</p>
+          </form>
+          <button class="ghost-button auth-logout" id="logoutButton" type="button" hidden>Se déconnecter</button>
         </section>
       </aside>
 
@@ -4298,116 +4066,54 @@ h2,
 
           <aside class="profile-status-stack">
             <article class="about-card mobile-account-card" id="mobileAccountCard">
-              <!-- Header -->
-              <div class="auth-panel-head" style="margin-bottom:0.75rem">
-                <p class="eyebrow" style="margin:0">Compte mbifê</p>
-                <p class="auth-hint" id="mobileAuthStatus">Connecte-toi pour synchroniser.</p>
+              <p class="eyebrow">Compte mbifê</p>
+              <h2>Connexion</h2>
+              <p class="muted-copy" id="mobileAuthStatus">Connecte-toi pour synchroniser likes, matches et messages.</p>
+              <div class="auth-mode-tabs" role="tablist" aria-label="Mode de connexion mobile">
+                <button class="active" data-auth-mode="login" type="button">Connexion</button>
+                <button data-auth-mode="signup" type="button">Inscription</button>
               </div>
-
-              <!-- Onglets -->
-              <div class="auth-tabs" id="mAuthTabs" role="tablist">
-                <button class="auth-tab active" id="mTabLogin"  role="tab" aria-selected="true"  type="button">Connexion</button>
-                <button class="auth-tab"        id="mTabSignup" role="tab" aria-selected="false" type="button">Inscription</button>
-              </div>
-
-              <!-- Points progression -->
-              <div class="auth-dots" id="mAuthDots" hidden>
-                <div class="auth-dot active"></div>
-                <div class="auth-dot"></div>
-              </div>
-
-              <!-- Champs cachés pour compatibilité JS -->
-              <input id="mobileAuthName"       type="text"     style="display:none" autocomplete="name" />
-              <input id="mobileAuthEmail"      type="email"    style="display:none" autocomplete="email" />
-              <input id="mobileAuthPassword"   type="password" style="display:none" autocomplete="current-password" />
-              <select id="mobileAuthGender"    aria-label="Ton sexe"          style="display:none">
-                <option value="">Je suis...</option>
-                <option value="femme">Femme</option>
-                <option value="homme">Homme</option>
-                <option value="autre">Autre</option>
-              </select>
-              <select id="mobileAuthLookingFor" aria-label="Profils recherchés" style="display:none">
-                <option value="">Je veux voir...</option>
-                <option value="femme">Des femmes</option>
-                <option value="homme">Des hommes</option>
-                <option value="tous">Tout le monde</option>
-              </select>
-
-              <!-- ══ CONNEXION ══ -->
-              <div id="mLoginPanel">
-                <div class="auth-step slide-in-left" style="gap:0.44rem;display:grid">
-                  <div class="auth-field">
-                    <input id="mLoginEmail" type="email" autocomplete="email" placeholder=" " />
-                    <label for="mLoginEmail">Email</label>
-                    <span class="auth-field-icon" aria-hidden="true"></span>
-                  </div>
-                  <div class="auth-field" style="position:relative">
-                    <input id="mLoginPwd" type="password" autocomplete="current-password" placeholder=" " />
-                    <label for="mLoginPwd">Mot de passe</label>
-                    <button class="auth-pwd-toggle" type="button" id="mLoginPwdToggle" aria-label="Afficher" tabindex="-1">👁</button>
-                  </div>
-                  <button class="auth-cta" id="mobileLoginButton" type="button">Se connecter</button>
+              <div class="auth-form" id="mobileAuthForm" data-mode="login">
+                <label class="auth-field signup-only">
+                  <span>Nom public</span>
+                  <input id="mobileAuthName" type="text" autocomplete="name" placeholder="Ex: Aziz" />
+                </label>
+                <label class="auth-field">
+                  <span>Email</span>
+                  <input id="mobileAuthEmail" type="email" autocomplete="email" placeholder="ton@email.com" />
+                </label>
+                <label class="auth-field">
+                  <span>Mot de passe</span>
+                  <input id="mobileAuthPassword" type="password" autocomplete="current-password" placeholder="6 caractères minimum" />
+                </label>
+                <label class="auth-field signup-only">
+                  <span>Je suis</span>
+                  <select id="mobileAuthGender" aria-label="Ton sexe">
+                    <option value="">Choisir</option>
+                    <option value="femme">Femme</option>
+                    <option value="homme">Homme</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </label>
+                <label class="auth-field signup-only">
+                  <span>Je veux voir</span>
+                  <select id="mobileAuthLookingFor" aria-label="Profils recherchés">
+                    <option value="">Automatique</option>
+                    <option value="femme">Des femmes</option>
+                    <option value="homme">Des hommes</option>
+                    <option value="tous">Tout le monde</option>
+                  </select>
+                </label>
+                <div class="auth-actions">
+                  <button id="mobileLoginButton" type="button">Connexion</button>
+                  <button id="mobileSignupButton" type="button">Inscription</button>
                 </div>
-                <div class="auth-divider">ou</div>
-                <button class="google-button" id="mobileGoogleButton" type="button">
-                  <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-                  Continuer avec Google
-                </button>
-              </div>
-
-              <!-- ══ INSCRIPTION ══ -->
-              <div id="mSignupPanel" hidden>
-                <!-- Étape 1 -->
-                <div class="auth-step" id="mSignupStep1" style="gap:0.44rem;display:grid">
-                  <div class="auth-field">
-                    <input id="mSignupEmail" type="email" autocomplete="email" placeholder=" " />
-                    <label for="mSignupEmail">Email</label>
-                    <span class="auth-field-icon" aria-hidden="true"></span>
-                  </div>
-                  <div class="auth-field" style="position:relative">
-                    <input id="mSignupPwd" type="password" autocomplete="new-password" placeholder=" " />
-                    <label for="mSignupPwd">Mot de passe</label>
-                    <button class="auth-pwd-toggle" type="button" id="mSignupPwdToggle" aria-label="Afficher" tabindex="-1">👁</button>
-                  </div>
-                  <div class="pwd-strength" id="mPwdStrength" data-level="0">
-                    <span></span><span></span><span></span><span></span>
-                  </div>
-                  <p class="auth-hint" id="mPwdHint">6 caractères min · Mélange lettres et chiffres</p>
-                  <button class="auth-next" id="mSignupNextBtn" type="button" disabled>Continuer →</button>
+                <button class="google-auth-button" id="mobileGoogleAuthButton" type="button"><span>G</span> Continuer avec Google</button>
+                <div class="auth-secondary-actions">
+                  <button class="auth-resend-button signup-only" id="mobileResendEmailButton" type="button">Renvoyer l'email de confirmation</button>
+                  <button class="auth-reset-button login-only" id="mobileResetPasswordButton" type="button">Mot de passe oublié</button>
                 </div>
-                <!-- Étape 2 -->
-                <div class="auth-step hidden" id="mSignupStep2" style="gap:0.44rem;display:grid">
-                  <div class="auth-field">
-                    <input id="mSignupName" type="text" autocomplete="name" placeholder=" " maxlength="80" />
-                    <label for="mSignupName">Nom public</label>
-                  </div>
-                  <div class="auth-field">
-                    <select id="mSignupGender">
-                      <option value="" disabled selected></option>
-                      <option value="femme">Femme</option>
-                      <option value="homme">Homme</option>
-                      <option value="autre">Autre</option>
-                    </select>
-                    <label for="mSignupGender">Je suis…</label>
-                  </div>
-                  <div class="auth-field">
-                    <select id="mSignupLookingFor">
-                      <option value="" disabled selected></option>
-                      <option value="femme">Des femmes</option>
-                      <option value="homme">Des hommes</option>
-                      <option value="tous">Tout le monde</option>
-                    </select>
-                    <label for="mSignupLookingFor">Je veux voir…</label>
-                  </div>
-                  <button class="auth-cta" id="mobileSignupButton" type="button">Créer mon compte</button>
-                  <button class="auth-next" id="mSignupBackBtn" type="button"
-                    style="background:var(--soft);color:var(--ink);box-shadow:none;margin-top:0">← Retour</button>
-                </div>
-                <div class="auth-divider" id="mSignupDivider">ou</div>
-                <button class="google-button" id="mobileGoogleButton2" type="button">
-                  <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-                  S'inscrire avec Google
-                </button>
+                <p class="auth-service-note">Email vérifié et Google sont gérés par Supabase Auth gratuitement pour commencer.</p>
               </div>
             </article>
             <article class="about-card">
@@ -4705,7 +4411,7 @@ h2,
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>
-const APP_VERSION = "2026-06-04-2";
+const APP_VERSION = "2026-06-15-1";
 
 const profiles = [];
 
@@ -4771,6 +4477,7 @@ const state = {
     lastError: "",
   },
   auth: readStoredJson("mbifeAuthSession", null),
+  authMode: localStorage.getItem("mbifeAuthMode") || "login",
   remoteProfiles: [],
   remoteMatches: [],
   remoteMessages: {},
@@ -4841,9 +4548,13 @@ const authGender = document.querySelector("#authGender");
 const authLookingFor = document.querySelector("#authLookingFor");
 const loginButton = document.querySelector("#loginButton");
 const signupButton = document.querySelector("#signupButton");
+const googleAuthButton = document.querySelector("#googleAuthButton");
+const resendEmailButton = document.querySelector("#resendEmailButton");
+const resetPasswordButton = document.querySelector("#resetPasswordButton");
 const logoutButton = document.querySelector("#logoutButton");
 const profileLogoutButton = document.querySelector("#profileLogoutButton");
 const mobileAuthStatus = document.querySelector("#mobileAuthStatus");
+const mobileAuthForm = document.querySelector("#mobileAuthForm");
 const mobileAuthName = document.querySelector("#mobileAuthName");
 const mobileAuthEmail = document.querySelector("#mobileAuthEmail");
 const mobileAuthPassword = document.querySelector("#mobileAuthPassword");
@@ -4851,6 +4562,9 @@ const mobileAuthGender = document.querySelector("#mobileAuthGender");
 const mobileAuthLookingFor = document.querySelector("#mobileAuthLookingFor");
 const mobileLoginButton = document.querySelector("#mobileLoginButton");
 const mobileSignupButton = document.querySelector("#mobileSignupButton");
+const mobileGoogleAuthButton = document.querySelector("#mobileGoogleAuthButton");
+const mobileResendEmailButton = document.querySelector("#mobileResendEmailButton");
+const mobileResetPasswordButton = document.querySelector("#mobileResetPasswordButton");
 const profileForm = document.querySelector("#profileForm");
 const profilePreview = document.querySelector("#profilePreview");
 const profilePhoto = document.querySelector("#profilePhoto");
@@ -5189,6 +4903,64 @@ function currentToken() {
   return state.auth?.access_token || "";
 }
 
+function getAuthRedirectUrl() {
+  const url = new URL(window.location.href);
+  url.hash = "";
+  url.search = "";
+  if (url.pathname.endsWith("/index.html")) {
+    url.pathname = url.pathname.replace(/index\.html$/, "");
+  }
+  return url.toString();
+}
+
+function cleanAuthCallbackUrl() {
+  const url = new URL(window.location.href);
+  ["auth", "code", "error", "error_code", "error_description", "provider"].forEach((key) => {
+    url.searchParams.delete(key);
+  });
+  url.hash = "";
+  window.history.replaceState({}, document.title, url.toString());
+}
+
+function base64UrlFromBytes(bytes) {
+  let binary = "";
+  new Uint8Array(bytes).forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function randomBase64Url(size = 48) {
+  const bytes = new Uint8Array(size);
+  crypto.getRandomValues(bytes);
+  return base64UrlFromBytes(bytes);
+}
+
+async function makeCodeChallenge(verifier) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
+  return base64UrlFromBytes(digest);
+}
+
+function storePendingAuthProfile() {
+  const fields = readAuthFields();
+  writeStoredJson("mbifePendingAuthProfile", {
+    name: fields.name,
+    gender: fields.gender,
+    lookingFor: fields.lookingFor,
+    createdAt: Date.now(),
+  });
+  return fields;
+}
+
+function readPendingAuthProfile() {
+  const draft = readStoredJson("mbifePendingAuthProfile", null);
+  if (!draft || Date.now() - Number(draft.createdAt || 0) > 24 * 60 * 60 * 1000) {
+    localStorage.removeItem("mbifePendingAuthProfile");
+    return null;
+  }
+  return draft;
+}
+
 function authHeaders({ prefer, useUserToken = true } = {}) {
   const token = useUserToken && currentToken() ? currentToken() : supabaseConfig.anonKey;
   const headers = {
@@ -5294,6 +5066,7 @@ function readableAuthError(error, fallback) {
 function showAuthError(error, fallback) {
   const message = readableAuthError(error, fallback);
   authStatus.textContent = message;
+  if (mobileAuthStatus) mobileAuthStatus.textContent = message;
   showToast(message);
 }
 
@@ -5345,7 +5118,7 @@ function signupRedirectPath() {
     return "/auth/v1/signup";
   }
 
-  return `/auth/v1/signup?redirect_to=${encodeURIComponent(window.location.origin)}`;
+  return `/auth/v1/signup?redirect_to=${encodeURIComponent(getAuthRedirectUrl())}`;
 }
 
 async function supabaseRequest(table, { method = "GET", body, query = "", prefer = "return=minimal" } = {}) {
@@ -5415,93 +5188,100 @@ function renderSupabaseStatus() {
     : "La configuration Supabase est présente. Recharge l'app pour vérifier la connexion.";
 }
 
+function setAuthMode(mode) {
+  const nextMode = mode === "signup" ? "signup" : "login";
+  state.authMode = nextMode;
+  localStorage.setItem("mbifeAuthMode", nextMode);
+
+  [authForm, mobileAuthForm].filter(Boolean).forEach((form) => {
+    form.dataset.mode = nextMode;
+  });
+
+  document.querySelectorAll("[data-auth-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.authMode === nextMode);
+  });
+
+  if (authPassword) {
+    authPassword.autocomplete = nextMode === "signup" ? "new-password" : "current-password";
+  }
+  if (mobileAuthPassword) {
+    mobileAuthPassword.autocomplete = nextMode === "signup" ? "new-password" : "current-password";
+  }
+
+  const message = nextMode === "signup"
+    ? "Crée ton compte, confirme ton email, puis complète ton profil."
+    : "Connecte-toi pour synchroniser likes, matches et messages.";
+  if (!currentUser()) {
+    if (authStatus) authStatus.textContent = message;
+    if (mobileAuthStatus) mobileAuthStatus.textContent = message;
+  }
+}
+
 function renderAuthState() {
-  if (!authStatus || !logoutButton) return;
+  if (!authStatus || !authForm || !logoutButton) {
+    return;
+  }
 
   const user = currentUser();
   document.body.classList.toggle("is-authenticated", Boolean(user));
-
+  document.body.classList.toggle("auth-gated", !user);
   if (mobileAuthStatus) {
+    const verified = user?.email_confirmed_at || user?.confirmed_at;
     mobileAuthStatus.textContent = user
-      ? `Connecté: ${user.email}`
+      ? verified
+        ? `Connecté: ${user.email} · email vérifié`
+        : `Connecté: ${user.email} · email à vérifier`
       : "Connecte-toi pour synchroniser likes, matches et messages.";
   }
-  if (profileLogoutButton) profileLogoutButton.hidden = !user;
 
-  const loginPanel  = document.querySelector("#loginPanel");
-  const signupPanel = document.querySelector("#signupPanel");
-  const authTabs    = document.querySelector("#authTabs");
-  const authDots    = document.querySelector("#authDots");
+  if (profileLogoutButton) {
+    profileLogoutButton.hidden = !user;
+  }
 
   if (!hasSupabaseConfig()) {
-    if (authPanel) authPanel.hidden = false;
-    authStatus.textContent = "Supabase non configuré";
-    authPanel?.querySelectorAll("input, button, select").forEach((el) => { el.disabled = true; });
+    if (authPanel) {
+      authPanel.hidden = false;
+    }
+    authStatus.textContent = "Supabase connecté";
+    authForm.querySelectorAll("input, select, button").forEach((element) => {
+      element.disabled = true;
+    });
     logoutButton.hidden = true;
     return;
   }
 
-  authPanel?.querySelectorAll("input, button, select").forEach((el) => { el.disabled = false; });
+  if (authPanel) {
+    authPanel.style.display = user ? "none" : "grid";
+  }
+
+  authForm.querySelectorAll("input, select, button").forEach((element) => {
+    element.disabled = false;
+  });
 
   if (user) {
-    authStatus.textContent = `Connecté · ${user.email}`;
-    if (loginPanel)  loginPanel.hidden  = true;
-    if (signupPanel) signupPanel.hidden = true;
-    if (authTabs)    authTabs.hidden    = true;
-    if (authDots)    authDots.hidden    = true;
-    logoutButton.hidden = false;
-    if (authPanel) authPanel.style.display = "grid";
-    // Mobile : masquer la carte auth, afficher le statut
-    const mCard = document.querySelector("#mobileAccountCard");
-    if (mCard) {
-      mCard.querySelector("#mLoginPanel")  && (mCard.querySelector("#mLoginPanel").hidden  = true);
-      mCard.querySelector("#mSignupPanel") && (mCard.querySelector("#mSignupPanel").hidden = true);
-      mCard.querySelector("#mAuthTabs")    && (mCard.querySelector("#mAuthTabs").hidden    = true);
-      mCard.querySelector("#mAuthDots")    && (mCard.querySelector("#mAuthDots").hidden    = true);
-      const mStatus = mCard.querySelector("#mobileAuthStatus");
-      if (mStatus) mStatus.textContent = `Connecté · ${user.email}`;
-    }
+    const verified = user.email_confirmed_at || user.confirmed_at;
+    authStatus.textContent = verified
+      ? `Connecté: ${user.email} · email vérifié`
+      : `Connecté: ${user.email} · email à vérifier`;
+    authForm.style.display = "none";
+    logoutButton.style.display = "block";
     return;
   }
 
-  authStatus.textContent = "Connecte-toi pour synchroniser.";
-  if (loginPanel)  loginPanel.hidden  = false;
-  if (signupPanel) signupPanel.hidden = true;
-  if (authTabs)    authTabs.hidden    = false;
-  if (authDots)    authDots.hidden    = true;
-  if (authPanel) authPanel.style.display = "grid";
-  logoutButton.hidden = true;
-  // Mobile : réafficher la carte auth
-  const mCard = document.querySelector("#mobileAccountCard");
-  if (mCard) {
-    mCard.querySelector("#mLoginPanel")  && (mCard.querySelector("#mLoginPanel").hidden  = false);
-    mCard.querySelector("#mSignupPanel") && (mCard.querySelector("#mSignupPanel").hidden = true);
-    mCard.querySelector("#mAuthTabs")    && (mCard.querySelector("#mAuthTabs").hidden    = false);
-    const mStatus = mCard.querySelector("#mobileAuthStatus");
-    if (mStatus) mStatus.textContent = "Connecte-toi pour synchroniser.";
-  }
+  setAuthMode(state.authMode || localStorage.getItem("mbifeAuthMode") || "login");
+  authForm.style.display = "grid";
+  logoutButton.style.display = "none";
 }
 
 function readAuthFields() {
-  // Lire depuis les nouveaux champs inscription en priorité
-  const signupEmailEl = document.querySelector("#signupEmail");
-  const signupPwdEl   = document.querySelector("#signupPwd");
-  const signupNameEl  = document.querySelector("#signupName");
-  const signupGenderEl = document.querySelector("#signupGender");
-  const signupLFEl    = document.querySelector("#signupLookingFor");
-
-  const resolvedEmail    = signupEmailEl?.value.trim()  || authEmail?.value.trim()    || "";
-  const resolvedPassword = signupPwdEl?.value            || authPassword?.value        || "";
-  const resolvedName     = signupNameEl?.value.trim()   || authName?.value.trim()     || "Nouveau membre mbifê";
-  const resolvedGender   = normalizeGender(signupGenderEl?.value || authGender?.value || "");
-  const resolvedLF       = normalizeLookingFor(signupLFEl?.value || authLookingFor?.value || oppositeGender(resolvedGender));
-
+  const gender = normalizeGender(authGender?.value || "");
+  const lookingFor = normalizeLookingFor(authLookingFor?.value || oppositeGender(gender));
   return {
-    name: resolvedName,
-    email: resolvedEmail,
-    password: resolvedPassword,
-    gender: resolvedGender,
-    lookingFor: resolvedLF,
+    name: authName.value.trim() || "Nouveau membre mbifê",
+    email: authEmail.value.trim(),
+    password: authPassword.value,
+    gender,
+    lookingFor,
   };
 }
 
@@ -5513,12 +5293,246 @@ function copyMobileAuthFields() {
   if (mobileAuthLookingFor?.value) authLookingFor.value = mobileAuthLookingFor.value;
 }
 
+function preferredAuthName(user, draft) {
+  return (
+    draft?.name ||
+    user?.user_metadata?.display_name ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split("@")[0] ||
+    "Membre mbifê"
+  );
+}
+
+async function updateAuthProfileBasics(user, draft) {
+  if (!user || !hasSupabaseConfig() || !draft) return;
+
+  const gender = normalizeGender(draft.gender || "");
+  const lookingFor = normalizeLookingFor(draft.lookingFor || oppositeGender(gender));
+  const patch = {
+    display_name: preferredAuthName(user, draft),
+  };
+
+  if (gender) patch.gender = gender;
+  if (lookingFor) patch.looking_for = lookingFor;
+  if (user.user_metadata?.avatar_url && !state.currentProfileRecord?.photo_url) {
+    patch.photo_url = user.user_metadata.avatar_url;
+  }
+
+  try {
+    const [updated] = await supabaseJson(`/rest/v1/profiles?user_id=eq.${user.id}`, {
+      method: "PATCH",
+      prefer: "return=representation",
+      body: patch,
+    });
+    if (updated) {
+      state.currentProfileRecord = updated;
+      localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(updated));
+      renderProfileForm();
+    }
+  } catch {
+    // Le profil peut encore attendre la migration sexe/preference; l'utilisateur pourra sauvegarder ensuite.
+  }
+}
+
+async function finishAuthenticatedReturn(session, sourceLabel) {
+  saveAuthSession(session);
+  let user = session.user;
+
+  if (!user) {
+    user = await supabaseJson("/auth/v1/user");
+    saveAuthSession({ ...session, user });
+  }
+
+  const draft = readPendingAuthProfile();
+  if (draft?.gender || draft?.lookingFor) {
+    hydrateGenderFields(draft.gender, draft.lookingFor);
+  }
+  if (draft?.name && authName) authName.value = draft.name;
+  if (draft?.name && mobileAuthName) mobileAuthName.value = draft.name;
+
+  await tryEnsureRemoteProfile(preferredAuthName(user, draft));
+  await updateAuthProfileBasics(user, draft);
+  await syncRemoteData();
+  startRemoteRefresh();
+  subscribeLikesRealtime();
+  subscribeNotificationsRealtime();
+  localStorage.removeItem("mbifePendingAuthProfile");
+  setPanel("profile");
+  showToast(sourceLabel);
+}
+
+async function handlePasswordRecoveryIfNeeded(hashParams) {
+  if (hashParams.get("type") !== "recovery") {
+    return false;
+  }
+
+  const nextPassword = window.prompt("Nouveau mot de passe mbifê (6 caractères minimum)");
+  if (!nextPassword) {
+    showToast("Connecté. Tu peux changer le mot de passe plus tard.");
+    return true;
+  }
+  if (nextPassword.length < 6) {
+    showToast("Mot de passe trop court.");
+    return true;
+  }
+
+  await supabaseJson("/auth/v1/user", {
+    method: "PUT",
+    body: { password: nextPassword },
+  });
+  showToast("Mot de passe mis à jour");
+  return true;
+}
+
+async function handleAuthRedirect() {
+  if (!hasSupabaseConfig()) return;
+
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const query = new URLSearchParams(window.location.search);
+
+  if (query.get("error") || hashParams.get("error")) {
+    const description = query.get("error_description") || hashParams.get("error_description") || "Connexion annulée";
+    cleanAuthCallbackUrl();
+    showToast(decodeURIComponent(description.replace(/\+/g, " ")));
+    return;
+  }
+
+  if (hashParams.get("access_token")) {
+    const session = {
+      access_token: hashParams.get("access_token"),
+      refresh_token: hashParams.get("refresh_token") || "",
+      token_type: hashParams.get("token_type") || "bearer",
+      expires_in: Number(hashParams.get("expires_in") || 0),
+      expires_at: Number(hashParams.get("expires_in") || 0)
+        ? Math.floor(Date.now() / 1000) + Number(hashParams.get("expires_in"))
+        : undefined,
+    };
+    await finishAuthenticatedReturn(session, "Connexion validée");
+    await handlePasswordRecoveryIfNeeded(hashParams);
+    cleanAuthCallbackUrl();
+    return;
+  }
+
+  const code = query.get("code");
+  const verifier = localStorage.getItem("mbifePkceVerifier");
+  if (code && verifier) {
+    const session = await supabaseJson("/auth/v1/token?grant_type=pkce", {
+      method: "POST",
+      body: { auth_code: code, code_verifier: verifier },
+      useUserToken: false,
+    });
+    localStorage.removeItem("mbifePkceVerifier");
+    await finishAuthenticatedReturn(session, "Connexion Google validée");
+    cleanAuthCallbackUrl();
+  }
+}
+
+async function signInWithGoogle() {
+  if (!hasSupabaseConfig()) {
+    showToast("Supabase doit être configuré avant Google.");
+    return;
+  }
+  if (!window.location.origin.startsWith("http")) {
+    showToast("Google fonctionne sur le site en ligne HTTPS, pas en fichier local.");
+    return;
+  }
+  if (!crypto?.subtle) {
+    showToast("Navigateur trop ancien pour Google sécurisé.");
+    return;
+  }
+
+  const draft = storePendingAuthProfile();
+  if (!draft.gender && state.authMode === "signup") {
+    showToast("Choisis ton sexe avant l'inscription Google.");
+    return;
+  }
+
+  const verifier = randomBase64Url(64);
+  const challenge = await makeCodeChallenge(verifier);
+  localStorage.setItem("mbifePkceVerifier", verifier);
+
+  const url = new URL(`${supabaseConfig.url.replace(/\/$/, "")}/auth/v1/authorize`);
+  url.searchParams.set("provider", "google");
+  url.searchParams.set("redirect_to", getAuthRedirectUrl());
+  url.searchParams.set("code_challenge", challenge);
+  url.searchParams.set("code_challenge_method", "s256");
+  window.location.href = url.toString();
+}
+
+async function resendVerificationEmail() {
+  const { email } = readAuthFields();
+  if (!email) {
+    showToast("Entre ton email avant de renvoyer le lien.");
+    return;
+  }
+
+  try {
+    await supabaseJson("/auth/v1/resend", {
+      method: "POST",
+      body: {
+        type: "signup",
+        email,
+        options: { email_redirect_to: getAuthRedirectUrl() },
+      },
+      useUserToken: false,
+    });
+    setAuthMode("signup");
+    showToast("Email de confirmation renvoyé");
+  } catch (error) {
+    showAuthError(error, "Renvoi impossible");
+  }
+}
+
+async function sendPasswordResetEmail() {
+  const { email } = readAuthFields();
+  if (!email) {
+    showToast("Entre ton email pour recevoir le lien.");
+    return;
+  }
+
+  try {
+    await supabaseJson(`/auth/v1/recover?redirect_to=${encodeURIComponent(getAuthRedirectUrl())}`, {
+      method: "POST",
+      body: { email },
+      useUserToken: false,
+    });
+    showToast("Lien de réinitialisation envoyé");
+  } catch (error) {
+    showAuthError(error, "Envoi impossible");
+  }
+}
+
+function revealSignupForm() {
+  if (state.authMode === "signup") {
+    return false;
+  }
+
+  setAuthMode("signup");
+  const message = "Complète les champs d'inscription, puis valide ton compte.";
+  if (authStatus) authStatus.textContent = message;
+  if (mobileAuthStatus) mobileAuthStatus.textContent = message;
+  window.setTimeout(() => {
+    (authName || mobileAuthName || authEmail)?.focus?.();
+  }, 60);
+  return true;
+}
+
+async function requestSignupWithSupabase() {
+  if (revealSignupForm()) {
+    return;
+  }
+  await signupWithSupabase();
+}
+
 async function signupWithSupabase() {
+  setAuthMode("signup");
   const { name, email, password, gender, lookingFor } = readAuthFields();
 
   if (!email || password.length < 6) {
     const message = "Email et mot de passe de 6 caractères minimum.";
     authStatus.textContent = message;
+    if (mobileAuthStatus) mobileAuthStatus.textContent = message;
     showToast(message);
     return;
   }
@@ -5541,6 +5555,8 @@ async function signupWithSupabase() {
 
   try {
     authStatus.textContent = "Création du compte en cours...";
+    if (mobileAuthStatus) mobileAuthStatus.textContent = authStatus.textContent;
+    storePendingAuthProfile();
 
     const data = await supabaseJson(signupRedirectPath(), {
       method: "POST",
@@ -5569,6 +5585,7 @@ async function signupWithSupabase() {
       showToast("Compte créé et connecté");
     } else {
       authStatus.textContent = "Compte créé. Vérifie ton email, puis reviens cliquer sur Connexion.";
+      if (mobileAuthStatus) mobileAuthStatus.textContent = authStatus.textContent;
       showToast("Vérifie ton email pour activer le compte");
     }
 
@@ -5581,18 +5598,20 @@ async function signupWithSupabase() {
 }
 
 async function loginWithSupabase() {
-  const email    = (document.querySelector("#loginEmailNew")?.value || authEmail?.value || "").trim();
-  const password =  document.querySelector("#loginPwdNew")?.value   || authPassword?.value || "";
+  setAuthMode("login");
+  const { email, password } = readAuthFields();
 
   if (!email || !password) {
     const message = "Entre ton email et ton mot de passe.";
     authStatus.textContent = message;
+    if (mobileAuthStatus) mobileAuthStatus.textContent = message;
     showToast(message);
     return;
   }
 
   try {
     authStatus.textContent = "Connexion en cours...";
+    if (mobileAuthStatus) mobileAuthStatus.textContent = authStatus.textContent;
 
     const data = await supabaseJson("/auth/v1/token?grant_type=password", {
       method: "POST",
@@ -6804,21 +6823,13 @@ async function toggleVoiceRecording() {
 }
 
 // ── Web Push ────────────────────────────────────────────────
-const VAPID_PUBLIC_KEY = "BD-vU_PhNflROCvPIfDkKPxsyy3StLRB4ovL881NI6fsq_63I6_ke4ZKgZMNzpotMf-HKKXHlaul-Vy8EpX8Dr4";
+const VAPID_PUBLIC_KEY = "BJdddOYFym5K-VKIIlz6k7rOprrx9IRDal7BprsfvYusFvnHOrZel2l3Qhsyza0kXjMyndaEnsG9Rv3owkfqSWw";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = atob(base64);
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
-}
-
-function pushKeysMatch(subscription, applicationServerKey) {
-  const existingKey = subscription?.options?.applicationServerKey;
-  if (!existingKey) return true;
-  const existing = new Uint8Array(existingKey);
-  if (existing.length !== applicationServerKey.length) return false;
-  return existing.every((value, index) => value === applicationServerKey[index]);
 }
 
 async function savePushSubscription(subscription) {
@@ -6835,7 +6846,6 @@ async function savePushSubscription(subscription) {
         endpoint: sub.endpoint,
         p256dh: sub.keys?.p256dh || "",
         auth: sub.keys?.auth || "",
-        user_agent: navigator.userAgent || "",
       }],
     });
   } catch (error) {
@@ -6908,19 +6918,12 @@ async function requestMessageNotifications() {
       navigator.serviceWorker.ready,
       new Promise((_, reject) => window.setTimeout(() => reject(new Error("Service worker indisponible")), 6000)),
     ]);
-    const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
     let subscription = await registration.pushManager.getSubscription();
-
-    if (subscription && !pushKeysMatch(subscription, applicationServerKey)) {
-      await removePushSubscription(subscription.endpoint);
-      await subscription.unsubscribe();
-      subscription = null;
-    }
 
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       });
     }
 
@@ -8683,6 +8686,9 @@ resetFiltersButton?.addEventListener("click", resetFilterDrawer);
 authGender?.addEventListener("change", () => applyDefaultLookingFor(authGender, authLookingFor));
 mobileAuthGender?.addEventListener("change", () => applyDefaultLookingFor(mobileAuthGender, mobileAuthLookingFor));
 profileGender?.addEventListener("change", () => applyDefaultLookingFor(profileGender, profileLookingFor));
+document.querySelectorAll("[data-auth-mode]").forEach((button) => {
+  button.addEventListener("click", () => setAuthMode(button.dataset.authMode));
+});
 
 document.querySelector("#passButton").addEventListener("click", () => advanceProfile("pass"));
 document.querySelector("#likeButton").addEventListener("click", () => advanceProfile("like"));
@@ -8727,349 +8733,31 @@ messagePhotoInput?.addEventListener("change", () => {
   };
   updateAttachmentPreview();
 });
-// ══════════════════════════════════════════════════════
-// NOUVEAU CONTRÔLEUR AUTH UI
-// Onglets · 2 étapes · validation temps réel · show/hide mdp
-// ══════════════════════════════════════════════════════
-(function initAuthUI() {
-  const tabLoginEl   = document.querySelector("#tabLogin");
-  const tabSignupEl  = document.querySelector("#tabSignup");
-  const loginPanelEl = document.querySelector("#loginPanel");
-  const signupPanelEl= document.querySelector("#signupPanel");
-  const authDotsEl   = document.querySelector("#authDots");
-  const authTabsEl   = document.querySelector("#authTabs");
-
-  const step1El      = document.querySelector("#signupStep1");
-  const step2El      = document.querySelector("#signupStep2");
-  const nextBtn      = document.querySelector("#signupNextBtn");
-  const backBtn      = document.querySelector("#signupBackBtn");
-  const dividerEl    = document.querySelector("#signupDivider");
-  const googleBtn2El = document.querySelector("#googleButton2");
-
-  const loginEmailEl = document.querySelector("#loginEmailNew");
-  const loginPwdEl   = document.querySelector("#loginPwdNew");
-  const loginPwdTog  = document.querySelector("#loginPwdToggle");
-  const loginCtaEl   = document.querySelector("#loginCta");
-
-  const signupEmailEl= document.querySelector("#signupEmail");
-  const signupPwdEl  = document.querySelector("#signupPwd");
-  const signupPwdTog = document.querySelector("#signupPwdToggle");
-  const signupNameEl = document.querySelector("#signupName");
-  const signupGenderEl= document.querySelector("#signupGender");
-  const signupLFEl   = document.querySelector("#signupLookingFor");
-  const signupCtaEl  = document.querySelector("#signupCta");
-  const pwdStrengthEl= document.querySelector("#pwdStrength");
-  const pwdHintEl    = document.querySelector("#pwdHint");
-
-  // ── helpers ──────────────────────────────────────
-  function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
-
-  function pwdLevel(p) {
-    if (!p || p.length < 6) return 0;
-    let s = 1;
-    if (p.length >= 8) s++;
-    if (/[A-Z]/.test(p) || /[0-9]/.test(p)) s++;
-    if (/[^a-zA-Z0-9]/.test(p)) s++;
-    return s;
-  }
-
-  function setDots(step) {
-    document.querySelectorAll(".auth-dot").forEach((d, i) => {
-      d.classList.toggle("active", i === step - 1);
-    });
-  }
-
-  function togglePwd(input, btn) {
-    const show = input.type === "password";
-    input.type = show ? "text" : "password";
-    btn.textContent = show ? "🙈" : "👁";
-  }
-
-  // ── Onglets ───────────────────────────────────────
-  function showTab(tab) {
-    const isLogin = tab === "login";
-    tabLoginEl?.classList.toggle("active", isLogin);
-    tabSignupEl?.classList.toggle("active", !isLogin);
-    tabLoginEl?.setAttribute("aria-selected", isLogin);
-    tabSignupEl?.setAttribute("aria-selected", !isLogin);
-    if (loginPanelEl)  loginPanelEl.hidden  = !isLogin;
-    if (signupPanelEl) signupPanelEl.hidden  = isLogin;
-    if (authDotsEl)    authDotsEl.hidden     = isLogin;
-    if (!isLogin) setDots(1);
-  }
-
-  tabLoginEl?.addEventListener("click",  () => showTab("login"));
-  tabSignupEl?.addEventListener("click", () => showTab("signup"));
-
-  // ── Show/hide mot de passe ────────────────────────
-  loginPwdTog?.addEventListener("click",  () => togglePwd(loginPwdEl, loginPwdTog));
-  signupPwdTog?.addEventListener("click", () => togglePwd(signupPwdEl, signupPwdTog));
-
-  // ── Validation email connexion ────────────────────
-  loginEmailEl?.addEventListener("input", () => {
-    const ok = validEmail(loginEmailEl.value);
-    loginEmailEl.classList.toggle("valid",   ok);
-    loginEmailEl.classList.toggle("invalid", !ok && loginEmailEl.value.length > 3);
-  });
-
-  // ── Bouton connexion (nouveau CTA) ────────────────
-  loginCtaEl?.addEventListener("click", () => {
-    // Synchroniser les champs cachés pour la fonction existante
-    if (authEmail)    authEmail.value    = loginEmailEl?.value.trim() || "";
-    if (authPassword) authPassword.value = loginPwdEl?.value || "";
-    loginWithSupabase();
-  });
-
-  // ── Validation email + mot de passe inscription ───
-  function checkStep1Readiness() {
-    const emailOk = validEmail(signupEmailEl?.value || "");
-    const pwdOk   = (signupPwdEl?.value || "").length >= 6;
-    if (nextBtn) nextBtn.disabled = !(emailOk && pwdOk);
-    if (signupEmailEl) {
-      signupEmailEl.classList.toggle("valid",   emailOk);
-      signupEmailEl.classList.toggle("invalid", !emailOk && signupEmailEl.value.length > 3);
-    }
-  }
-
-  signupEmailEl?.addEventListener("input", checkStep1Readiness);
-
-  signupPwdEl?.addEventListener("input", () => {
-    const val   = signupPwdEl.value;
-    const level = pwdLevel(val);
-    if (pwdStrengthEl) pwdStrengthEl.dataset.level = level;
-    if (pwdHintEl) {
-      const msgs = ["6 caractères min · Mélange lettres et chiffres", "Trop court", "Faible — essaie mieux", "Bien — presque parfait", "Excellent 💪"];
-      pwdHintEl.textContent = msgs[level] || "";
-      pwdHintEl.className = "auth-hint" + (level >= 3 ? " ok" : level <= 1 && val.length ? " error" : "");
-    }
-    checkStep1Readiness();
-  });
-
-  // ── Navigation entre étapes ───────────────────────
-  nextBtn?.addEventListener("click", () => {
-    step1El?.classList.add("hidden");
-    step2El?.classList.remove("hidden");
-    step2El?.classList.add("slide-in-right");
-    if (dividerEl)   dividerEl.hidden  = true;
-    if (googleBtn2El) googleBtn2El.hidden = true;
-    setDots(2);
-  });
-
-  backBtn?.addEventListener("click", () => {
-    step2El?.classList.add("hidden");
-    step1El?.classList.remove("hidden");
-    step1El?.classList.add("slide-in-left");
-    if (dividerEl)   dividerEl.hidden  = false;
-    if (googleBtn2El) googleBtn2El.hidden = false;
-    setDots(1);
-  });
-
-  // ── Auto-fill "Je veux voir" selon genre ─────────
-  signupGenderEl?.addEventListener("change", () => {
-    if (signupLFEl && !signupLFEl.value) {
-      const opp = { femme: "homme", homme: "femme", autre: "tous" };
-      signupLFEl.value = opp[signupGenderEl.value] || "";
-    }
-  });
-
-  // ── Bouton "Créer mon compte" (nouveau CTA) ───────
-  signupCtaEl?.addEventListener("click", () => {
-    // Synchroniser les champs cachés pour signupWithSupabase()
-    if (authEmail)     authEmail.value     = signupEmailEl?.value.trim()  || "";
-    if (authPassword)  authPassword.value  = signupPwdEl?.value            || "";
-    if (authName)      authName.value      = signupNameEl?.value.trim()   || "";
-    if (authGender)    authGender.value    = signupGenderEl?.value         || "";
-    if (authLookingFor) authLookingFor.value = signupLFEl?.value           || "";
-    signupWithSupabase();
-  });
-
-  // ── Google button 2 ───────────────────────────────
-  // (câblé globalement via loginWithGoogle)
-
-})();
-
-// ══════════════════════════════════════════════════════
-// GOOGLE OAUTH
-// ══════════════════════════════════════════════════════
-function loginWithGoogle() {
-  if (!hasSupabaseConfig()) {
-    showToast("Configure Supabase avant de continuer avec Google.");
-    return;
-  }
-
-  // En mode PWA standalone, window.location.origin suffit
-  // redirect_to doit correspondre exactement à une URL autorisée dans Supabase
-  const redirectTo = "https://visionary-chaja-4912fb.vercel.app/";
-  const base = supabaseConfig.url.replace(/\/$/, "");
-
-  const params = new URLSearchParams({
-    provider:    "google",
-    redirect_to: redirectTo,
-  });
-
-  window.location.href = `${base}/auth/v1/authorize?${params}`;
-}
-
-// Câbler tous les boutons Google (desktop + mobile, connexion + inscription)
-document.querySelector("#googleButton")?.addEventListener("click", loginWithGoogle);
-document.querySelector("#googleButton2")?.addEventListener("click", loginWithGoogle);
-document.querySelector("#mobileGoogleButton")?.addEventListener("click", loginWithGoogle);
-document.querySelector("#mobileGoogleButton2")?.addEventListener("click", loginWithGoogle);
-
-// ══════════════════════════════════════════════════════
-// CONTRÔLEUR AUTH MOBILE
-// ══════════════════════════════════════════════════════
-(function initMobileAuthUI() {
-  const mTabLogin    = document.querySelector("#mTabLogin");
-  const mTabSignup   = document.querySelector("#mTabSignup");
-  const mLoginPanel  = document.querySelector("#mLoginPanel");
-  const mSignupPanel = document.querySelector("#mSignupPanel");
-  const mAuthDots    = document.querySelector("#mAuthDots");
-
-  const mStep1       = document.querySelector("#mSignupStep1");
-  const mStep2       = document.querySelector("#mSignupStep2");
-  const mNextBtn     = document.querySelector("#mSignupNextBtn");
-  const mBackBtn     = document.querySelector("#mSignupBackBtn");
-  const mDivider     = document.querySelector("#mSignupDivider");
-  const mGoogleBtn2  = document.querySelector("#mobileGoogleButton2");
-
-  const mLoginEmail  = document.querySelector("#mLoginEmail");
-  const mLoginPwd    = document.querySelector("#mLoginPwd");
-  const mLoginTog    = document.querySelector("#mLoginPwdToggle");
-
-  const mSignupEmail = document.querySelector("#mSignupEmail");
-  const mSignupPwd   = document.querySelector("#mSignupPwd");
-  const mSignupTog   = document.querySelector("#mSignupPwdToggle");
-  const mSignupName  = document.querySelector("#mSignupName");
-  const mSignupGender= document.querySelector("#mSignupGender");
-  const mSignupLF    = document.querySelector("#mSignupLookingFor");
-  const mPwdStrength = document.querySelector("#mPwdStrength");
-  const mPwdHint     = document.querySelector("#mPwdHint");
-
-  function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
-
-  function pwdLevel(p) {
-    if (!p || p.length < 6) return 0;
-    let s = 1;
-    if (p.length >= 8) s++;
-    if (/[A-Z]/.test(p) || /[0-9]/.test(p)) s++;
-    if (/[^a-zA-Z0-9]/.test(p)) s++;
-    return s;
-  }
-
-  function setDots(step) {
-    mAuthDots?.querySelectorAll(".auth-dot").forEach((d, i) => {
-      d.classList.toggle("active", i === step - 1);
-    });
-  }
-
-  function togglePwd(input, btn) {
-    const show = input.type === "password";
-    input.type = show ? "text" : "password";
-    btn.textContent = show ? "🙈" : "👁";
-  }
-
-  // Onglets
-  function showMTab(tab) {
-    const isLogin = tab === "login";
-    mTabLogin?.classList.toggle("active", isLogin);
-    mTabSignup?.classList.toggle("active", !isLogin);
-    mTabLogin?.setAttribute("aria-selected", isLogin);
-    mTabSignup?.setAttribute("aria-selected", !isLogin);
-    if (mLoginPanel)  mLoginPanel.hidden  = !isLogin;
-    if (mSignupPanel) mSignupPanel.hidden  = isLogin;
-    if (mAuthDots)    mAuthDots.hidden     = isLogin;
-    if (!isLogin) setDots(1);
-  }
-
-  mTabLogin?.addEventListener("click",  () => showMTab("login"));
-  mTabSignup?.addEventListener("click", () => showMTab("signup"));
-
-  // Show/hide mdp
-  mLoginTog?.addEventListener("click",  () => togglePwd(mLoginPwd, mLoginTog));
-  mSignupTog?.addEventListener("click", () => togglePwd(mSignupPwd, mSignupTog));
-
-  // Validation email connexion
-  mLoginEmail?.addEventListener("input", () => {
-    const ok = validEmail(mLoginEmail.value);
-    mLoginEmail.classList.toggle("valid",   ok);
-    mLoginEmail.classList.toggle("invalid", !ok && mLoginEmail.value.length > 3);
-  });
-
-  // Validation step 1 inscription
-  function checkMStep1() {
-    const emailOk = validEmail(mSignupEmail?.value || "");
-    const pwdOk   = (mSignupPwd?.value || "").length >= 6;
-    if (mNextBtn) mNextBtn.disabled = !(emailOk && pwdOk);
-    if (mSignupEmail) {
-      mSignupEmail.classList.toggle("valid",   emailOk);
-      mSignupEmail.classList.toggle("invalid", !emailOk && mSignupEmail.value.length > 3);
-    }
-  }
-
-  mSignupEmail?.addEventListener("input", checkMStep1);
-  mSignupPwd?.addEventListener("input", () => {
-    const val = mSignupPwd.value;
-    const level = pwdLevel(val);
-    if (mPwdStrength) mPwdStrength.dataset.level = level;
-    if (mPwdHint) {
-      const msgs = ["6 caractères min · Mélange lettres et chiffres", "Trop court", "Faible — essaie mieux", "Bien — presque parfait", "Excellent 💪"];
-      mPwdHint.textContent = msgs[level] || "";
-      mPwdHint.className = "auth-hint" + (level >= 3 ? " ok" : level <= 1 && val.length ? " error" : "");
-    }
-    checkMStep1();
-  });
-
-  // Navigation étapes
-  mNextBtn?.addEventListener("click", () => {
-    mStep1?.classList.add("hidden");
-    mStep2?.classList.remove("hidden");
-    mStep2?.classList.add("slide-in-right");
-    if (mDivider)   mDivider.hidden  = true;
-    if (mGoogleBtn2) mGoogleBtn2.hidden = true;
-    setDots(2);
-  });
-
-  mBackBtn?.addEventListener("click", () => {
-    mStep2?.classList.add("hidden");
-    mStep1?.classList.remove("hidden");
-    mStep1?.classList.add("slide-in-left");
-    if (mDivider)   mDivider.hidden  = false;
-    if (mGoogleBtn2) mGoogleBtn2.hidden = false;
-    setDots(1);
-  });
-
-  // Auto-fill "Je veux voir"
-  mSignupGender?.addEventListener("change", () => {
-    if (mSignupLF && !mSignupLF.value) {
-      const opp = { femme: "homme", homme: "femme", autre: "tous" };
-      mSignupLF.value = opp[mSignupGender.value] || "";
-    }
-  });
-
-  // Bouton connexion mobile
-  document.querySelector("#mobileLoginButton")?.addEventListener("click", () => {
-    if (mobileAuthEmail) mobileAuthEmail.value = mLoginEmail?.value.trim() || "";
-    if (mobileAuthPassword) mobileAuthPassword.value = mLoginPwd?.value || "";
-    copyMobileAuthFields();
-    loginWithSupabase();
-  });
-
-  // Bouton inscription mobile
-  document.querySelector("#mobileSignupButton")?.addEventListener("click", () => {
-    if (mobileAuthEmail)      mobileAuthEmail.value      = mSignupEmail?.value.trim() || "";
-    if (mobileAuthPassword)   mobileAuthPassword.value   = mSignupPwd?.value          || "";
-    if (mobileAuthName)       mobileAuthName.value       = mSignupName?.value.trim()  || "";
-    if (mobileAuthGender)     mobileAuthGender.value     = mSignupGender?.value       || "";
-    if (mobileAuthLookingFor) mobileAuthLookingFor.value = mSignupLF?.value           || "";
-    copyMobileAuthFields();
-    signupWithSupabase();
-  });
-
-})();
-
 loginButton.addEventListener("click", loginWithSupabase);
-signupButton.addEventListener("click", signupWithSupabase);
+signupButton.addEventListener("click", requestSignupWithSupabase);
+googleAuthButton?.addEventListener("click", signInWithGoogle);
+resendEmailButton?.addEventListener("click", resendVerificationEmail);
+resetPasswordButton?.addEventListener("click", sendPasswordResetEmail);
+mobileLoginButton?.addEventListener("click", () => {
+  copyMobileAuthFields();
+  loginWithSupabase();
+});
+mobileSignupButton?.addEventListener("click", () => {
+  copyMobileAuthFields();
+  requestSignupWithSupabase();
+});
+mobileGoogleAuthButton?.addEventListener("click", () => {
+  copyMobileAuthFields();
+  signInWithGoogle();
+});
+mobileResendEmailButton?.addEventListener("click", () => {
+  copyMobileAuthFields();
+  resendVerificationEmail();
+});
+mobileResetPasswordButton?.addEventListener("click", () => {
+  copyMobileAuthFields();
+  sendPasswordResetEmail();
+});
 logoutButton.addEventListener("click", logoutFromSupabase);
 profileLogoutButton?.addEventListener("click", logoutFromSupabase);
 profileForm.addEventListener("submit", saveProfile);
@@ -9121,7 +8809,11 @@ profilePhoto.addEventListener("change", () => {
 });
 authForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  loginWithSupabase();
+  if (state.authMode === "signup") {
+    requestSignupWithSupabase();
+  } else {
+    loginWithSupabase();
+  }
 });
 document.querySelector("#annonceSubmitBtn")?.addEventListener("click", submitAnnonce);
 document.querySelector("#annoncesRefreshBtn")?.addEventListener("click", async () => {
@@ -9226,87 +8918,6 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden && currentUser()) syncRemoteData();
 });
 
-// ══════════════════════════════════════════════════════
-// OAUTH CALLBACK — gère les deux flows Supabase :
-//   • Implicit  : #access_token=xxx&token_type=bearer&...
-//   • PKCE/Code : ?code=xxx  (échangé contre un token)
-// ══════════════════════════════════════════════════════
-(function handleOAuthCallback() {
-
-  // ── Flow implicit (fragment) ──────────────────────
-  const hash = window.location.hash.slice(1);
-  if (hash) {
-    const p = new URLSearchParams(hash);
-    const accessToken  = p.get("access_token");
-    const refreshToken = p.get("refresh_token") || "";
-    const tokenType    = p.get("token_type");
-    const expiresIn    = Number(p.get("expires_in") || 3600);
-
-    if (accessToken && tokenType === "bearer") {
-      // Nettoyer l'URL immédiatement
-      history.replaceState(null, "", window.location.pathname + window.location.search);
-
-      // Sauvegarder la session puis charger l'utilisateur
-      saveAuthSession({ access_token: accessToken, refresh_token: refreshToken, token_type: tokenType, expires_in: expiresIn });
-
-      supabaseJson("/auth/v1/user")
-        .then((user) => {
-          if (user) {
-            saveAuthSession({ access_token: accessToken, refresh_token: refreshToken, token_type: tokenType, expires_in: expiresIn, user });
-            tryEnsureRemoteProfile(user.user_metadata?.full_name || user.user_metadata?.display_name || user.email?.split("@")[0] || "Membre mbifê");
-            syncRemoteData();
-            startRemoteRefresh();
-            subscribeLikesRealtime();
-            subscribeNotificationsRealtime();
-            showToast("Connexion Google réussie ✓");
-          }
-        })
-        .catch(() => showToast("Connecté via Google"));
-
-      return;
-    }
-  }
-
-  // ── Flow PKCE / Authorization Code ────────────────
-  const searchParams = new URLSearchParams(window.location.search);
-  const code = searchParams.get("code");
-
-  if (code && hasSupabaseConfig()) {
-    // Nettoyer l'URL immédiatement
-    searchParams.delete("code");
-    searchParams.delete("state");
-    const cleanSearch = searchParams.toString();
-    history.replaceState(null, "", window.location.pathname + (cleanSearch ? "?" + cleanSearch : ""));
-
-    // Échanger le code contre un token via l'endpoint Supabase
-    fetch(`${supabaseConfig.url}/auth/v1/token?grant_type=pkce`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        apikey: supabaseConfig.anonKey,
-      },
-      body: JSON.stringify({ auth_code: code }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data?.access_token) {
-          saveAuthSession(data);
-          tryEnsureRemoteProfile(data.user?.user_metadata?.full_name || data.user?.email?.split("@")[0] || "Membre mbifê");
-          syncRemoteData();
-          startRemoteRefresh();
-          subscribeLikesRealtime();
-          subscribeNotificationsRealtime();
-          showToast("Connexion Google réussie ✓");
-        } else {
-          // Fallback : tenter de récupérer la session via cookie de session Supabase
-          restoreAuthSession();
-        }
-      })
-      .catch(() => restoreAuthSession());
-  }
-
-})();
-
 renderAll();
 syncMobileNav();
 syncFilterDrawerInputs();
@@ -9315,7 +8926,7 @@ const requestedPanel = new URLSearchParams(window.location.search).get("panel");
 if (["discover", "profile", "matches", "messages", "viral", "settings", "about"].includes(requestedPanel)) {
   setPanel(requestedPanel);
 }
-restoreAuthSession();
+handleAuthRedirect().finally(() => restoreAuthSession());
 checkSupabaseStatus();
 loadRemoteAnnonces();
 subscribeAnnoncesRealtime();
