@@ -4691,6 +4691,70 @@ body:not(.auth-gated) .date-ideas-line {
   line-height: 1.45;
 }
 
+body:not(.auth-gated) .match-grid {
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.8rem;
+}
+
+body:not(.auth-gated) .match-showcase,
+body:not(.auth-gated) .conversation-section-title,
+body:not(.auth-gated) .empty-state {
+  grid-column: 1 / -1;
+}
+
+body:not(.auth-gated) .match-showcase {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+body:not(.auth-gated) .new-match-strip {
+  grid-auto-columns: 4.7rem;
+  padding-bottom: 0.3rem;
+}
+
+body:not(.auth-gated) .new-match img {
+  width: 3.6rem;
+  height: 3.6rem;
+}
+
+body:not(.auth-gated) .conversation-section-title {
+  margin: 0.2rem 0 0;
+}
+
+body:not(.auth-gated) .mini-card {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr);
+  align-items: center;
+  min-height: 5.25rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 28px rgba(26, 26, 46, 0.07);
+}
+
+body:not(.auth-gated) .mini-card img {
+  width: 4.4rem;
+  height: 100%;
+  min-height: 5.25rem;
+  aspect-ratio: auto;
+}
+
+body:not(.auth-gated) .mini-card div {
+  min-width: 0;
+  padding: 0.75rem;
+}
+
+body:not(.auth-gated) .mini-card strong,
+body:not(.auth-gated) .mini-card span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body:not(.auth-gated) .like-request-card {
+  border-radius: 1rem;
+}
+
 @media (max-width: 1080px) {
   body:not(.auth-gated) .app-shell {
     grid-template-columns: 1fr;
@@ -4802,6 +4866,10 @@ body:not(.auth-gated) .date-ideas-line {
 
   body:not(.auth-gated) .mobile-bottom-nav {
     display: grid;
+  }
+
+  body:not(.auth-gated) .match-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -8268,8 +8336,8 @@ function renderInsights(profile) {
   promptText.textContent = profile.prompts[0];
   const promptDateIdeas = document.querySelector("#promptDateIdeas");
   if (promptDateIdeas) {
-    promptDateIdeas.innerHTML = `<strong>${escapeHtml(profile.name)}'s date ideas:</strong> ${profile.dateIdeas
-      .map((idea) => escapeHtml(idea.title))
+    promptDateIdeas.innerHTML = `<strong>Idées de date avec ${escapeHtml(profile.name)}:</strong> ${profile.dateIdeas
+      .map((idea) => escapeHtml(Array.isArray(idea) ? idea[0] : idea.title))
       .join(", ")}`;
   }
   renderDateIdeas(profile);
