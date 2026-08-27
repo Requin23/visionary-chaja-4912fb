@@ -1462,6 +1462,17 @@ blockquote {
   font-size: 0.75rem;
 }
 
+.annonce-sync-badge {
+  justify-self: start;
+  border: 1px solid rgba(178, 112, 22, 0.28);
+  border-radius: 999px;
+  background: #fff7e8;
+  color: #9a5a08;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
 .annonce-body {
   color: var(--ink);
   line-height: 1.5;
@@ -7616,6 +7627,7 @@ function renderAnnoncesFeed() {
         ? `<img class="annonce-avatar" src="${escapeHtml(ann.author_photo)}" alt="${authorName}" onerror="this.outerHTML='<div class=\\"annonce-avatar\\">${initial}</div>'" />`
         : `<div class="annonce-avatar">${initial}</div>`;
       const canReply = !isAnon && ann.author_id && ann.author_id !== currentUser()?.id;
+      const syncBadge = ann.pending_sync ? `<span class="annonce-sync-badge">en attente de synchro</span>` : "";
 
       return `
         <article class="annonce-card" data-annonce-id="${escapeHtml(ann.id)}">
@@ -7624,6 +7636,7 @@ function renderAnnoncesFeed() {
             <div class="annonce-author">
               <strong>${authorName}</strong>
               <span>${timeAgo(ann.created_at)}</span>
+              ${syncBadge}
             </div>
           </div>
           <p class="annonce-body">${escapeHtml(ann.body)}</p>
@@ -7684,6 +7697,7 @@ async function submitAnnonce() {
       }
     } catch (err) {
       // Fall through to local save — show note but continue
+      newAnn.pending_sync = true;
       showToast("Annonce enregistrée localement (Supabase non disponible)");
     }
   }
@@ -7789,10 +7803,58 @@ async function replyToAnnonce(authorId) {
   }
 }
 
+async function syncPendingAnnonces() {
+  const user = currentUser();
+  if (!hasSupabaseConfig() || !user) return;
+
+  const pending = state.annonces.filter((ann) => ann.pending_sync);
+  if (!pending.length) return;
+
+  let changed = false;
+  for (const ann of pending) {
+    try {
+      const result = await supabaseJson("/rest/v1/annonces", {
+        method: "POST",
+        prefer: "return=representation",
+        body: {
+          body: ann.body,
+          anonymous: !!ann.anonymous,
+          author_id: ann.anonymous ? null : user.id,
+          author_name: ann.anonymous ? null : ann.author_name,
+          author_photo: ann.anonymous ? null : ann.author_photo,
+        },
+      });
+
+      if (result?.[0]) {
+        ann.id = result[0].id;
+        ann.like_count = result[0].like_count || 0;
+        ann.created_at = result[0].created_at || ann.created_at;
+        ann.pending_sync = false;
+        changed = true;
+      }
+    } catch {
+      // Keep the local card marked as pending.
+    }
+  }
+
+  if (changed) {
+    state.annonces = state.annonces.map((ann) => {
+      if (ann.pending_sync === false) {
+        const { pending_sync, ...syncedAnn } = ann;
+        return syncedAnn;
+      }
+      return ann;
+    });
+    localStorage.setItem("mbifeAnnonces", JSON.stringify(state.annonces.slice(0, 80)));
+  }
+}
+
 async function loadRemoteAnnonces() {
   if (!hasSupabaseConfig()) return;
 
   try {
+    await syncPendingAnnonces();
+
     const data = await supabaseJson(
       "/rest/v1/annonces?select=id,body,anonymous,author_name,author_photo,author_id,like_count,created_at&order=created_at.desc&limit=40",
     );
