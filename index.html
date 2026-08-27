@@ -6393,6 +6393,10 @@ function renderAuthState() {
   const user = state.authChecking ? null : storedUser;
   document.body.classList.toggle("is-authenticated", Boolean(user));
   document.body.classList.toggle("auth-gated", !user);
+  if (!user && onboardingModal) {
+    onboardingModal.classList.remove("is-open");
+    onboardingModal.setAttribute("aria-hidden", "true");
+  }
 
   if (state.authChecking) {
     if (authPanel) {
@@ -9818,7 +9822,7 @@ function nextOnboardingStep() {
 }
 
 function showOnboardingIfNeeded() {
-  if (localStorage.getItem("mbife_onboarding_done") || !onboardingModal) {
+  if (!currentUser() || localStorage.getItem("mbife_onboarding_done") || !onboardingModal) {
     return;
   }
   renderOnboardingStep();
