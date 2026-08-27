@@ -3814,6 +3814,1015 @@ body.auth-gated .auth-service-note {
   }
 }
 
+/* Professional responsive polish */
+:root {
+  --radius-xs: 0.55rem;
+  --radius-sm: 0.8rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --surface-glass: rgba(255, 255, 255, 0.94);
+  --shadow-soft: 0 16px 44px rgba(26, 26, 46, 0.08);
+  --shadow-strong: 0 26px 70px rgba(26, 26, 46, 0.16);
+}
+
+body {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 247, 252, 0.9)),
+    radial-gradient(circle at 12% 0%, rgba(255, 68, 88, 0.12), transparent 30rem),
+    radial-gradient(circle at 90% 12%, rgba(0, 201, 167, 0.1), transparent 26rem),
+    #f7f7fc;
+}
+
+button,
+input,
+textarea,
+select {
+  outline-offset: 3px;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(55, 114, 255, 0.22);
+  border-color: rgba(55, 114, 255, 0.45);
+}
+
+.workspace {
+  gap: 1rem;
+  max-width: 1480px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.topbar {
+  top: 0.85rem;
+  border-color: rgba(26, 26, 46, 0.08);
+  border-radius: var(--radius-lg);
+  background: var(--surface-glass);
+  padding: clamp(0.85rem, 2vw, 1.15rem);
+}
+
+.topbar-copy h1 {
+  max-width: 48rem;
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+  line-height: 1.04;
+}
+
+.eyebrow {
+  color: #b93549;
+  letter-spacing: 0.06em;
+}
+
+.hero-kpis span,
+.status-pill {
+  min-height: 2.15rem;
+  border-radius: var(--radius-xs);
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(26, 26, 46, 0.06);
+}
+
+.side-nav {
+  gap: 0.45rem;
+}
+
+.nav-item {
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+}
+
+.nav-item.active {
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(230, 83, 106, 0.12);
+}
+
+.nav-item strong {
+  background: rgba(26, 26, 46, 0.06);
+  color: var(--ink);
+}
+
+.filters {
+  margin-block: 0.25rem 0.5rem;
+}
+
+.filter-chip {
+  min-height: 2.35rem;
+  border-radius: var(--radius-xs);
+  background: #fff;
+  font-weight: 800;
+}
+
+#discoverPanel {
+  grid-template-columns: minmax(20rem, 34rem) minmax(18rem, 25rem);
+  gap: clamp(1rem, 3vw, 2.25rem);
+}
+
+.profile-card {
+  min-height: clamp(33rem, 72vh, 42rem);
+  border-radius: var(--radius-lg);
+}
+
+.profile-title {
+  flex-wrap: wrap;
+  margin-top: clamp(8rem, 24vh, 15rem);
+}
+
+.profile-title h2 {
+  overflow-wrap: anywhere;
+}
+
+.profile-bio,
+.intent-card strong,
+.prompt-box,
+.muted-copy,
+.about-card p,
+.settings-card p {
+  line-height: 1.55;
+}
+
+.actions {
+  gap: 0.65rem;
+}
+
+.action-button {
+  min-height: 3.8rem;
+  border-radius: var(--radius-sm);
+}
+
+.action-button small {
+  letter-spacing: 0;
+}
+
+.profile-editor,
+.profile-status-stack .about-card,
+.insight-panel,
+.date-lab,
+.chat-window,
+.conversation-list,
+.annonce-composer,
+.annonce-card,
+.about-hero,
+.about-card,
+.settings-card,
+.message-sidebar {
+  border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-soft);
+}
+
+.profile-editor,
+.insight-panel,
+.date-lab,
+.annonce-composer,
+.about-card,
+.settings-card {
+  padding: clamp(1rem, 2vw, 1.2rem);
+}
+
+.section-heading h2,
+.message-section-head h2,
+.annonces-feed-header h2,
+.settings-card h2 {
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.15;
+}
+
+.form-grid {
+  gap: 0.85rem;
+}
+
+.profile-form label,
+.auth-field {
+  color: #55546b;
+}
+
+.profile-form input,
+.profile-form textarea,
+.profile-form select,
+.auth-form input,
+.auth-form select,
+.annonce-composer textarea,
+.composer input {
+  border-radius: var(--radius-sm);
+  background: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.primary-button,
+.ghost-button,
+.composer button,
+.annonces-refresh-btn,
+.annonce-like-btn,
+.annonce-reply-btn {
+  border-radius: var(--radius-xs);
+}
+
+.primary-button,
+.send-button {
+  background: linear-gradient(135deg, #e6536a, #f07845);
+}
+
+.ghost-button,
+.annonces-refresh-btn,
+.annonce-like-btn,
+.annonce-reply-btn,
+.composer-tool {
+  border-color: rgba(26, 26, 46, 0.12);
+  background: #fff;
+}
+
+.message-sidebar {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+}
+
+.conversation-list {
+  padding: 0.45rem;
+}
+
+.conversation {
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+
+.conversation.active {
+  border-color: rgba(230, 83, 106, 0.18);
+  border-left-width: 1px;
+  padding-left: 0.55rem;
+}
+
+.chat-window {
+  overflow: hidden;
+}
+
+.chat-header {
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.composer {
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.75rem;
+}
+
+.annonces-layout,
+.two-column,
+.profile-layout,
+.about-layout {
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.annonce-card {
+  padding: 1rem;
+}
+
+.annonce-header {
+  align-items: flex-start;
+}
+
+.annonce-author {
+  gap: 0.18rem;
+}
+
+.settings-grid {
+  align-items: start;
+}
+
+.blocked-item {
+  background: #fff;
+}
+
+@media (min-width: 769px) {
+  .mobile-bottom-nav {
+    display: none;
+  }
+}
+
+@media (max-width: 1080px) {
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: static;
+    width: auto;
+    min-height: auto;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    overflow: visible;
+    padding: 0.8rem 1rem;
+  }
+
+  .sidebar:hover,
+  .sidebar:focus-within {
+    width: auto;
+  }
+
+  .brand,
+  .side-nav {
+    min-width: 0;
+  }
+
+  .quality-panel,
+  .auth-panel {
+    display: none;
+  }
+
+  .side-nav {
+    display: flex;
+    overflow-x: auto;
+    justify-content: flex-end;
+    scrollbar-width: none;
+  }
+
+  .side-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-item {
+    flex: 0 0 auto;
+  }
+
+  #discoverPanel {
+    grid-template-columns: minmax(18rem, 1fr);
+  }
+
+  .insight-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(5.9rem + env(safe-area-inset-bottom));
+  }
+
+  .workspace {
+    padding: 0.8rem 0.8rem calc(6.8rem + env(safe-area-inset-bottom));
+  }
+
+  .topbar {
+    margin: 0;
+    border-radius: var(--radius-md);
+  }
+
+  .topbar-copy h1 {
+    font-size: clamp(1.32rem, 7vw, 1.75rem);
+  }
+
+  .topbar-actions {
+    gap: 0.35rem;
+  }
+
+  .icon-button,
+  #filterDrawerButton {
+    width: 2.55rem;
+    min-width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  .filters {
+    margin-inline: -0.8rem;
+    padding: 0 0.8rem 0.15rem;
+  }
+
+  .filter-chip {
+    min-height: 2.25rem;
+    padding-inline: 0.75rem;
+  }
+
+  .profile-card {
+    min-height: clamp(28rem, calc(100dvh - 15.5rem), 40rem);
+    border-radius: var(--radius-md);
+  }
+
+  .profile-content {
+    padding: 1rem;
+  }
+
+  .profile-title {
+    margin-top: 0;
+  }
+
+  .profile-title h2 {
+    font-size: clamp(1.85rem, 11vw, 2.45rem);
+  }
+
+  .profile-bio {
+    font-size: 0.95rem;
+  }
+
+  .actions {
+    bottom: calc(5.45rem + env(safe-area-inset-bottom));
+    justify-content: space-between;
+    border-radius: var(--radius-md);
+    padding: 0.45rem;
+  }
+
+  .action-button {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    height: 3.25rem;
+    min-height: 3.25rem;
+  }
+
+  .action-button.report,
+  .action-button.secondary,
+  .action-button.block {
+    flex: 0.82 1 0;
+    width: auto;
+    min-width: 0;
+  }
+
+  .action-button small {
+    display: none;
+  }
+
+  .mobile-bottom-nav {
+    right: 0.65rem;
+    bottom: calc(0.55rem + env(safe-area-inset-bottom));
+    left: 0.65rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .mobile-bottom-nav button {
+    min-height: 3.15rem;
+  }
+
+  .profile-layout,
+  .two-column,
+  .annonces-layout,
+  .about-layout,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-window,
+  .messages-layout.chat-open .chat-window {
+    height: calc(100dvh - 7.2rem);
+    min-height: 0;
+  }
+
+  .composer {
+    grid-template-columns: 1fr;
+  }
+
+  .composer-tools {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .send-button,
+  .composer-tool {
+    width: 100%;
+  }
+
+  .annonce-composer textarea {
+    min-height: 8rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .workspace {
+    padding-inline: 0.65rem;
+  }
+
+  .topbar {
+    padding: 0.72rem;
+  }
+
+  .profile-card {
+    min-height: clamp(25rem, calc(100dvh - 14.8rem), 36rem);
+  }
+
+  .action-button {
+    height: 3rem;
+    min-height: 3rem;
+  }
+
+  .action-button span {
+    font-size: 1.22rem;
+  }
+
+  .mobile-bottom-nav {
+    right: 0.45rem;
+    left: 0.45rem;
+  }
+
+  .mobile-bottom-nav small {
+    font-size: 0.6rem;
+  }
+}
+
+/* mbifê applied mockup layer */
+body:not(.auth-gated) {
+  background:
+    radial-gradient(circle at 10% 6%, rgba(233, 85, 104, 0.16), transparent 30rem),
+    radial-gradient(circle at 90% 14%, rgba(25, 185, 154, 0.16), transparent 32rem),
+    linear-gradient(135deg, #fff2e8 0%, #fffaf1 42%, #eafff7 100%);
+}
+
+body:not(.auth-gated) .app-shell {
+  grid-template-columns: 8rem minmax(0, 1fr);
+  background: transparent;
+}
+
+body:not(.auth-gated) .sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  width: auto;
+  min-height: 100vh;
+  overflow: visible;
+  align-items: stretch;
+  border-right: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.6);
+  padding: 1.45rem 0.9rem;
+  backdrop-filter: blur(22px);
+  box-shadow: 14px 0 44px rgba(32, 26, 20, 0.06);
+}
+
+body:not(.auth-gated) .sidebar:hover,
+body:not(.auth-gated) .sidebar:focus-within {
+  width: auto;
+  box-shadow: 14px 0 44px rgba(32, 26, 20, 0.06);
+}
+
+body:not(.auth-gated) .brand,
+body:not(.auth-gated) .side-nav {
+  min-width: 0;
+}
+
+body:not(.auth-gated) .brand {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+}
+
+body:not(.auth-gated) .brand > div:last-child,
+body:not(.auth-gated) .quality-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+body:not(.auth-gated) .brand-name {
+  font-size: 1.25rem;
+}
+
+body:not(.auth-gated) .brand-subtitle,
+body:not(.auth-gated) .auth-panel,
+body:not(.auth-gated) .nav-item strong,
+body:not(.auth-gated) .nav-item[data-panel="about"] {
+  display: none;
+}
+
+body:not(.auth-gated) .side-nav {
+  display: grid;
+  gap: 0.75rem;
+}
+
+body:not(.auth-gated) .nav-item {
+  display: grid;
+  min-height: 4.65rem;
+  justify-items: center;
+  justify-content: center;
+  gap: 0.32rem;
+  border-radius: 1.15rem;
+  padding: 0.55rem 0.35rem;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+body:not(.auth-gated) .nav-item::before {
+  width: 2.2rem;
+  height: 2.2rem;
+  background: rgba(26, 26, 46, 0.05);
+  font-size: 1.08rem;
+}
+
+body:not(.auth-gated) .nav-item span {
+  opacity: 1;
+  max-width: 6rem;
+  white-space: normal;
+}
+
+body:not(.auth-gated) .nav-item.active {
+  border-color: rgba(230, 83, 106, 0.18);
+  background: #fff0f2;
+  color: var(--rose);
+  box-shadow: 0 12px 28px rgba(230, 83, 106, 0.12);
+}
+
+body:not(.auth-gated) .quality-panel {
+  display: grid;
+  justify-items: center;
+  border-radius: 1.25rem;
+  padding: 0.9rem 0.55rem;
+  text-align: center;
+}
+
+body:not(.auth-gated) .quality-meter {
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fff 57%, transparent 58%),
+    conic-gradient(var(--mint) 0 302deg, rgba(26, 26, 46, 0.1) 302deg 360deg);
+}
+
+body:not(.auth-gated) .quality-meter span {
+  width: auto !important;
+  height: auto;
+  background: transparent;
+}
+
+body:not(.auth-gated) .quality-meter::after {
+  color: var(--mint);
+  font-size: 1.05rem;
+  font-weight: 900;
+  content: "84%";
+}
+
+body:not(.auth-gated) .quality-panel p {
+  display: none;
+}
+
+body:not(.auth-gated) .workspace {
+  display: grid;
+  align-content: center;
+  gap: 1.35rem;
+  max-width: 1180px;
+  min-height: 100vh;
+  padding: 2rem clamp(1.25rem, 4vw, 3.75rem);
+}
+
+body:not(.auth-gated) .topbar {
+  position: static;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+body:not(.auth-gated) .topbar-copy h1 {
+  max-width: 39rem;
+  font-size: clamp(2.05rem, 4vw, 3.6rem);
+  line-height: 0.98;
+}
+
+body:not(.auth-gated) .hero-kpis,
+body:not(.auth-gated) .filters {
+  display: none;
+}
+
+body:not(.auth-gated) .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+body:not(.auth-gated) .status-pill {
+  min-height: 2.65rem;
+  border: 0;
+  border-radius: 999px;
+  background: #e9fff8;
+  color: #117361;
+  padding: 0 1.1rem;
+  box-shadow: none;
+  font-size: 0.85rem;
+}
+
+body:not(.auth-gated) #filterDrawerButton,
+body:not(.auth-gated) .respect-button {
+  display: inline-flex;
+  min-height: 2.65rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.9rem;
+}
+
+body:not(.auth-gated) #filterDrawerButton {
+  width: 2.65rem;
+  min-width: 2.65rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+}
+
+body:not(.auth-gated) .respect-button {
+  gap: 0.45rem;
+  border: 0;
+  background: var(--ink);
+  color: #fff;
+  padding: 0 1rem;
+  font-weight: 900;
+}
+
+body:not(.auth-gated) #discoverPanel {
+  grid-template-columns: minmax(19rem, 30rem) minmax(18rem, 22.5rem);
+  place-content: center;
+  align-items: start;
+  gap: clamp(1.4rem, 4vw, 2.65rem);
+}
+
+body:not(.auth-gated) .deck-area {
+  justify-items: stretch;
+}
+
+body:not(.auth-gated) .profile-card {
+  width: 100%;
+  min-height: clamp(34rem, 68vh, 41rem);
+  border-radius: 1.75rem;
+  box-shadow: 0 24px 70px rgba(35, 26, 29, 0.2);
+}
+
+body:not(.auth-gated) .photo-wash {
+  background:
+    linear-gradient(180deg, rgba(23, 23, 37, 0.03) 18%, rgba(23, 23, 37, 0.2) 52%, rgba(16, 12, 18, 0.9) 100%),
+    linear-gradient(45deg, rgba(230, 83, 106, 0.28), transparent 48%);
+}
+
+body:not(.auth-gated) .profile-content {
+  gap: 0.85rem;
+  padding: 1.55rem;
+}
+
+body:not(.auth-gated) .profile-topline {
+  display: none;
+}
+
+body:not(.auth-gated) .profile-title {
+  margin-top: 0;
+}
+
+body:not(.auth-gated) .profile-title h2 {
+  font-size: clamp(2.45rem, 5.8vw, 3.5rem);
+  line-height: 0.95;
+}
+
+body:not(.auth-gated) .profile-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+body:not(.auth-gated) .distance,
+body:not(.auth-gated) .badge {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink);
+  padding: 0.42rem 0.72rem;
+  font-size: 0.82rem;
+}
+
+body:not(.auth-gated) .badge.verified {
+  border-color: #407bff;
+  background: #407bff;
+  color: #fff;
+}
+
+body:not(.auth-gated) .profile-bio {
+  max-width: 40ch;
+  font-size: 1rem;
+}
+
+body:not(.auth-gated) .interest {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(246, 238, 225, 0.22);
+}
+
+body:not(.auth-gated) .intent-card {
+  border-radius: 1rem;
+}
+
+body:not(.auth-gated) .actions {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0;
+}
+
+body:not(.auth-gated) .action-button {
+  width: auto;
+  min-width: 0;
+  min-height: 4.25rem;
+  height: auto;
+  border-radius: 1.15rem;
+}
+
+body:not(.auth-gated) .action-button small {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  color: currentColor;
+  font-size: 0.7rem;
+}
+
+body:not(.auth-gated) .action-button.like {
+  background: #fff0f2;
+  color: var(--rose);
+}
+
+body:not(.auth-gated) .action-button.spark {
+  background: #fff7df;
+  color: #9d6900;
+}
+
+body:not(.auth-gated) .insight-panel {
+  display: grid;
+  gap: 1rem;
+  border-radius: 1.75rem;
+  padding: 1.45rem;
+}
+
+body:not(.auth-gated) .insight-header h2 {
+  font-size: 1.55rem;
+}
+
+body:not(.auth-gated) .score-ring {
+  width: 10rem;
+  height: 10rem;
+}
+
+body:not(.auth-gated) .trait-list {
+  gap: 0.85rem;
+}
+
+body:not(.auth-gated) .trait-label {
+  font-weight: 900;
+}
+
+body:not(.auth-gated) .trait-bar {
+  height: 0.56rem;
+}
+
+body:not(.auth-gated) .prompt-box {
+  border-radius: 1.15rem;
+  background: var(--soft);
+}
+
+body:not(.auth-gated) .prompt-box button {
+  justify-self: start;
+}
+
+body:not(.auth-gated) .date-ideas-line {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1080px) {
+  body:not(.auth-gated) .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  body:not(.auth-gated) .sidebar {
+    min-height: auto;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    padding: 0.85rem 1rem;
+  }
+
+  body:not(.auth-gated) .brand {
+    grid-auto-flow: column;
+    align-items: center;
+  }
+
+  body:not(.auth-gated) .side-nav {
+    display: flex;
+    overflow-x: auto;
+    justify-content: flex-end;
+    scrollbar-width: none;
+  }
+
+  body:not(.auth-gated) .nav-item {
+    flex: 0 0 5.6rem;
+    min-height: 3.8rem;
+  }
+
+  body:not(.auth-gated) .quality-panel {
+    display: none;
+  }
+
+  body:not(.auth-gated) .workspace {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  body:not(.auth-gated) .sidebar {
+    display: none;
+  }
+
+  body:not(.auth-gated) .workspace {
+    padding: 0.95rem 0.85rem calc(6.6rem + env(safe-area-inset-bottom));
+  }
+
+  body:not(.auth-gated) .topbar {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  body:not(.auth-gated) .topbar-copy h1 {
+    font-size: clamp(1.65rem, 9vw, 2.25rem);
+  }
+
+  body:not(.auth-gated) .topbar-actions {
+    flex-wrap: wrap;
+  }
+
+  body:not(.auth-gated) .respect-button {
+    flex: 1 1 auto;
+  }
+
+  body:not(.auth-gated) #discoverPanel,
+  body:not(.auth-gated) .profile-layout,
+  body:not(.auth-gated) .two-column,
+  body:not(.auth-gated) .annonces-layout,
+  body:not(.auth-gated) .about-layout,
+  body:not(.auth-gated) .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body:not(.auth-gated) .profile-card {
+    min-height: clamp(30rem, calc(100dvh - 15.5rem), 39rem);
+  }
+
+  body:not(.auth-gated) .profile-content {
+    padding: 1.2rem;
+  }
+
+  body:not(.auth-gated) .actions {
+    position: sticky;
+    bottom: calc(5.35rem + env(safe-area-inset-bottom));
+    z-index: 12;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border: 1px solid rgba(28, 27, 34, 0.08);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 0.4rem;
+    box-shadow: 0 18px 42px rgba(32, 26, 20, 0.14);
+    backdrop-filter: blur(16px);
+  }
+
+  body:not(.auth-gated) .action-button {
+    min-height: 3.1rem;
+    border-radius: 0.8rem;
+    box-shadow: none;
+  }
+
+  body:not(.auth-gated) .action-button small {
+    display: none;
+  }
+
+  body:not(.auth-gated) .insight-panel {
+    display: none;
+  }
+
+  body:not(.auth-gated) .mobile-bottom-nav {
+    display: grid;
+  }
+}
+
+@media (max-width: 420px) {
+  body:not(.auth-gated) .status-pill {
+    display: none;
+  }
+
+  body:not(.auth-gated) .profile-card {
+    min-height: clamp(27rem, calc(100dvh - 14.6rem), 36rem);
+  }
+
+  body:not(.auth-gated) .profile-title h2 {
+    font-size: 2.25rem;
+  }
+
+  body:not(.auth-gated) .profile-bio {
+    font-size: 0.92rem;
+  }
+}
+
 /* Auth gate hard override: must stay at the end of the stylesheet. */
 body.auth-gated {
   display: block;
@@ -3927,10 +4936,6 @@ body.auth-gated .google-auth-button {
             <span>Annonces</span>
             <strong id="viralCount">0</strong>
           </button>
-          <button class="nav-item" data-panel="about" type="button">
-            <span>À propos</span>
-            <strong id="aboutCount">1</strong>
-          </button>
           <button class="nav-item" data-panel="settings" type="button">
             <span>Paramètres</span>
             <strong id="settingsCount">⚙</strong>
@@ -4016,8 +5021,9 @@ body.auth-gated .google-auth-button {
             <button class="icon-button" id="filterDrawerButton" type="button" title="Filtres avancés">
               <span aria-hidden="true">🎛️</span>
             </button>
-            <button class="icon-button" id="safeModeButton" type="button" aria-pressed="false" title="Activer le mode respect">
+            <button class="respect-button" id="safeModeButton" type="button" aria-pressed="false" title="Activer le mode respect">
               <span aria-hidden="true">✓</span>
+              <span>Mode respect</span>
             </button>
           </div>
         </header>
@@ -4064,8 +5070,8 @@ body.auth-gated .google-auth-button {
 
           <aside class="insight-panel" aria-label="Détails de compatibilité">
             <div class="insight-header">
-              <p class="eyebrow">Signal mbifê</p>
-              <h2 id="insightName">Compatibilité</h2>
+              <p class="eyebrow">Insight panel</p>
+              <h2 id="insightName">Signal mbifê</h2>
             </div>
             <div class="score-ring" id="scoreRing">
               <strong id="scoreValue">0%</strong>
@@ -4073,9 +5079,10 @@ body.auth-gated .google-auth-button {
             </div>
             <div class="trait-list" id="traitList"></div>
             <div class="prompt-box">
-              <p>Phrase d'ouverture</p>
+              <p>Prompt box</p>
               <button id="promptButton" type="button">Voir une idée</button>
               <blockquote id="promptText"></blockquote>
+              <p class="date-ideas-line" id="promptDateIdeas"></p>
             </div>
           </aside>
         </section>
@@ -7208,24 +8215,20 @@ function renderProfile() {
     <div class="swipe-overlay nope">NOPE</div>
     <div class="compatibility-orb" style="--score-deg:${profile.score * 3.6}deg">${profile.score}%</div>
     <div class="profile-content">
-      <div class="profile-topline">
-        <div class="badge-row">
-          ${isCompleteProfile ? '<span class="badge verified">✓ Vérifié</span>' : ""}
-          ${profileBackendBadge(profile)}
-          <span class="badge">${profile.city}</span>
-        </div>
-        <span class="distance">${profile.hasApproxLocation ? "~" : ""}${profile.distance} km</span>
-      </div>
       <div class="profile-title">
-        <h2>${profile.name}</h2>
-        <span>${profile.age}</span>
+        <h2>${profile.name}, ${profile.age}</h2>
+      </div>
+      <div class="profile-meta-row">
+        <span class="distance">⌖ ${profile.city} • ${profile.hasApproxLocation ? "~" : ""}${profile.distance} km</span>
+        ${isCompleteProfile ? '<span class="badge verified">✓ Vérifié</span>' : ""}
+        ${profileBackendBadge(profile)}
       </div>
       <p class="profile-bio">${profile.bio}</p>
       <div class="interest-row">
         ${profile.interests.map((interest) => `<span class="interest">${interest}</span>`).join("")}
       </div>
       <div class="intent-card">
-        <span>Intention claire</span>
+        <span>Intention</span>
         <strong>${profile.intent}</strong>
       </div>
     </div>
@@ -7236,7 +8239,7 @@ function renderProfile() {
 }
 
 function renderInsights(profile) {
-  insightName.textContent = `${profile.name}, ${profile.city}`;
+  insightName.textContent = "Signal mbifê";
   scoreValue.textContent = `${profile.score}%`;
 
   const deg = profile.score * 3.6;
@@ -7263,6 +8266,12 @@ function renderInsights(profile) {
   }
 
   promptText.textContent = profile.prompts[0];
+  const promptDateIdeas = document.querySelector("#promptDateIdeas");
+  if (promptDateIdeas) {
+    promptDateIdeas.innerHTML = `<strong>${escapeHtml(profile.name)}'s date ideas:</strong> ${profile.dateIdeas
+      .map((idea) => escapeHtml(idea.title))
+      .join(", ")}`;
+  }
   renderDateIdeas(profile);
 }
 
