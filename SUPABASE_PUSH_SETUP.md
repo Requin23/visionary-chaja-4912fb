@@ -13,19 +13,20 @@ Dans Supabase SQL Editor, exécute:
 Puis remplace et exécute ces lignes avec ton URL Supabase et ta service role key:
 
 ```sql
-alter database postgres set app.settings.supabase_url = 'https://mmsrozfrrzyyxwpebnxb.supabase.co';
+alter database postgres set app.settings.supabase_url = 'https://TON-PROJET.supabase.co';
 alter database postgres set app.settings.service_role_key = 'TA_SERVICE_ROLE_KEY';
 select pg_reload_conf();
 ```
 
 ## 2. Secrets Edge Function
 
-La nouvelle clé publique VAPID est déjà dans `index.html`.
+La clé publique VAPID est dans `index.html`. La clé privée VAPID ne doit jamais être commitée; si elle a déjà été poussée sur GitHub, régénère une nouvelle paire VAPID et remplace les secrets Supabase.
 
 ```bash
-supabase secrets set VAPID_PUBLIC_KEY="BD-vU_PhNflROCvPIfDkKPxsyy3StLRB4ovL881NI6fsq_63I6_ke4ZKgZMNzpotMf-HKKXHlaul-Vy8EpX8Dr4"
-supabase secrets set VAPID_PRIVATE_KEY="ArqtvN_JFagPNsJKQHszIqdMcf4cRmCUlAf3vizfQKE"
-supabase secrets set VAPID_SUBJECT="mailto:zifacarter@gmail.com"
+supabase secrets set VAPID_PUBLIC_KEY="TA_VAPID_PUBLIC_KEY"
+supabase secrets set VAPID_PRIVATE_KEY="TA_VAPID_PRIVATE_KEY"
+supabase secrets set VAPID_SUBJECT="mailto:ton-email@example.com"
+supabase secrets set SUPABASE_SERVICE_ROLE_KEY="TA_SERVICE_ROLE_KEY"
 ```
 
 Important: vérifie que `VAPID_PUBLIC_KEY` dans les secrets est exactement la même valeur que `VAPID_PUBLIC_KEY` dans `index.html`.
