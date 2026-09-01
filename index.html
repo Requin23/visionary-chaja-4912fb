@@ -7393,7 +7393,7 @@ async function loadRemoteProfiles() {
 
   try {
     const rows = await supabaseJson(
-      `/rest/v1/profiles?select=*&is_active=eq.true&order=created_at.desc&limit=40`,
+      `/rest/v1/profiles?select=*&or=(is_active.eq.true,is_active.is.null)&order=created_at.desc&limit=40`,
     );
     state.remoteProfiles = (rows || [])
       .filter((row) => row.user_id !== currentUser().id)
