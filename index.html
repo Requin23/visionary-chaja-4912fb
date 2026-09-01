@@ -5058,6 +5058,22 @@ body.auth-gated .google-auth-button {
                 <option value="tous">Tout le monde</option>
               </select>
             </label>
+            <label class="auth-field signup-only">
+              <span>Âge</span>
+              <input id="authAge" name="age" type="number" min="18" max="99" placeholder="18+" />
+            </label>
+            <label class="auth-field signup-only">
+              <span>Ville</span>
+              <input id="authCity" name="city" type="text" maxlength="80" placeholder="Ex: Dakar" />
+            </label>
+            <label class="auth-field signup-only">
+              <span>Intention</span>
+              <input id="authIntent" name="intent" type="text" maxlength="220" placeholder="Relation sérieuse, discussion..." />
+            </label>
+            <label class="auth-field signup-only">
+              <span>Bio courte</span>
+              <input id="authBio" name="bio" type="text" maxlength="220" placeholder="Deux mots vrais sur toi" />
+            </label>
             <div class="auth-actions">
               <button id="loginButton" type="button">Connexion</button>
               <button id="signupButton" type="button">Inscription</button>
@@ -5268,6 +5284,22 @@ body.auth-gated .google-auth-button {
                     <option value="homme">Des hommes</option>
                     <option value="tous">Tout le monde</option>
                   </select>
+                </label>
+                <label class="auth-field signup-only">
+                  <span>Âge</span>
+                  <input id="mobileAuthAge" type="number" min="18" max="99" placeholder="18+" />
+                </label>
+                <label class="auth-field signup-only">
+                  <span>Ville</span>
+                  <input id="mobileAuthCity" type="text" maxlength="80" placeholder="Ex: Dakar" />
+                </label>
+                <label class="auth-field signup-only">
+                  <span>Intention</span>
+                  <input id="mobileAuthIntent" type="text" maxlength="220" placeholder="Relation sérieuse, discussion..." />
+                </label>
+                <label class="auth-field signup-only">
+                  <span>Bio courte</span>
+                  <input id="mobileAuthBio" type="text" maxlength="220" placeholder="Deux mots vrais sur toi" />
                 </label>
                 <div class="auth-actions">
                   <button id="mobileLoginButton" type="button">Connexion</button>
@@ -5712,6 +5744,10 @@ const authEmail = document.querySelector("#authEmail");
 const authPassword = document.querySelector("#authPassword");
 const authGender = document.querySelector("#authGender");
 const authLookingFor = document.querySelector("#authLookingFor");
+const authAge = document.querySelector("#authAge");
+const authCity = document.querySelector("#authCity");
+const authIntent = document.querySelector("#authIntent");
+const authBio = document.querySelector("#authBio");
 const loginButton = document.querySelector("#loginButton");
 const signupButton = document.querySelector("#signupButton");
 const googleAuthButton = document.querySelector("#googleAuthButton");
@@ -5726,6 +5762,10 @@ const mobileAuthEmail = document.querySelector("#mobileAuthEmail");
 const mobileAuthPassword = document.querySelector("#mobileAuthPassword");
 const mobileAuthGender = document.querySelector("#mobileAuthGender");
 const mobileAuthLookingFor = document.querySelector("#mobileAuthLookingFor");
+const mobileAuthAge = document.querySelector("#mobileAuthAge");
+const mobileAuthCity = document.querySelector("#mobileAuthCity");
+const mobileAuthIntent = document.querySelector("#mobileAuthIntent");
+const mobileAuthBio = document.querySelector("#mobileAuthBio");
 const mobileLoginButton = document.querySelector("#mobileLoginButton");
 const mobileSignupButton = document.querySelector("#mobileSignupButton");
 const mobileGoogleAuthButton = document.querySelector("#mobileGoogleAuthButton");
@@ -5930,6 +5970,13 @@ function applyDefaultLookingFor(genderSelect, lookingForSelect) {
   }
 }
 
+function syncSignupLookingForFromGender(genderSelect, lookingForSelect) {
+  const gender = normalizeGender(genderSelect?.value);
+  if (gender && lookingForSelect) {
+    lookingForSelect.value = oppositeGender(gender);
+  }
+}
+
 function roundedCoordinate(value) {
   return Math.round(Number(value) * 100) / 100;
 }
@@ -6109,10 +6156,18 @@ async function makeCodeChallenge(verifier) {
 
 function storePendingAuthProfile() {
   const fields = readAuthFields();
+  if (state.authMode === "signup" && fields.gender) {
+    fields.lookingFor = oppositeGender(fields.gender);
+    hydrateGenderFields(fields.gender, fields.lookingFor);
+  }
   writeStoredJson("mbifePendingAuthProfile", {
     name: fields.name,
     gender: fields.gender,
     lookingFor: fields.lookingFor,
+    age: fields.age,
+    city: fields.city,
+    intent: fields.intent,
+    bio: fields.bio,
     createdAt: Date.now(),
   });
   return fields;
@@ -6467,6 +6522,10 @@ function readAuthFields() {
     password: authPassword.value,
     gender,
     lookingFor,
+    age: authAge?.value ? Number(authAge.value) : null,
+    city: authCity?.value.trim() || "",
+    intent: authIntent?.value.trim() || "",
+    bio: authBio?.value.trim() || "",
   };
 }
 
@@ -6476,6 +6535,10 @@ function copyMobileAuthFields() {
   if (mobileAuthPassword?.value) authPassword.value = mobileAuthPassword.value;
   if (mobileAuthGender?.value) authGender.value = mobileAuthGender.value;
   if (mobileAuthLookingFor?.value) authLookingFor.value = mobileAuthLookingFor.value;
+  if (mobileAuthAge?.value && authAge) authAge.value = mobileAuthAge.value;
+  if (mobileAuthCity?.value && authCity) authCity.value = mobileAuthCity.value;
+  if (mobileAuthIntent?.value && authIntent) authIntent.value = mobileAuthIntent.value;
+  if (mobileAuthBio?.value && authBio) authBio.value = mobileAuthBio.value;
 }
 
 function preferredAuthName(user, draft) {
@@ -6489,6 +6552,19 @@ function preferredAuthName(user, draft) {
   );
 }
 
+function applyAuthDraftToProfileForm(draft = {}) {
+  if (!draft || !profileForm) return;
+
+  if (draft.name && profileName) profileName.value = draft.name;
+  if (draft.age && profileAge) profileAge.value = draft.age;
+  if (draft.city && profileCity) profileCity.value = draft.city;
+  if (draft.intent && profileIntent) profileIntent.value = draft.intent;
+  if (draft.bio && profileBio) profileBio.value = draft.bio;
+  if (draft.gender || draft.lookingFor) {
+    hydrateGenderFields(draft.gender, draft.lookingFor);
+  }
+}
+
 async function updateAuthProfileBasics(user, draft) {
   if (!user || !hasSupabaseConfig() || !draft) return;
 
@@ -6500,6 +6576,10 @@ async function updateAuthProfileBasics(user, draft) {
 
   if (gender) patch.gender = gender;
   if (lookingFor) patch.looking_for = lookingFor;
+  if (Number(draft.age) >= 18) patch.age = Number(draft.age);
+  if (draft.city) patch.city = draft.city;
+  if (draft.intent) patch.intent = draft.intent;
+  if (draft.bio) patch.bio = draft.bio;
   if (user.user_metadata?.avatar_url && !state.currentProfileRecord?.photo_url) {
     patch.photo_url = user.user_metadata.avatar_url;
   }
@@ -6535,6 +6615,7 @@ async function finishAuthenticatedReturn(session, sourceLabel) {
   }
   if (draft?.name && authName) authName.value = draft.name;
   if (draft?.name && mobileAuthName) mobileAuthName.value = draft.name;
+  applyAuthDraftToProfileForm(draft);
 
   await tryEnsureRemoteProfile(preferredAuthName(user, draft));
   await updateAuthProfileBasics(user, draft);
@@ -6544,6 +6625,7 @@ async function finishAuthenticatedReturn(session, sourceLabel) {
   subscribeNotificationsRealtime();
   localStorage.removeItem("mbifePendingAuthProfile");
   setPanel("profile");
+  showOnboardingIfNeeded();
   showToast(sourceLabel);
 }
 
@@ -6712,7 +6794,8 @@ async function requestSignupWithSupabase() {
 
 async function signupWithSupabase() {
   setAuthMode("signup");
-  const { name, email, password, gender, lookingFor } = readAuthFields();
+  const { name, email, password, gender, age } = readAuthFields();
+  const lookingFor = oppositeGender(gender);
 
   if (!email || password.length < 6) {
     const message = "Email et mot de passe de 6 caractères minimum.";
@@ -6738,10 +6821,18 @@ async function signupWithSupabase() {
     return;
   }
 
+  if (!age || age < 18) {
+    const message = "mbifê est réservé aux 18 ans et plus.";
+    authStatus.textContent = message;
+    if (mobileAuthStatus) mobileAuthStatus.textContent = message;
+    showToast(message);
+    return;
+  }
+
   try {
     authStatus.textContent = "Création du compte en cours...";
     if (mobileAuthStatus) mobileAuthStatus.textContent = authStatus.textContent;
-    storePendingAuthProfile();
+    const draft = storePendingAuthProfile();
 
     const data = await supabaseJson(signupRedirectPath(), {
       method: "POST",
@@ -6762,11 +6853,15 @@ async function signupWithSupabase() {
     if (session) {
       saveAuthSession(session);
       hydrateGenderFields(gender, lookingFor);
+      applyAuthDraftToProfileForm(draft);
       await ensureRemoteProfile(name);
+      await updateAuthProfileBasics(currentUser(), draft);
       await syncRemoteData();
       startRemoteRefresh();
       subscribeLikesRealtime();
       subscribeNotificationsRealtime();
+      setPanel("profile");
+      showOnboardingIfNeeded();
       showToast("Compte créé et connecté");
     } else {
       authStatus.textContent = "Compte créé. Vérifie ton email, puis reviens cliquer sur Connexion.";
@@ -7088,13 +7183,13 @@ function readableStorageError(error) {
 }
 
 async function saveProfile(event) {
-  event.preventDefault();
+  event?.preventDefault?.();
 
   const user = currentUser();
 
   if (!user || !hasSupabaseConfig()) {
     showToast("Connecte-toi pour sauvegarder ton profil");
-    return;
+    return false;
   }
 
   try {
@@ -7177,10 +7272,12 @@ async function saveProfile(event) {
     } else {
       showToast("Profil sauvegardé");
     }
+    return true;
   } catch (error) {
     state.supabase.lastError = error.message;
     renderSupabaseStatus();
     showToast("Profil non sauvegardé");
+    return false;
   }
 }
 
@@ -9786,6 +9883,26 @@ function renderOnboardingStep() {
     ${step.html}
   `;
   onboardingNext.textContent = state.onboardingStep === onboardingSteps.length - 1 ? "Terminer" : "Continuer";
+  hydrateOnboardingStepFields();
+}
+
+function hydrateOnboardingStepFields() {
+  const record = state.currentProfileRecord || {};
+  const gender = currentProfileGender();
+  const lookingFor = currentProfileLookingFor();
+  const values = {
+    onboardName: profileName?.value || record.display_name || authName?.value || "",
+    onboardAge: profileAge?.value || record.age || authAge?.value || "",
+    onboardGender: gender,
+    onboardLookingFor: lookingFor,
+    onboardIntent: profileIntent?.value || record.intent || authIntent?.value || "",
+    onboardBio: profileBio?.value || record.bio || authBio?.value || "",
+  };
+
+  Object.entries(values).forEach(([id, value]) => {
+    const field = document.querySelector(`#${id}`);
+    if (field && value) field.value = value;
+  });
 }
 
 function saveOnboardingFields() {
@@ -9796,6 +9913,11 @@ function saveOnboardingFields() {
   const gender = normalizeGender(document.querySelector("#onboardGender")?.value);
   const lookingFor = normalizeLookingFor(document.querySelector("#onboardLookingFor")?.value || oppositeGender(gender));
 
+  if (document.querySelector("#onboardAge") && (!Number(age) || Number(age) < 18)) {
+    showToast("mbifê est réservé aux 18 ans et plus.");
+    return false;
+  }
+
   if (name && profileName) profileName.value = name;
   if (age && profileAge) profileAge.value = age;
   if (intent && profileIntent) profileIntent.value = intent;
@@ -9805,20 +9927,30 @@ function saveOnboardingFields() {
     localStorage.setItem("mbifeOnboardingGender", gender);
     localStorage.setItem("mbifeOnboardingLookingFor", lookingFor);
   }
+  return true;
 }
 
-function nextOnboardingStep() {
-  saveOnboardingFields();
+async function nextOnboardingStep() {
+  if (!saveOnboardingFields()) {
+    return;
+  }
   if (state.onboardingStep < onboardingSteps.length - 1) {
     state.onboardingStep += 1;
     renderOnboardingStep();
     return;
   }
 
+  if (currentUser() && hasSupabaseConfig()) {
+    const saved = await saveProfile({ preventDefault() {} });
+    if (!saved) {
+      return;
+    }
+  } else {
+    showToast("Profil prêt à compléter");
+  }
   localStorage.setItem("mbife_onboarding_done", "true");
   onboardingModal?.classList.remove("is-open");
   onboardingModal?.setAttribute("aria-hidden", "true");
-  showToast("Profil prêt à compléter");
 }
 
 function showOnboardingIfNeeded() {
@@ -9923,8 +10055,8 @@ document.querySelectorAll("[data-filter-pills] .filter-pill").forEach((button) =
 });
 applyFiltersButton?.addEventListener("click", applyFilterDrawer);
 resetFiltersButton?.addEventListener("click", resetFilterDrawer);
-authGender?.addEventListener("change", () => applyDefaultLookingFor(authGender, authLookingFor));
-mobileAuthGender?.addEventListener("change", () => applyDefaultLookingFor(mobileAuthGender, mobileAuthLookingFor));
+authGender?.addEventListener("change", () => syncSignupLookingForFromGender(authGender, authLookingFor));
+mobileAuthGender?.addEventListener("change", () => syncSignupLookingForFromGender(mobileAuthGender, mobileAuthLookingFor));
 profileGender?.addEventListener("change", () => applyDefaultLookingFor(profileGender, profileLookingFor));
 document.querySelectorAll("[data-auth-mode]").forEach((button) => {
   button.addEventListener("click", () => setAuthMode(button.dataset.authMode));
