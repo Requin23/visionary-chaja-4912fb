@@ -5846,17 +5846,11 @@ function profilePassesSearchFilters(profile) {
   const age = Number(profile.age || 0);
   const distance = Number(profile.distance || 0);
   const gender = String(profile.gender || "").toLowerCase();
-  const lookingFor = String(profile.lookingFor || "").toLowerCase();
-  const myGender = currentProfileGender();
   const myLookingFor = currentProfileLookingFor();
   const intent = String(profile.intent || "").toLowerCase();
   const tags = (profile.tags || []).join(" ").toLowerCase();
 
   if (myLookingFor && myLookingFor !== "tous" && gender !== myLookingFor) {
-    return false;
-  }
-
-  if (myGender && lookingFor && lookingFor !== "tous" && lookingFor !== myGender) {
     return false;
   }
 
@@ -6572,6 +6566,7 @@ async function updateAuthProfileBasics(user, draft) {
   const lookingFor = normalizeLookingFor(draft.lookingFor || oppositeGender(gender));
   const patch = {
     display_name: preferredAuthName(user, draft),
+    is_active: true,
   };
 
   if (gender) patch.gender = gender;
@@ -7012,6 +7007,7 @@ async function ensureRemoteProfile(displayName) {
         ),
         compatibility_score: 82,
         is_verified: true,
+        is_active: true,
       },
     ],
   });
@@ -9951,6 +9947,7 @@ async function nextOnboardingStep() {
   localStorage.setItem("mbife_onboarding_done", "true");
   onboardingModal?.classList.remove("is-open");
   onboardingModal?.setAttribute("aria-hidden", "true");
+  setPanel("discover");
 }
 
 function showOnboardingIfNeeded() {
