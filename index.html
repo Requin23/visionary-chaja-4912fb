@@ -334,6 +334,42 @@ canvas {
   color: var(--rose);
 }
 
+.verification-panel {
+  display: grid;
+  gap: 0.55rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 68, 88, 0.08);
+  padding: 0.75rem;
+}
+
+.verification-panel[hidden] {
+  display: none;
+}
+
+.verification-panel input {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.72rem 0.75rem;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.verification-panel button {
+  min-height: 2.5rem;
+  border-radius: 999px;
+  font-weight: 850;
+}
+
+.verification-panel button[data-verify-code] {
+  border: 0;
+  background: var(--ink);
+  color: white;
+}
+
 .auth-form[data-mode="login"] .signup-only {
   display: none;
 }
@@ -5085,6 +5121,12 @@ body.auth-gated .google-auth-button {
             </div>
             <p class="auth-service-note">Email vérifié et Google sont gérés par Supabase Auth gratuitement pour commencer.</p>
           </form>
+          <div class="verification-panel" id="emailVerificationPanel" hidden>
+            <p class="auth-service-note" id="emailVerificationStatus">Entre le code reçu par email.</p>
+            <input id="verificationCodeInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" />
+            <button data-verify-code type="button">Vérifier</button>
+            <button class="auth-resend-button" data-resend-code type="button">Renvoyer le code</button>
+          </div>
           <button class="ghost-button auth-logout" id="logoutButton" type="button" hidden>Se déconnecter</button>
         </section>
       </aside>
@@ -5311,6 +5353,12 @@ body.auth-gated .google-auth-button {
                   <button class="auth-reset-button login-only" id="mobileResetPasswordButton" type="button">Mot de passe oublié</button>
                 </div>
                 <p class="auth-service-note">Email vérifié et Google sont gérés par Supabase Auth gratuitement pour commencer.</p>
+              </div>
+              <div class="verification-panel" id="mobileEmailVerificationPanel" hidden>
+                <p class="auth-service-note" id="mobileEmailVerificationStatus">Entre le code reçu par email.</p>
+                <input id="mobileVerificationCodeInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" />
+                <button data-verify-code type="button">Vérifier</button>
+                <button class="auth-resend-button" data-resend-code type="button">Renvoyer le code</button>
               </div>
             </article>
             <article class="about-card">
@@ -5676,6 +5724,7 @@ const state = {
   auth: readStoredJson("mbifeAuthSession", null),
   authChecking: Boolean(localStorage.getItem("mbifeAuthSession")),
   authMode: localStorage.getItem("mbifeAuthMode") || "login",
+  verificationEmail: localStorage.getItem("mbifeVerificationEmail") || "",
   remoteProfiles: [],
   remoteMatches: [],
   remoteMessages: {},
@@ -5755,6 +5804,9 @@ const resendEmailButton = document.querySelector("#resendEmailButton");
 const resetPasswordButton = document.querySelector("#resetPasswordButton");
 const logoutButton = document.querySelector("#logoutButton");
 const profileLogoutButton = document.querySelector("#profileLogoutButton");
+const emailVerificationPanel = document.querySelector("#emailVerificationPanel");
+const emailVerificationStatus = document.querySelector("#emailVerificationStatus");
+const verificationCodeInput = document.querySelector("#verificationCodeInput");
 const mobileAuthStatus = document.querySelector("#mobileAuthStatus");
 const mobileAuthForm = document.querySelector("#mobileAuthForm");
 const mobileAuthName = document.querySelector("#mobileAuthName");
@@ -5771,6 +5823,9 @@ const mobileSignupButton = document.querySelector("#mobileSignupButton");
 const mobileGoogleAuthButton = document.querySelector("#mobileGoogleAuthButton");
 const mobileResendEmailButton = document.querySelector("#mobileResendEmailButton");
 const mobileResetPasswordButton = document.querySelector("#mobileResetPasswordButton");
+const mobileEmailVerificationPanel = document.querySelector("#mobileEmailVerificationPanel");
+const mobileEmailVerificationStatus = document.querySelector("#mobileEmailVerificationStatus");
+const mobileVerificationCodeInput = document.querySelector("#mobileVerificationCodeInput");
 const profileForm = document.querySelector("#profileForm");
 const profilePreview = document.querySelector("#profilePreview");
 const profilePhoto = document.querySelector("#profilePhoto");
@@ -6240,6 +6295,26 @@ async function supabaseJson(path, options) {
   return response.status === 204 ? null : response.json();
 }
 
+async function supabaseFunctionJson(name, body) {
+  if (!hasSupabaseConfig()) {
+    throw new Error("Supabase n'est pas configuré");
+  }
+
+  const response = await fetch(`${supabaseConfig.url.replace(/\/$/, "")}/functions/v1/${name}`, {
+    method: "POST",
+    headers: authHeaders({ useUserToken: false }),
+    body: JSON.stringify(body || {}),
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(payload.error || payload.message || `Function ${name} failed`);
+    error.code = payload.error;
+    throw error;
+  }
+  return payload;
+}
+
 function readableAuthError(error, fallback) {
   const rawMessage = String(error?.message || "").replace(/^Supabase\s+\d+:\s*/i, "").trim();
   const normalized = rawMessage.toLowerCase();
@@ -6433,6 +6508,22 @@ function setAuthMode(mode) {
   }
 }
 
+function setVerificationEmail(email, message = "Entre le code reçu par email.") {
+  state.verificationEmail = String(email || "").trim().toLowerCase();
+  if (state.verificationEmail) {
+    localStorage.setItem("mbifeVerificationEmail", state.verificationEmail);
+  } else {
+    localStorage.removeItem("mbifeVerificationEmail");
+  }
+
+  [emailVerificationPanel, mobileEmailVerificationPanel].forEach((panel) => {
+    if (panel) panel.hidden = !state.verificationEmail;
+  });
+  [emailVerificationStatus, mobileEmailVerificationStatus].forEach((status) => {
+    if (status) status.textContent = state.verificationEmail ? message : "";
+  });
+}
+
 function renderAuthState() {
   if (!authStatus || !authForm || !logoutButton) {
     return;
@@ -6493,6 +6584,7 @@ function renderAuthState() {
   });
 
   if (user) {
+    setVerificationEmail("");
     const verified = user.email_confirmed_at || user.confirmed_at;
     authStatus.textContent = verified
       ? `Connecté: ${user.email} · email vérifié`
@@ -6503,6 +6595,7 @@ function renderAuthState() {
   }
 
   setAuthMode(state.authMode || localStorage.getItem("mbifeAuthMode") || "login");
+  setVerificationEmail(state.verificationEmail);
   authForm.style.display = "grid";
   logoutButton.style.display = "none";
 }
@@ -6765,6 +6858,56 @@ async function sendPasswordResetEmail() {
   }
 }
 
+async function sendEmailVerificationCode(email = readAuthFields().email) {
+  const targetEmail = String(email || "").trim().toLowerCase();
+  if (!targetEmail) {
+    showToast("Entre ton email pour recevoir le code.");
+    return false;
+  }
+
+  try {
+    await supabaseFunctionJson("send-verification-code", { email: targetEmail });
+    setVerificationEmail(targetEmail, `Code envoyé à ${targetEmail}`);
+    showToast("Code de vérification envoyé");
+    return true;
+  } catch (error) {
+    const message = String(error?.message || "Envoi du code impossible");
+    setVerificationEmail(targetEmail, message);
+    showToast("Code non envoyé");
+    return false;
+  }
+}
+
+async function verifyEmailCode() {
+  const email = state.verificationEmail || readAuthFields().email;
+  const code = (verificationCodeInput?.value || mobileVerificationCodeInput?.value || "").replace(/\D/g, "").slice(0, 6);
+
+  if (!email || code.length !== 6) {
+    showToast("Entre le code à 6 chiffres.");
+    return;
+  }
+
+  try {
+    await supabaseFunctionJson("verify-code", { email, code });
+    setVerificationEmail("");
+    showToast("Email vérifié");
+
+    if (!currentUser() && authPassword?.value) {
+      await loginWithSupabase();
+    }
+
+    setPanel("discover");
+    await syncRemoteData();
+  } catch (error) {
+    const codeError = String(error?.code || error?.message || "");
+    const message = codeError.includes("expired")
+      ? "Code expiré. Demande un nouveau code."
+      : "Code incorrect.";
+    setVerificationEmail(email, message);
+    showToast(message);
+  }
+}
+
 function revealSignupForm() {
   if (state.authMode === "signup") {
     return false;
@@ -6845,6 +6988,8 @@ async function signupWithSupabase() {
         ? data
         : null;
 
+    await sendEmailVerificationCode(email);
+
     if (session) {
       saveAuthSession(session);
       hydrateGenderFields(gender, lookingFor);
@@ -6859,9 +7004,9 @@ async function signupWithSupabase() {
       showOnboardingIfNeeded();
       showToast("Compte créé et connecté");
     } else {
-      authStatus.textContent = "Compte créé. Vérifie ton email, puis reviens cliquer sur Connexion.";
+      authStatus.textContent = "Compte créé. Entre le code reçu par email.";
       if (mobileAuthStatus) mobileAuthStatus.textContent = authStatus.textContent;
-      showToast("Vérifie ton email pour activer le compte");
+      showToast("Entre le code à 6 chiffres");
     }
 
     recordRemoteEvent("auth_signup", { email });
@@ -10107,6 +10252,17 @@ signupButton.addEventListener("click", requestSignupWithSupabase);
 googleAuthButton?.addEventListener("click", signInWithGoogle);
 resendEmailButton?.addEventListener("click", resendVerificationEmail);
 resetPasswordButton?.addEventListener("click", sendPasswordResetEmail);
+document.querySelectorAll("[data-verify-code]").forEach((button) => {
+  button.addEventListener("click", verifyEmailCode);
+});
+document.querySelectorAll("[data-resend-code]").forEach((button) => {
+  button.addEventListener("click", () => sendEmailVerificationCode(state.verificationEmail || readAuthFields().email));
+});
+[verificationCodeInput, mobileVerificationCodeInput].filter(Boolean).forEach((input) => {
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/\D/g, "").slice(0, 6);
+  });
+});
 mobileLoginButton?.addEventListener("click", () => {
   copyMobileAuthFields();
   loginWithSupabase();
