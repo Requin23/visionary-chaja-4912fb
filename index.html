@@ -10463,8 +10463,9 @@ async function loadModerationReports({ silent = false } = {}) {
       if (moderationCard) moderationCard.hidden = true;
       return;
     }
-    if (moderationCard) moderationCard.hidden = false;
-    if (moderationList) moderationList.innerHTML = `<p class="muted-copy">La file de signalements n’a pas pu être chargée. Réessaie dans un instant.</p>`;
+    // Do not reveal the admin console when the API is unavailable. Only a
+    // successful, server-authorized response may make the card visible.
+    if (moderationCard) moderationCard.hidden = true;
     if (!silent) showToast("Modération indisponible");
   }
 }
