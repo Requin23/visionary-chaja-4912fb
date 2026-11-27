@@ -22,6 +22,10 @@ const admin = createClient(supabaseUrl, serviceRoleKey, {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return json({}, 204);
   if (req.method !== "GET" && req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+  console.info("moderation_request", {
+    method: req.method,
+    view: req.method === "GET" ? new URL(req.url).searchParams.get("view") ?? "reports" : undefined,
+  });
   if (!supabaseUrl || !serviceRoleKey || moderators.size === 0) {
     return json({ error: "moderation_not_configured" }, 503);
   }
@@ -44,7 +48,10 @@ Deno.serve(async (req) => {
         .select("id,display_name,age,city,photo_url,is_verified,is_active")
         .order("display_name", { ascending: true })
         .range(start, start + 100);
-      if (error) return json({ error: "profiles_unavailable" }, 503);
+      if (error) {
+        logDatabaseError("profiles_list_failed", error);
+        return json({ error: "profiles_unavailable" }, 503);
+      }
       const rows = profiles ?? [];
       return json({ profiles: rows.slice(0, 100), has_more: rows.length > 100 });
     }
@@ -62,7 +69,10 @@ Deno.serve(async (req) => {
       return json({ error: "invalid_status" }, 400);
     }
     const { data: reports, error } = await query;
-    if (error) return json({ error: "reports_unavailable" }, 503);
+    if (error) {
+      logDatabaseError("reports_list_failed", error);
+      return json({ error: "reports_unavailable" }, 503);
+    }
 
     const profileIds = [...new Set((reports ?? []).map((report) => report.target_profile_id))];
     const reporterIds = [...new Set((reports ?? []).map((report) => report.reporter_user_id))];
@@ -72,14 +82,20 @@ Deno.serve(async (req) => {
           .select("id,display_name,age,city,photo_url,is_verified,is_active")
           .in("id", profileIds)
       : { data: [], error: null };
-    if (profilesError) return json({ error: "profiles_unavailable" }, 503);
+    if (profilesError) {
+      logDatabaseError("reported_profiles_read_failed", profilesError);
+      return json({ error: "profiles_unavailable" }, 503);
+    }
     const { data: reporterProfiles, error: reporterProfilesError } = reporterIds.length
       ? await admin
           .from("profiles")
           .select("user_id,display_name,age,city")
           .in("user_id", reporterIds)
       : { data: [], error: null };
-    if (reporterProfilesError) return json({ error: "profiles_unavailable" }, 503);
+    if (reporterProfilesError) {
+      logDatabaseError("reporter_profiles_read_failed", reporterProfilesError);
+      return json({ error: "profiles_unavailable" }, 503);
+    }
     const profileById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
     const reporterById = new Map((reporterProfiles ?? []).map((profile) => [profile.user_id, profile]));
 
@@ -103,7 +119,10 @@ Deno.serve(async (req) => {
       .from("profiles")
       .update({ is_active: payload.is_active })
       .eq("id", profileId);
-    if (error) return json({ error: "profile_action_failed" }, 503);
+    if (error) {
+      logDatabaseError("profile_visibility_update_failed", error);
+      return json({ error: "profile_action_failed" }, 503);
+    }
     return json({ success: true, is_active: payload.is_active });
   }
 
@@ -118,7 +137,10 @@ Deno.serve(async (req) => {
     .select("id,target_profile_id,status")
     .eq("id", reportId)
     .maybeSingle();
-  if (reportError) return json({ error: "report_unavailable" }, 503);
+  if (reportError) {
+    logDatabaseError("report_read_failed", reportError);
+    return json({ error: "report_unavailable" }, 503);
+  }
   if (!report) return json({ error: "report_not_found" }, 404);
 
   if (action === "hide_profile") {
@@ -126,7 +148,10 @@ Deno.serve(async (req) => {
       .from("profiles")
       .update({ is_active: false })
       .eq("id", report.target_profile_id);
-    if (hideError) return json({ error: "profile_action_failed" }, 503);
+    if (hideError) {
+      logDatabaseError("reported_profile_hide_failed", hideError);
+      return json({ error: "profile_action_failed" }, 503);
+    }
   }
 
   const status = action === "review" ? "reviewing" : action === "dismiss" ? "dismissed" : "actioned";
@@ -134,7 +159,10 @@ Deno.serve(async (req) => {
     .from("profile_reports")
     .update({ status, reviewed_at: new Date().toISOString(), reviewed_by: user.id })
     .eq("id", reportId);
-  if (updateError) return json({ error: "report_update_failed" }, 503);
+  if (updateError) {
+    logDatabaseError("report_update_failed", updateError);
+    return json({ error: "report_update_failed" }, 503);
+  }
 
   return json({ success: true, status });
 });
@@ -143,5 +171,17 @@ function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, "content-type": "application/json" },
+  });
+}
+
+function logDatabaseError(
+  event: string,
+  error: { code?: string; message?: string; details?: string | null; hint?: string | null },
+) {
+  console.error(`moderation_${event}`, {
+    code: error.code,
+    message: error.message,
+    details: error.details,
+    hint: error.hint,
   });
 }
