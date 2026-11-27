@@ -8,6 +8,12 @@ The original hardening migration [`20261127_security_hardening.sql`](20261127_se
 
 The migration intentionally invalidates any outstanding email codes. Users can request new codes after the new Edge Functions are deployed.
 
+Before deploying the Google-only signup and private chat-media changes, also apply [`20261128_security_hardening_followup.sql`](20261128_security_hardening_followup.sql). It removes client access to notification creation, prepares the Google-only Auth hook, makes chat-media buckets private with match-scoped access, and adds a server-side message size limit. In Authentication > Hooks, enable **Before User Created** and select `public.before_user_created_google_only(jsonb)`. Then reset the old `app.settings.service_role_key` database setting as described at the end of the migration and in [`SUPABASE_PUSH_SETUP.md`](SUPABASE_PUSH_SETUP.md).
+
+After switching the chat buckets from public to private, purge the Supabase Storage CDN cache for `chat-images` and `chat-audio` so previously cached public media URLs stop being served. Supabase Dashboard > Storage > Settings > CDN provides the cache purge controls.
+
+Deploy the updated `send-verification-code` and `verify-code` functions to disable the old custom email-signup flow. New accounts should use Google; existing email/password accounts can still sign in, and password recovery continues to depend on Supabase Auth email delivery settings.
+
 ## 2. Configure and deploy the Edge Functions
 
 Add a private random `VERIFICATION_CODE_PEPPER` secret (at least 32 random bytes) and set `MODERATOR_USER_IDS` to the Supabase Auth UUID of the account that will administer moderation. More than one trusted admin can be listed with comma separators. Keep these values, `SUPABASE_SERVICE_ROLE_KEY`, and `RESEND_API_KEY` in Supabase secrets only; none belongs in browser code. To find the admin's ID, open Authentication → Users and copy the UUID on the account's row.
@@ -16,7 +22,7 @@ An allowlisted account gets the app's moderation console: browse and filter the 
 
 These console controls use the existing `profile_reports` table and the `profiles.is_active` field; they do not require another SQL migration. They control moderation in mbifê, not Supabase project settings or secrets.
 
-The updated code is already pushed to the GitHub branch `security/verification-hardening`. To publish the visual and app changes, merge that branch into the branch used by your hosting service. The Edge Functions can be deployed from this checked-out branch. Deploy `send-verification-code` and `verify-code` with JWT verification disabled because signup and email confirmation happen before a user session exists. Deploy `moderation` with JWT verification enabled; it also checks the signed-in user against `MODERATOR_USER_IDS`.
+The security fixes are in the branch created for this audit. Deploy `send-verification-code` and `verify-code` with JWT verification disabled because these endpoints are called before a user session exists. Deploy `moderation` with JWT verification enabled; it also checks the signed-in user against `MODERATOR_USER_IDS`.
 
 Example deployment commands from the repository folder:
 
