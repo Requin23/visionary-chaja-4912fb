@@ -5122,6 +5122,20 @@ body:not(.auth-gated) .profile-card {
   gap: 0.7rem;
 }
 
+.moderation-tabs,
+.moderation-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.moderation-tabs button[aria-pressed="true"],
+.moderation-filters button[aria-pressed="true"] {
+  border-color: var(--mint);
+  background: color-mix(in srgb, var(--mint) 18%, var(--surface));
+  color: var(--ink);
+}
+
 .moderation-report {
   border: 1px solid var(--line);
   border-radius: 0.9rem;
@@ -5817,12 +5831,29 @@ html[data-theme="dark"] .profile-editor:hover {
             <article class="settings-card" id="moderationCard" hidden>
               <div class="settings-card-header">
                 <div>
-                  <p class="eyebrow">Équipe mbifê</p>
-                  <h2>Signalements à examiner</h2>
+                  <p class="eyebrow">Administration</p>
+                  <h2>Modération mbifê</h2>
                 </div>
                 <button class="ghost-button" id="refreshModerationButton" type="button">Actualiser</button>
               </div>
+              <div class="moderation-tabs" aria-label="Rubriques de modération">
+                <button class="ghost-button" data-moderation-view="reports" aria-pressed="true" type="button">Signalements</button>
+                <button class="ghost-button" data-moderation-view="profiles" aria-pressed="false" type="button">Profils</button>
+              </div>
+              <div class="moderation-filters" id="moderationFilters" aria-label="Filtrer les signalements">
+                <button class="ghost-button" data-moderation-status="open" aria-pressed="true" type="button">À traiter</button>
+                <button class="ghost-button" data-moderation-status="new" aria-pressed="false" type="button">Nouveaux</button>
+                <button class="ghost-button" data-moderation-status="reviewing" aria-pressed="false" type="button">En cours</button>
+                <button class="ghost-button" data-moderation-status="actioned" aria-pressed="false" type="button">Traités</button>
+                <button class="ghost-button" data-moderation-status="dismissed" aria-pressed="false" type="button">Fermés</button>
+                <button class="ghost-button" data-moderation-status="all" aria-pressed="false" type="button">Tout</button>
+              </div>
               <div class="moderation-list" id="moderationList" aria-live="polite"></div>
+              <div class="moderation-actions" id="moderationPagination" hidden>
+                <button class="ghost-button" id="moderationPreviousPage" type="button">Précédent</button>
+                <span class="muted-copy" id="moderationPageLabel"></span>
+                <button class="ghost-button" id="moderationNextPage" type="button">Suivant</button>
+              </div>
             </article>
           </div>
         </section>
@@ -6118,6 +6149,13 @@ const notificationsToggle = document.querySelector("#notificationsToggle");
 const darkModeToggle = document.querySelector("#darkModeToggle");
 const moderationCard = document.querySelector("#moderationCard");
 const moderationList = document.querySelector("#moderationList");
+const moderationFilters = document.querySelector("#moderationFilters");
+const moderationPagination = document.querySelector("#moderationPagination");
+const moderationPageLabel = document.querySelector("#moderationPageLabel");
+let moderationPage = 0;
+let moderationHasMore = false;
+let moderationView = "reports";
+let moderationStatus = "open";
 const refreshModerationButton = document.querySelector("#refreshModerationButton");
 const notificationStatus = document.querySelector("#notificationStatus");
 const testNotificationButton = document.querySelector("#testNotificationButton");
@@ -10339,8 +10377,8 @@ function applyRespectMode(enabled = state.safeMode) {
   document.querySelector("#safeModeButton")?.setAttribute("aria-pressed", String(state.safeMode));
 }
 
-async function moderationRequest(method = "GET", body = null) {
-  const response = await fetch(`${supabaseConfig.url.replace(/\/$/, "")}/functions/v1/moderation`, {
+async function moderationRequest(method = "GET", body = null, query = "") {
+  const response = await fetch(`${supabaseConfig.url.replace(/\/$/, "")}/functions/v1/moderation${query}`, {
     method,
     headers: authHeaders({ useUserToken: true }),
     body: body ? JSON.stringify(body) : undefined,
@@ -10360,22 +10398,43 @@ function renderModerationReports(reports = []) {
   moderationList.innerHTML = reports.length
     ? reports.map((report) => {
         const profile = report.target_profile || {};
+        const reporter = report.reporter_profile || {};
         const name = profile.display_name || "Profil supprimé";
         const created = new Date(report.created_at).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
-        const takeAction = report.status === "new"
-          ? `<button class="ghost-button" data-moderation-action="review" data-report-id="${escapeHtml(report.id)}" type="button">Prendre en charge</button>`
-          : `<button class="ghost-button" data-moderation-action="dismiss" data-report-id="${escapeHtml(report.id)}" type="button">Fermer sans sanction</button>`;
+        const statusLabels = { new: "Nouveau", reviewing: "En cours", actioned: "Traité", dismissed: "Fermé" };
+        const firstAction = report.status === "reviewing"
+          ? `<button class="ghost-button" data-moderation-action="dismiss" data-report-id="${escapeHtml(report.id)}" type="button">Fermer sans sanction</button>`
+          : `<button class="ghost-button" data-moderation-action="review" data-report-id="${escapeHtml(report.id)}" type="button">${report.status === "new" ? "Prendre en charge" : "Rouvrir"}</button>`;
+        const profileAction = profile.is_active === false
+          ? `<button class="ghost-button" data-moderation-action="set_profile_visibility" data-profile-id="${escapeHtml(profile.id || "")}" data-is-active="true" type="button">Réactiver le profil</button>`
+          : `<button class="danger-button" data-moderation-action="hide_profile" data-report-id="${escapeHtml(report.id)}" type="button">Masquer le profil</button>`;
         return `
           <article class="moderation-report">
-            <div><strong>${escapeHtml(name)}${profile.age ? `, ${escapeHtml(profile.age)}` : ""}</strong><span>${escapeHtml(profile.city || "Ville non indiquée")} · ${escapeHtml(created)}</span></div>
+            <div><strong>${escapeHtml(name)}${profile.age ? `, ${escapeHtml(profile.age)}` : ""}</strong><span>${escapeHtml(profile.city || "Ville non indiquée")} · signalé par ${escapeHtml(reporter.display_name || "Profil indisponible")} · ${escapeHtml(statusLabels[report.status] || report.status)} · ${escapeHtml(created)}</span></div>
             <p>${escapeHtml(report.reason)}</p>
             <div class="moderation-actions">
-              ${takeAction}
-              <button class="danger-button" data-moderation-action="hide_profile" data-report-id="${escapeHtml(report.id)}" type="button">Masquer le profil</button>
+              ${firstAction}
+              ${profileAction}
             </div>
           </article>`;
       }).join("")
-    : `<p class="muted-copy">Aucun signalement en attente.</p>`;
+    : `<p class="muted-copy">Aucun signalement pour ce filtre.</p>`;
+}
+
+function renderModerationProfiles(profiles = []) {
+  if (!moderationList) return;
+  moderationList.innerHTML = profiles.length
+    ? profiles.map((profile) => {
+        const visible = profile.is_active !== false;
+        return `
+          <article class="moderation-report">
+            <div><strong>${escapeHtml(profile.display_name || "Profil sans nom")}${profile.age ? `, ${escapeHtml(profile.age)}` : ""}</strong><span>${escapeHtml(profile.city || "Ville non indiquée")} · ${visible ? "visible dans la découverte" : "masqué"}</span></div>
+            <div class="moderation-actions">
+              <button class="${visible ? "danger-button" : "ghost-button"}" data-moderation-action="set_profile_visibility" data-profile-id="${escapeHtml(profile.id)}" data-is-active="${visible ? "false" : "true"}" type="button">${visible ? "Masquer le profil" : "Réactiver le profil"}</button>
+            </div>
+          </article>`;
+      }).join("")
+    : `<p class="muted-copy">Aucun profil trouvé.</p>`;
 }
 
 async function loadModerationReports({ silent = false } = {}) {
@@ -10384,9 +10443,21 @@ async function loadModerationReports({ silent = false } = {}) {
     return;
   }
   try {
-    const { reports = [] } = await moderationRequest();
+    const query = moderationView === "profiles"
+      ? `?view=profiles&page=${moderationPage}`
+      : `?status=${encodeURIComponent(moderationStatus)}&page=${moderationPage}`;
+    const result = await moderationRequest("GET", null, query);
     if (moderationCard) moderationCard.hidden = false;
-    renderModerationReports(reports);
+    if (moderationFilters) moderationFilters.hidden = moderationView !== "reports";
+    moderationHasMore = Boolean(result.has_more);
+    if (moderationPagination) moderationPagination.hidden = moderationPage === 0 && !moderationHasMore;
+    if (moderationPageLabel) moderationPageLabel.textContent = `Page ${moderationPage + 1}`;
+    const previousPageButton = document.querySelector("#moderationPreviousPage");
+    const nextPageButton = document.querySelector("#moderationNextPage");
+    if (previousPageButton) previousPageButton.disabled = moderationPage === 0;
+    if (nextPageButton) nextPageButton.disabled = !moderationHasMore;
+    if (moderationView === "profiles") renderModerationProfiles(result.profiles || []);
+    else renderModerationReports(result.reports || []);
   } catch (error) {
     if (error.status === 403 || error.status === 401 || error.code === "moderation_not_configured") {
       if (moderationCard) moderationCard.hidden = true;
@@ -10782,16 +10853,62 @@ blockedList?.addEventListener("click", (event) => {
   }
 });
 refreshModerationButton?.addEventListener("click", () => loadModerationReports());
+document.querySelector("#moderationPreviousPage")?.addEventListener("click", () => {
+  if (moderationPage > 0) {
+    moderationPage -= 1;
+    loadModerationReports();
+  }
+});
+document.querySelector("#moderationNextPage")?.addEventListener("click", () => {
+  if (moderationHasMore) {
+    moderationPage += 1;
+    loadModerationReports();
+  }
+});
+moderationCard?.addEventListener("click", async (event) => {
+  const viewButton = event.target.closest("[data-moderation-view]");
+  if (viewButton) {
+    moderationView = viewButton.dataset.moderationView;
+    moderationPage = 0;
+    moderationCard.querySelectorAll("[data-moderation-view]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button === viewButton));
+    });
+    await loadModerationReports();
+    return;
+  }
+  const statusButton = event.target.closest("[data-moderation-status]");
+  if (statusButton) {
+    moderationStatus = statusButton.dataset.moderationStatus;
+    moderationPage = 0;
+    moderationFilters?.querySelectorAll("[data-moderation-status]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button === statusButton));
+    });
+    await loadModerationReports();
+  }
+});
 moderationCard?.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-moderation-action]");
   if (!button) return;
   const action = button.dataset.moderationAction;
   const reportId = button.dataset.reportId;
-  if (action === "hide_profile" && !window.confirm("Masquer ce profil de la découverte ?")) return;
+  const isVisibilityAction = action === "set_profile_visibility";
+  const isActive = button.dataset.isActive === "true";
+  if (isVisibilityAction || action === "hide_profile") {
+    const prompt = isActive
+      ? "Réactiver ce profil dans la découverte ?"
+      : "Masquer ce profil de la découverte ?";
+    if (!window.confirm(prompt)) return;
+  }
   button.disabled = true;
   try {
-    await moderationRequest("POST", { report_id: reportId, action });
-    showToast(action === "hide_profile" ? "Profil masqué et signalement traité" : action === "dismiss" ? "Signalement fermé" : "Signalement pris en charge");
+    const body = isVisibilityAction
+      ? { action, profile_id: button.dataset.profileId, is_active: isActive }
+      : { report_id: reportId, action };
+    await moderationRequest("POST", body);
+    showToast(isVisibilityAction
+      ? (isActive ? "Profil réactivé" : "Profil masqué")
+      : action === "hide_profile" ? "Profil masqué et signalement traité"
+      : action === "dismiss" ? "Signalement fermé" : action === "review" ? "Signalement pris en charge" : "Action de modération effectuée");
     await loadModerationReports({ silent: true });
   } catch {
     button.disabled = false;

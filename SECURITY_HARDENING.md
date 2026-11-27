@@ -10,7 +10,11 @@ The migration intentionally invalidates any outstanding email codes. Users can r
 
 ## 2. Configure and deploy the Edge Functions
 
-Add a private random `VERIFICATION_CODE_PEPPER` secret (at least 32 random bytes) and set `MODERATOR_USER_IDS` to the comma-separated Supabase Auth user IDs of trusted moderators. Keep these values, `SUPABASE_SERVICE_ROLE_KEY`, and `RESEND_API_KEY` in Supabase secrets only; none belongs in browser code. To find a moderator's ID, run `select id, email from auth.users;` in the SQL editor and copy only the intended account ID into the secret.
+Add a private random `VERIFICATION_CODE_PEPPER` secret (at least 32 random bytes) and set `MODERATOR_USER_IDS` to the Supabase Auth UUID of the account that will administer moderation. More than one trusted admin can be listed with comma separators. Keep these values, `SUPABASE_SERVICE_ROLE_KEY`, and `RESEND_API_KEY` in Supabase secrets only; none belongs in browser code. To find the admin's ID, open Authentication → Users and copy the UUID on the account's row.
+
+An allowlisted account gets the app's moderation console: browse and filter the complete report history, review reports, and browse profiles to hide or reactivate them. Access is checked by the Edge Function on every request. The service-role key remains private in Supabase and is never sent to the app.
+
+These console controls use the existing `profile_reports` table and the `profiles.is_active` field; they do not require another SQL migration. They control moderation in mbifê, not Supabase project settings or secrets.
 
 The updated code is already pushed to the GitHub branch `security/verification-hardening`. To publish the visual and app changes, merge that branch into the branch used by your hosting service. The Edge Functions can be deployed from this checked-out branch. Deploy `send-verification-code` and `verify-code` with JWT verification disabled because signup and email confirmation happen before a user session exists. Deploy `moderation` with JWT verification enabled; it also checks the signed-in user against `MODERATOR_USER_IDS`.
 
