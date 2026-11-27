@@ -2,9 +2,9 @@
 {
   "name": "mbifê",
   "short_name": "mbifê",
-  "start_url": "/?v=2026-06-15-3",
+  "start_url": "/?v=2026-11-27-1",
   "display": "standalone",
-  "background_color": "#fffaf3",
+  "background_color": "#fff7f3",
   "theme_color": "#e6536a",
   "icons": [
     {

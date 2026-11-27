@@ -5006,6 +5006,233 @@ body.auth-gated .google-auth-button {
   min-height: 3rem !important;
 }
 
+/* Accessible appearance settings and reduced-pressure discovery mode. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f5f3f8;
+  --muted: #b3b0c2;
+  --soft: #272532;
+  --surface: #1d1b27;
+  --panel: #211f2b;
+  --line: rgba(238, 233, 248, 0.14);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.36);
+}
+
+html[data-theme="dark"] body {
+  background: radial-gradient(circle at 10% 6%, rgba(233, 85, 104, 0.12), transparent 30rem),
+    linear-gradient(135deg, #15141d 0%, #191922 55%, #171f20 100%);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .quality-panel,
+html[data-theme="dark"] .auth-panel,
+html[data-theme="dark"] .profile-editor,
+html[data-theme="dark"] .about-card,
+html[data-theme="dark"] .settings-card,
+html[data-theme="dark"] .insight-panel,
+html[data-theme="dark"] .date-lab,
+html[data-theme="dark"] .conversation-list,
+html[data-theme="dark"] .chat-window,
+html[data-theme="dark"] .annonce-composer,
+html[data-theme="dark"] .annonce-card,
+html[data-theme="dark"] .mini-card,
+html[data-theme="dark"] .like-request-card {
+  background: rgba(31, 29, 40, 0.94);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .nav-item.active,
+html[data-theme="dark"] .nav-item:hover,
+html[data-theme="dark"] .filter-chip,
+html[data-theme="dark"] .action-button,
+html[data-theme="dark"] .composer,
+html[data-theme="dark"] .conversation,
+html[data-theme="dark"] .blocked-item,
+html[data-theme="dark"] .annonce-like-btn,
+html[data-theme="dark"] .annonce-reply-btn,
+html[data-theme="dark"] .date-option {
+  background: #292735;
+  color: var(--ink);
+}
+
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="range"]),
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+  border-color: var(--line);
+  background: #24222f;
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .annonces-empty {
+  background: rgba(39, 37, 50, 0.7);
+}
+
+html[data-theme="dark"] .mobile-bottom-nav {
+  border-color: var(--line);
+  background: rgba(31, 29, 40, 0.96);
+}
+
+body.respect-mode .compatibility-orb,
+body.respect-mode #sparkButton {
+  display: none !important;
+}
+
+body.respect-mode *,
+body.respect-mode *::before,
+body.respect-mode *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+body:not(.auth-gated) .workspace {
+  gap: 1rem;
+}
+
+body:not(.auth-gated) .topbar {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.68);
+  padding: clamp(0.9rem, 2vw, 1.35rem);
+  box-shadow: 0 14px 38px rgba(38, 35, 50, 0.06);
+  backdrop-filter: blur(20px);
+}
+
+body:not(.auth-gated) .profile-card {
+  border-radius: 1.35rem;
+}
+
+.settings-card,
+.profile-editor,
+.insight-panel,
+.date-lab,
+.annonce-card,
+.annonce-composer {
+  border-radius: 1.1rem;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.moderation-list,
+.moderation-report {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.moderation-tabs,
+.moderation-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.moderation-tabs button[aria-pressed="true"],
+.moderation-filters button[aria-pressed="true"] {
+  border-color: var(--mint);
+  background: color-mix(in srgb, var(--mint) 18%, var(--surface));
+  color: var(--ink);
+}
+
+.moderation-report {
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: var(--soft);
+  padding: 0.9rem;
+}
+
+.moderation-report > div:first-child {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.moderation-report span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.moderation-report p {
+  margin: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.attachment-preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.attachment-preview[hidden] {
+  display: none !important;
+}
+
+.attachment-image-preview,
+.attachment-audio-preview {
+  grid-column: 1 / -1;
+  width: min(100%, 22rem);
+}
+
+.attachment-image-preview {
+  max-height: 14rem;
+  border-radius: 0.8rem;
+  object-fit: contain;
+  background: var(--soft);
+}
+
+.moderation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.settings-card-header {
+  align-items: center;
+}
+
+.settings-card[hidden] {
+  display: none !important;
+}
+
+.filter-chip,
+.primary-button,
+.ghost-button,
+.annonces-refresh-btn {
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(55, 114, 255, 0.72);
+  outline-offset: 3px;
+}
+
+html[data-theme="dark"] body:not(.auth-gated) .topbar {
+  border-color: var(--line);
+  background: rgba(31, 29, 40, 0.78);
+}
+
+html[data-theme="dark"] .settings-card:hover,
+html[data-theme="dark"] .annonce-card:hover,
+html[data-theme="dark"] .profile-editor:hover {
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 </style>
   </head>
   <body class="auth-gated">
@@ -5471,9 +5698,9 @@ body.auth-gated .google-auth-button {
               confiance entre les utilisateurs.
             </p>
             <p>
-              Ce projet me permet aussi de mettre en pratique mes compétences en développement web, design d'interface,
-              expérience utilisateur et connexion à une base de données moderne. mbifê est pensé comme un produit évolutif :
-              d'abord un prototype solide, puis une vraie plateforme avec comptes, profils, matches et messages réels.
+              Ce projet met en pratique le développement web, le design d'interface, l'expérience utilisateur et la
+              connexion à une base de données moderne. L'application propose des comptes, des profils, des matches,
+              des messages et un espace communautaire.
             </p>
           </article>
 
@@ -5509,17 +5736,16 @@ body.auth-gated .google-auth-button {
               <p class="eyebrow">Supabase</p>
               <h2 id="supabaseModeLabel">Mode local</h2>
               <p class="muted-copy" id="supabaseStatusText">
-                Les données sont encore stockées dans le navigateur. La connexion Supabase sera activée dès que l'URL du projet
-                et la clé anon publique seront ajoutées.
+                Les comptes et interactions sont synchronisés avec Supabase lorsque le service est disponible.
               </p>
             </article>
 
             <article class="about-card">
               <p class="eyebrow">Prochaine évolution</p>
-              <h2>Comptes, matches et messages réels</h2>
+              <h2>Protéger et faire grandir la communauté</h2>
               <p class="muted-copy">
-                La prochaine étape connectera les profils, likes, invitations et conversations à une base partagée pour que
-                plusieurs utilisateurs puissent interagir en même temps.
+                Les prochaines améliorations portent sur la modération, la confidentialité des médias, la fiabilité des
+                notifications et l'accessibilité sur mobile.
               </p>
             </article>
 
@@ -5543,6 +5769,20 @@ body.auth-gated .google-auth-button {
             <article class="settings-card">
               <div class="settings-card-header">
                 <div>
+                  <p class="eyebrow">Apparence</p>
+                  <h2>Thème sombre</h2>
+                </div>
+                <label class="toggle-switch">
+                  <input id="darkModeToggle" type="checkbox" aria-label="Activer le thème sombre" />
+                  <span></span>
+                </label>
+              </div>
+              <p class="muted-copy">Choisis une interface plus douce dans les endroits peu éclairés.</p>
+            </article>
+
+            <article class="settings-card">
+              <div class="settings-card-header">
+                <div>
                   <p class="eyebrow">Visibilité</p>
                   <h2>Profil visible</h2>
                 </div>
@@ -5551,7 +5791,7 @@ body.auth-gated .google-auth-button {
                   <span></span>
                 </label>
               </div>
-              <p class="muted-copy">Désactive cette option si tu veux mettre ton profil en pause pendant les tests.</p>
+              <p class="muted-copy">Désactive cette option pour ne plus apparaître dans la découverte. Tu peux la réactiver à tout moment.</p>
             </article>
 
             <article class="settings-card">
@@ -5578,14 +5818,42 @@ body.auth-gated .google-auth-button {
             <article class="settings-card">
               <p class="eyebrow">Compte</p>
               <h2>Zone sensible</h2>
-              <p class="muted-copy">Tu peux désactiver ton compte de test et te déconnecter proprement.</p>
-              <button class="danger-button" id="deactivateAccountButton" type="button">Désactiver mon compte</button>
+              <p class="muted-copy">Mets ton profil en pause pour qu’il n’apparaisse plus dans la découverte. Tu peux le réactiver à tout moment.</p>
+              <button class="danger-button" id="deactivateAccountButton" type="button">Mettre mon profil en pause</button>
             </article>
 
             <article class="settings-card">
               <p class="eyebrow">À propos</p>
               <h2>mbifê v1.0</h2>
-              <p class="muted-copy">Rencontres sincères, profils plus clairs, messages privés, demandes de like et blocage local.</p>
+              <p class="muted-copy">Rencontres sincères, profils détaillés, messages privés, demandes de like, blocage et notifications.</p>
+            </article>
+
+            <article class="settings-card" id="moderationCard" hidden>
+              <div class="settings-card-header">
+                <div>
+                  <p class="eyebrow">Administration</p>
+                  <h2>Modération mbifê</h2>
+                </div>
+                <button class="ghost-button" id="refreshModerationButton" type="button">Actualiser</button>
+              </div>
+              <div class="moderation-tabs" aria-label="Rubriques de modération">
+                <button class="ghost-button" data-moderation-view="reports" aria-pressed="true" type="button">Signalements</button>
+                <button class="ghost-button" data-moderation-view="profiles" aria-pressed="false" type="button">Profils</button>
+              </div>
+              <div class="moderation-filters" id="moderationFilters" aria-label="Filtrer les signalements">
+                <button class="ghost-button" data-moderation-status="open" aria-pressed="true" type="button">À traiter</button>
+                <button class="ghost-button" data-moderation-status="new" aria-pressed="false" type="button">Nouveaux</button>
+                <button class="ghost-button" data-moderation-status="reviewing" aria-pressed="false" type="button">En cours</button>
+                <button class="ghost-button" data-moderation-status="actioned" aria-pressed="false" type="button">Traités</button>
+                <button class="ghost-button" data-moderation-status="dismissed" aria-pressed="false" type="button">Fermés</button>
+                <button class="ghost-button" data-moderation-status="all" aria-pressed="false" type="button">Tout</button>
+              </div>
+              <div class="moderation-list" id="moderationList" aria-live="polite"></div>
+              <div class="moderation-actions" id="moderationPagination" hidden>
+                <button class="ghost-button" id="moderationPreviousPage" type="button">Précédent</button>
+                <span class="muted-copy" id="moderationPageLabel"></span>
+                <button class="ghost-button" id="moderationNextPage" type="button">Suivant</button>
+              </div>
             </article>
           </div>
         </section>
@@ -5656,7 +5924,7 @@ body.auth-gated .google-auth-button {
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>
-const APP_VERSION = "2026-06-15-3";
+const APP_VERSION = "2026-11-27-1";
 
 const profiles = [];
 
@@ -5679,6 +5947,23 @@ const supabaseConfig = {
     localStorage.getItem("mbifeSupabaseAnonKey") ||
     "sb_publishable_EarW8QPA9w_c_euHaI9RCQ_0__No0le",
 };
+
+function loadAuthSession() {
+  try {
+    const sessionValue = sessionStorage.getItem("mbifeAuthSession");
+    if (sessionValue) return JSON.parse(sessionValue);
+    const legacyValue = localStorage.getItem("mbifeAuthSession");
+    if (!legacyValue) return null;
+    sessionStorage.setItem("mbifeAuthSession", legacyValue);
+    localStorage.removeItem("mbifeAuthSession");
+    return JSON.parse(legacyValue);
+  } catch {
+    localStorage.removeItem("mbifeAuthSession");
+    return null;
+  }
+}
+
+const initialAuthSession = loadAuthSession();
 
 const state = {
   activePanel: "discover",
@@ -5705,7 +5990,8 @@ const state = {
   index: 0,
   history: [],
   matches: [],
-  safeMode: false,
+  safeMode: localStorage.getItem("mbifeRespectMode") === "true",
+  theme: localStorage.getItem("mbifeTheme") === "dark" ? "dark" : "light",
   activeConversation: conversations.length ? conversations[0].id : "",
   shareProfileIndex: 0,
   inviteCode: getStoredInviteCode(),
@@ -5721,8 +6007,8 @@ const state = {
     checked: false,
     lastError: "",
   },
-  auth: readStoredJson("mbifeAuthSession", null),
-  authChecking: Boolean(localStorage.getItem("mbifeAuthSession")),
+  auth: initialAuthSession,
+  authChecking: Boolean(initialAuthSession),
   authMode: localStorage.getItem("mbifeAuthMode") || "login",
   verificationEmail: localStorage.getItem("mbifeVerificationEmail") || "",
   remoteProfiles: [],
@@ -5743,6 +6029,8 @@ const state = {
   activityPollBusy: false,
   pendingAttachment: null,
   mediaRecorder: null,
+  recordingTimer: null,
+  profilePhotoPreviewUrl: null,
   recordingChunks: [],
   recordingStartedAt: 0,
   currentProfileRecord: readStoredJson("mbifeLocalProfileDraft", null),
@@ -5858,6 +6146,17 @@ const blockButton = document.querySelector("#blockButton");
 const blockedList = document.querySelector("#blockedList");
 const profileVisibleToggle = document.querySelector("#profileVisibleToggle");
 const notificationsToggle = document.querySelector("#notificationsToggle");
+const darkModeToggle = document.querySelector("#darkModeToggle");
+const moderationCard = document.querySelector("#moderationCard");
+const moderationList = document.querySelector("#moderationList");
+const moderationFilters = document.querySelector("#moderationFilters");
+const moderationPagination = document.querySelector("#moderationPagination");
+const moderationPageLabel = document.querySelector("#moderationPageLabel");
+let moderationPage = 0;
+let moderationHasMore = false;
+let moderationView = "reports";
+let moderationStatus = "open";
+const refreshModerationButton = document.querySelector("#refreshModerationButton");
 const notificationStatus = document.querySelector("#notificationStatus");
 const testNotificationButton = document.querySelector("#testNotificationButton");
 const deactivateAccountButton = document.querySelector("#deactivateAccountButton");
@@ -6251,12 +6550,19 @@ function saveAuthSession(session) {
   state.authChecking = false;
 
   if (session) {
-    localStorage.setItem("mbifeAuthSession", JSON.stringify(session));
+    sessionStorage.setItem("mbifeAuthSession", JSON.stringify(session));
+    localStorage.removeItem("mbifeAuthSession");
   } else {
+    sessionStorage.removeItem("mbifeAuthSession");
     localStorage.removeItem("mbifeAuthSession");
   }
 
   renderAuthState();
+  if (session) {
+    window.setTimeout(() => loadModerationReports({ silent: true }), 0);
+  } else if (moderationCard) {
+    moderationCard.hidden = true;
+  }
 }
 
 async function supabaseFetch(path, { method = "GET", body, prefer, useUserToken = true } = {}) {
@@ -6871,9 +7177,12 @@ async function sendEmailVerificationCode(email = readAuthFields().email) {
     showToast("Code de vérification envoyé");
     return true;
   } catch (error) {
-    const message = String(error?.message || "Envoi du code impossible");
+    const codeError = String(error?.code || error?.message || "");
+    const message = codeError.includes("rate_limited")
+      ? "Trop de codes demandés. Attends avant de réessayer."
+      : "Envoi du code impossible. Vérifie ton adresse et réessaie.";
     setVerificationEmail(targetEmail, message);
-    showToast("Code non envoyé");
+    showToast(message);
     return false;
   }
 }
@@ -6902,7 +7211,9 @@ async function verifyEmailCode() {
     const codeError = String(error?.code || error?.message || "");
     const message = codeError.includes("expired")
       ? "Code expiré. Demande un nouveau code."
-      : "Code incorrect.";
+      : codeError.includes("locked")
+        ? "Trop de tentatives. Attends une minute avant de demander un nouveau code."
+        : "Code incorrect.";
     setVerificationEmail(email, message);
     showToast(message);
   }
@@ -7057,6 +7368,19 @@ async function loginWithSupabase() {
 }
 
 async function logoutFromSupabase() {
+  // Stop push delivery before ending the session so a shared device does not
+  // keep showing this account's private message notifications.
+  try {
+    const registration = await navigator.serviceWorker?.getRegistration();
+    const subscription = await registration?.pushManager?.getSubscription();
+    if (subscription) {
+      await removePushSubscription(subscription.endpoint);
+      await subscription.unsubscribe();
+    }
+  } catch {
+    // Local privacy state is still cleared if the browser push API is unavailable.
+  }
+
   try {
     if (hasSupabaseConfig() && currentToken()) {
       await supabaseFetch("/auth/v1/logout", { method: "POST" });
@@ -7072,6 +7396,38 @@ async function logoutFromSupabase() {
   state.remoteLikes = [];
   state.remoteIncomingLikes = [];
   state.currentProfileRecord = null;
+  state.activeConversation = "";
+  state.index = 0;
+  state.history = [];
+  state.blockedUsers = new Set();
+  state.blockedProfiles = {};
+  state.unreadThreads = {};
+  state.seenMessageIds = {};
+  state.seenMatchIds = [];
+  state.seenLikeIds = [];
+  state.seenNotificationIds = [];
+  state.dismissedIncomingLikes = [];
+  state.notificationsReady = false;
+  state.messagesReady = false;
+  state.matchesReady = false;
+  state.likesReady = false;
+  state.profileVisible = true;
+  state.annonceLikes = {};
+  [
+    "mbifeLocalProfileDraft",
+    "mbifeApproxLocation",
+    "mbife_blocked",
+    "mbifeBlockedProfiles",
+    "mbifeUnreadThreads",
+    "mbifeSeenMessageIds",
+    "mbifeSeenMatchIds",
+    "mbifeSeenLikeIds",
+    "mbifeSeenNotificationIds",
+    "mbifeDismissedIncomingLikes",
+    "mbifeNotificationsReady",
+    "mbifeAnnonceLikes",
+  ].forEach((key) => localStorage.removeItem(key));
+  localStorage.setItem("mbifeProfileVisible", "true");
   window.clearInterval(state.refreshTimer);
   if (state.likesRealtimeChannel) {
     state.likesRealtimeChannel.onclose = null;
@@ -7129,6 +7485,8 @@ async function ensureRemoteProfile(displayName) {
 
   if (existing?.[0]) {
     state.currentProfileRecord = existing[0];
+    state.profileVisible = existing[0].is_active !== false;
+    localStorage.setItem("mbifeProfileVisible", String(state.profileVisible));
     localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(existing[0]));
     renderProfileForm();
     return existing[0];
@@ -7151,13 +7509,15 @@ async function ensureRemoteProfile(displayName) {
           normalizeLookingFor(authLookingFor?.value || user.user_metadata?.looking_for || oppositeGender(normalizeGender(authGender?.value || user.user_metadata?.gender || ""))),
         ),
         compatibility_score: 82,
-        is_verified: true,
+        is_verified: false,
         is_active: true,
       },
     ],
   });
 
   state.currentProfileRecord = created;
+  state.profileVisible = true;
+  localStorage.setItem("mbifeProfileVisible", "true");
   localStorage.setItem("mbifeLocalProfileDraft", JSON.stringify(created));
   renderProfileForm();
   return created;
@@ -7279,6 +7639,10 @@ async function uploadProfilePhoto(file) {
 
   if (file.size > 5 * 1024 * 1024) {
     throw new Error("Photo trop lourde. Limite: 5 Mo.");
+  }
+
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    throw new Error("Format photo non accepté. Utilise JPG, PNG ou WebP.");
   }
 
   const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
@@ -8140,8 +8504,11 @@ function updateAttachmentPreview() {
     state.pendingAttachment.type === "photo"
       ? `Photo prête: ${state.pendingAttachment.name}`
       : `Vocal prêt: ${state.pendingAttachment.duration || "quelques"} s`;
+  const mediaPreview = state.pendingAttachment.type === "photo"
+    ? `<img class="attachment-image-preview" src="${escapeHtml(state.pendingAttachment.previewUrl)}" alt="Aperçu de la photo" />`
+    : `<audio class="attachment-audio-preview" controls src="${escapeHtml(state.pendingAttachment.previewUrl)}"></audio>`;
   attachmentPreview.hidden = false;
-  attachmentPreview.innerHTML = `<span>${escapeHtml(label)}</span><button type="button" id="clearAttachmentButton">Retirer</button>`;
+  attachmentPreview.innerHTML = `${mediaPreview}<span>${escapeHtml(label)}</span><button type="button" id="clearAttachmentButton">Retirer</button>`;
   attachmentPreview.querySelector("#clearAttachmentButton")?.addEventListener("click", clearPendingAttachment);
 }
 
@@ -8165,6 +8532,10 @@ async function uploadMessageAttachment(attachment) {
   }
 
   const bucketName = attachment.type === "voice" ? "chat-audio" : "chat-images";
+  const sizeLimit = attachment.type === "voice" ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+  if (attachment.file.size > sizeLimit) {
+    throw new Error(attachment.type === "voice" ? "Vocal trop lourd. Limite: 10 Mo." : "Photo trop lourde. Limite: 5 Mo.");
+  }
   const originalName = attachment.name || attachment.file.name || "media";
   const extension = originalName.split(".").pop()?.toLowerCase() || (attachment.type === "voice" ? "webm" : "jpg");
   const allowed = attachment.type === "voice" ? ["webm", "ogg", "mp3", "m4a", "wav"] : ["jpg", "jpeg", "png", "webp"];
@@ -8222,10 +8593,19 @@ async function toggleVoiceRecording() {
       }
     });
     state.mediaRecorder.addEventListener("stop", () => {
+      window.clearTimeout(state.recordingTimer);
+      state.recordingTimer = null;
       const cleanAudioType = String(state.mediaRecorder.mimeType || "audio/webm").split(";")[0];
       const blob = new Blob(state.recordingChunks, { type: cleanAudioType || "audio/webm" });
       const duration = Math.max(1, Math.round((Date.now() - state.recordingStartedAt) / 1000));
       stream.getTracks().forEach((track) => track.stop());
+      state.recordingChunks = [];
+      if (blob.size > 10 * 1024 * 1024) {
+        voiceMessageButton?.classList.remove("recording");
+        voiceMessageButton.textContent = "Vocal";
+        showToast("Vocal trop lourd. Limite: 10 Mo.");
+        return;
+      }
       state.pendingAttachment = {
         type: "voice",
         file: blob,
@@ -8239,6 +8619,12 @@ async function toggleVoiceRecording() {
       showToast("Vocal prêt à envoyer");
     });
     state.mediaRecorder.start();
+    state.recordingTimer = window.setTimeout(() => {
+      if (state.mediaRecorder?.state === "recording") {
+        state.mediaRecorder.stop();
+        showToast("Durée maximale du vocal atteinte (60 s).");
+      }
+    }, 60_000);
     voiceMessageButton?.classList.add("recording");
     voiceMessageButton.textContent = "Stop";
     showToast("Enregistrement vocal...");
@@ -8701,6 +9087,10 @@ async function reportCurrentProfile() {
   const reason = window.prompt("Pourquoi veux-tu signaler ce profil ?")?.trim();
 
   if (!reason) {
+    return;
+  }
+  if (reason.length < 5 || reason.length > 1000) {
+    showToast("Le motif doit contenir entre 5 et 1 000 caractères.");
     return;
   }
 
@@ -9935,17 +10325,156 @@ async function syncProfileVisibility() {
       prefer: "return=minimal",
       body: { is_active: state.profileVisible },
     });
+    if (state.currentProfileRecord) state.currentProfileRecord.is_active = state.profileVisible;
+    renderProfileForm();
+    renderSettings();
     showToast(state.profileVisible ? "Profil visible en ligne" : "Profil masqué en ligne");
   } catch (error) {
     state.supabase.lastError = error.message;
     renderSupabaseStatus();
-    showToast("Visibilité gardée localement");
+    state.profileVisible = !state.profileVisible;
+    localStorage.setItem("mbifeProfileVisible", String(state.profileVisible));
+    renderSettings();
+    showToast("Visibilité non modifiée. Vérifie ta connexion et réessaie.");
+  }
+}
+
+async function pauseProfile() {
+  if (!currentUser()) {
+    showToast("Connecte-toi pour mettre ton profil en pause.");
+    return;
+  }
+  if (!window.confirm("Mettre ton profil en pause ? Il ne sera plus proposé dans la découverte.")) return;
+  state.profileVisible = false;
+  await syncProfileVisibility();
+}
+
+async function toggleProfilePause() {
+  if (state.profileVisible) {
+    await pauseProfile();
+    return;
+  }
+  if (!currentUser()) {
+    showToast("Connecte-toi pour réactiver ton profil.");
+    return;
+  }
+  if (!window.confirm("Réactiver ton profil dans la découverte ?")) return;
+  state.profileVisible = true;
+  await syncProfileVisibility();
+}
+
+function applyTheme(theme = state.theme) {
+  state.theme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = state.theme;
+  localStorage.setItem("mbifeTheme", state.theme);
+  if (darkModeToggle) darkModeToggle.checked = state.theme === "dark";
+}
+
+function applyRespectMode(enabled = state.safeMode) {
+  state.safeMode = Boolean(enabled);
+  document.body.classList.toggle("respect-mode", state.safeMode);
+  localStorage.setItem("mbifeRespectMode", String(state.safeMode));
+  document.querySelector("#safeModeButton")?.setAttribute("aria-pressed", String(state.safeMode));
+}
+
+async function moderationRequest(method = "GET", body = null, query = "") {
+  const response = await fetch(`${supabaseConfig.url.replace(/\/$/, "")}/functions/v1/moderation${query}`, {
+    method,
+    headers: authHeaders({ useUserToken: true }),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(payload.error || "Modération indisponible");
+    error.code = payload.error;
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
+function renderModerationReports(reports = []) {
+  if (!moderationList) return;
+  moderationList.innerHTML = reports.length
+    ? reports.map((report) => {
+        const profile = report.target_profile || {};
+        const reporter = report.reporter_profile || {};
+        const name = profile.display_name || "Profil supprimé";
+        const created = new Date(report.created_at).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
+        const statusLabels = { new: "Nouveau", reviewing: "En cours", actioned: "Traité", dismissed: "Fermé" };
+        const firstAction = report.status === "reviewing"
+          ? `<button class="ghost-button" data-moderation-action="dismiss" data-report-id="${escapeHtml(report.id)}" type="button">Fermer sans sanction</button>`
+          : `<button class="ghost-button" data-moderation-action="review" data-report-id="${escapeHtml(report.id)}" type="button">${report.status === "new" ? "Prendre en charge" : "Rouvrir"}</button>`;
+        const profileAction = profile.is_active === false
+          ? `<button class="ghost-button" data-moderation-action="set_profile_visibility" data-profile-id="${escapeHtml(profile.id || "")}" data-is-active="true" type="button">Réactiver le profil</button>`
+          : `<button class="danger-button" data-moderation-action="hide_profile" data-report-id="${escapeHtml(report.id)}" type="button">Masquer le profil</button>`;
+        return `
+          <article class="moderation-report">
+            <div><strong>${escapeHtml(name)}${profile.age ? `, ${escapeHtml(profile.age)}` : ""}</strong><span>${escapeHtml(profile.city || "Ville non indiquée")} · signalé par ${escapeHtml(reporter.display_name || "Profil indisponible")} · ${escapeHtml(statusLabels[report.status] || report.status)} · ${escapeHtml(created)}</span></div>
+            <p>${escapeHtml(report.reason)}</p>
+            <div class="moderation-actions">
+              ${firstAction}
+              ${profileAction}
+            </div>
+          </article>`;
+      }).join("")
+    : `<p class="muted-copy">Aucun signalement pour ce filtre.</p>`;
+}
+
+function renderModerationProfiles(profiles = []) {
+  if (!moderationList) return;
+  moderationList.innerHTML = profiles.length
+    ? profiles.map((profile) => {
+        const visible = profile.is_active !== false;
+        return `
+          <article class="moderation-report">
+            <div><strong>${escapeHtml(profile.display_name || "Profil sans nom")}${profile.age ? `, ${escapeHtml(profile.age)}` : ""}</strong><span>${escapeHtml(profile.city || "Ville non indiquée")} · ${visible ? "visible dans la découverte" : "masqué"}</span></div>
+            <div class="moderation-actions">
+              <button class="${visible ? "danger-button" : "ghost-button"}" data-moderation-action="set_profile_visibility" data-profile-id="${escapeHtml(profile.id)}" data-is-active="${visible ? "false" : "true"}" type="button">${visible ? "Masquer le profil" : "Réactiver le profil"}</button>
+            </div>
+          </article>`;
+      }).join("")
+    : `<p class="muted-copy">Aucun profil trouvé.</p>`;
+}
+
+async function loadModerationReports({ silent = false } = {}) {
+  if (!currentUser() || !hasSupabaseConfig()) {
+    if (moderationCard) moderationCard.hidden = true;
+    return;
+  }
+  try {
+    const query = moderationView === "profiles"
+      ? `?view=profiles&page=${moderationPage}`
+      : `?status=${encodeURIComponent(moderationStatus)}&page=${moderationPage}`;
+    const result = await moderationRequest("GET", null, query);
+    if (moderationCard) moderationCard.hidden = false;
+    if (moderationFilters) moderationFilters.hidden = moderationView !== "reports";
+    moderationHasMore = Boolean(result.has_more);
+    if (moderationPagination) moderationPagination.hidden = moderationPage === 0 && !moderationHasMore;
+    if (moderationPageLabel) moderationPageLabel.textContent = `Page ${moderationPage + 1}`;
+    const previousPageButton = document.querySelector("#moderationPreviousPage");
+    const nextPageButton = document.querySelector("#moderationNextPage");
+    if (previousPageButton) previousPageButton.disabled = moderationPage === 0;
+    if (nextPageButton) nextPageButton.disabled = !moderationHasMore;
+    if (moderationView === "profiles") renderModerationProfiles(result.profiles || []);
+    else renderModerationReports(result.reports || []);
+  } catch (error) {
+    if (error.status === 403 || error.status === 401 || error.code === "moderation_not_configured") {
+      if (moderationCard) moderationCard.hidden = true;
+      return;
+    }
+    if (moderationCard) moderationCard.hidden = false;
+    if (moderationList) moderationList.innerHTML = `<p class="muted-copy">La file de signalements n’a pas pu être chargée. Réessaie dans un instant.</p>`;
+    if (!silent) showToast("Modération indisponible");
   }
 }
 
 function renderSettings() {
   if (profileVisibleToggle) {
     profileVisibleToggle.checked = state.profileVisible;
+  }
+  if (deactivateAccountButton) {
+    deactivateAccountButton.textContent = state.profileVisible ? "Mettre mon profil en pause" : "Réactiver mon profil";
   }
   if (notificationsToggle) {
     notificationsToggle.checked =
@@ -10235,6 +10764,12 @@ messagePhotoInput?.addEventListener("change", () => {
     return;
   }
 
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    showToast("Format photo non accepté. Utilise JPG, PNG ou WebP.");
+    messagePhotoInput.value = "";
+    return;
+  }
+
   if (state.pendingAttachment?.previewUrl) {
     URL.revokeObjectURL(state.pendingAttachment.previewUrl);
   }
@@ -10307,17 +10842,77 @@ notificationsToggle?.addEventListener("change", async (event) => {
   renderSettings();
 });
 testNotificationButton?.addEventListener("click", testNotificationDelivery);
-deactivateAccountButton?.addEventListener("click", () => {
-  if (window.confirm("Désactiver ce compte de test et te déconnecter ?")) {
-    state.profileVisible = false;
-    localStorage.setItem("mbifeProfileVisible", "false");
-    logoutFromSupabase();
-  }
+deactivateAccountButton?.addEventListener("click", toggleProfilePause);
+darkModeToggle?.addEventListener("change", (event) => {
+  applyTheme(event.target.checked ? "dark" : "light");
 });
 blockedList?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-unblock]");
   if (button) {
     unblockProfile(button.dataset.unblock);
+  }
+});
+refreshModerationButton?.addEventListener("click", () => loadModerationReports());
+document.querySelector("#moderationPreviousPage")?.addEventListener("click", () => {
+  if (moderationPage > 0) {
+    moderationPage -= 1;
+    loadModerationReports();
+  }
+});
+document.querySelector("#moderationNextPage")?.addEventListener("click", () => {
+  if (moderationHasMore) {
+    moderationPage += 1;
+    loadModerationReports();
+  }
+});
+moderationCard?.addEventListener("click", async (event) => {
+  const viewButton = event.target.closest("[data-moderation-view]");
+  if (viewButton) {
+    moderationView = viewButton.dataset.moderationView;
+    moderationPage = 0;
+    moderationCard.querySelectorAll("[data-moderation-view]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button === viewButton));
+    });
+    await loadModerationReports();
+    return;
+  }
+  const statusButton = event.target.closest("[data-moderation-status]");
+  if (statusButton) {
+    moderationStatus = statusButton.dataset.moderationStatus;
+    moderationPage = 0;
+    moderationFilters?.querySelectorAll("[data-moderation-status]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button === statusButton));
+    });
+    await loadModerationReports();
+  }
+});
+moderationCard?.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-moderation-action]");
+  if (!button) return;
+  const action = button.dataset.moderationAction;
+  const reportId = button.dataset.reportId;
+  const isVisibilityAction = action === "set_profile_visibility";
+  const isActive = button.dataset.isActive === "true";
+  if (isVisibilityAction || action === "hide_profile") {
+    const prompt = isActive
+      ? "Réactiver ce profil dans la découverte ?"
+      : "Masquer ce profil de la découverte ?";
+    if (!window.confirm(prompt)) return;
+  }
+  button.disabled = true;
+  try {
+    const body = isVisibilityAction
+      ? { action, profile_id: button.dataset.profileId, is_active: isActive }
+      : { report_id: reportId, action };
+    await moderationRequest("POST", body);
+    showToast(isVisibilityAction
+      ? (isActive ? "Profil réactivé" : "Profil masqué")
+      : action === "hide_profile" ? "Profil masqué et signalement traité"
+      : action === "dismiss" ? "Signalement fermé" : action === "review" ? "Signalement pris en charge" : "Action de modération effectuée");
+    await loadModerationReports({ silent: true });
+  } catch {
+    button.disabled = false;
+    showToast("Action impossible. Vérifie ta connexion.");
   }
 });
 onboardingNext?.addEventListener("click", nextOnboardingStep);
@@ -10329,7 +10924,9 @@ profilePhoto.addEventListener("change", () => {
   const file = profilePhoto.files?.[0];
 
   if (file) {
-    profilePreview.src = URL.createObjectURL(file);
+    if (state.profilePhotoPreviewUrl) URL.revokeObjectURL(state.profilePhotoPreviewUrl);
+    state.profilePhotoPreviewUrl = URL.createObjectURL(file);
+    profilePreview.src = state.profilePhotoPreviewUrl;
   }
 });
 authForm.addEventListener("submit", (event) => {
@@ -10421,12 +11018,12 @@ matchGrid?.addEventListener("click", (event) => {
 
 
 document.querySelector("#safeModeButton").addEventListener("click", (event) => {
-  state.safeMode = !state.safeMode;
-  event.currentTarget.setAttribute("aria-pressed", String(state.safeMode));
+  applyRespectMode(!state.safeMode);
   showToast(state.safeMode ? "Mode respect activé" : "Mode respect désactivé");
 });
 
 window.addEventListener("keydown", (event) => {
+  if (state.safeMode || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "")) return;
   if (event.key === "ArrowRight") {
     advanceProfile("like");
   }
@@ -10443,6 +11040,8 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden && currentUser()) syncRemoteData();
 });
 
+applyTheme();
+applyRespectMode();
 renderAll();
 syncMobileNav();
 syncFilterDrawerInputs();
