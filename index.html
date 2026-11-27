@@ -5371,16 +5371,16 @@ html[data-theme="dark"] .profile-editor:hover {
             </div>
           </div>
           <form id="authForm" class="auth-form" data-mode="login">
-            <p class="auth-service-note signup-only">À l’inscription, renseigne tes informations en une seule fois. La photo pourra être ajoutée ensuite.</p>
+            <p class="auth-service-note signup-only">Inscription par Google uniquement pendant les essais e‑mail. Complète tes informations en une fois ; la photo pourra être ajoutée ensuite.</p>
             <label class="auth-field signup-only">
               <span>Nom public</span>
               <input id="authName" name="name" type="text" minlength="2" maxlength="80" autocomplete="name" placeholder="Ex: Aziz" required />
             </label>
-            <label class="auth-field">
+            <label class="auth-field login-only">
               <span>Email</span>
               <input id="authEmail" name="email" type="email" autocomplete="email" placeholder="ton@email.com" />
             </label>
-            <label class="auth-field">
+            <label class="auth-field login-only">
               <span>Mot de passe</span>
               <input id="authPassword" name="password" type="password" autocomplete="current-password" placeholder="6 caractères minimum" />
             </label>
@@ -5428,7 +5428,7 @@ html[data-theme="dark"] .profile-editor:hover {
             </div>
             <button class="google-auth-button" id="googleAuthButton" type="button"><span>G</span> Continuer avec Google</button>
             <div class="auth-secondary-actions">
-              <button class="auth-resend-button signup-only" id="resendEmailButton" type="button">Renvoyer l'email de confirmation</button>
+              <button class="auth-resend-button login-only" id="resendEmailButton" type="button">Renvoyer l'email de confirmation</button>
               <button class="auth-reset-button login-only" id="resetPasswordButton" type="button">Mot de passe oublié</button>
             </div>
             <p class="auth-service-note">Email vérifié et Google sont gérés par Supabase Auth gratuitement pour commencer.</p>
@@ -5609,15 +5609,16 @@ html[data-theme="dark"] .profile-editor:hover {
                 <button data-auth-mode="signup" type="button">Inscription</button>
               </div>
               <div class="auth-form" id="mobileAuthForm" data-mode="login">
+                <p class="auth-service-note signup-only">Inscription par Google uniquement pendant les essais e‑mail. Complète tes informations en une fois ; la photo pourra être ajoutée ensuite.</p>
                 <label class="auth-field signup-only">
                   <span>Nom public</span>
                   <input id="mobileAuthName" type="text" minlength="2" maxlength="80" autocomplete="name" placeholder="Ex: Aziz" required />
                 </label>
-                <label class="auth-field">
+                <label class="auth-field login-only">
                   <span>Email</span>
                   <input id="mobileAuthEmail" type="email" autocomplete="email" placeholder="ton@email.com" />
                 </label>
-                <label class="auth-field">
+                <label class="auth-field login-only">
                   <span>Mot de passe</span>
                   <input id="mobileAuthPassword" type="password" autocomplete="current-password" placeholder="6 caractères minimum" />
                 </label>
@@ -5665,7 +5666,7 @@ html[data-theme="dark"] .profile-editor:hover {
                 </div>
                 <button class="google-auth-button" id="mobileGoogleAuthButton" type="button"><span>G</span> Continuer avec Google</button>
                 <div class="auth-secondary-actions">
-                  <button class="auth-resend-button signup-only" id="mobileResendEmailButton" type="button">Renvoyer l'email de confirmation</button>
+                  <button class="auth-resend-button login-only" id="mobileResendEmailButton" type="button">Renvoyer l'email de confirmation</button>
                   <button class="auth-reset-button login-only" id="mobileResetPasswordButton" type="button">Mot de passe oublié</button>
                 </div>
                 <p class="auth-service-note">Email vérifié et Google sont gérés par Supabase Auth gratuitement pour commencer.</p>
@@ -6041,7 +6042,7 @@ html[data-theme="dark"] .profile-editor:hover {
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>
-const APP_VERSION = "2026-11-27-2";
+const APP_VERSION = "2026-11-27-4";
 
 const profiles = [];
 
@@ -6050,11 +6051,11 @@ const conversations = [];
 const dailyChallenge = {
   title: "Premier message: tu choisis quelle vibe ?",
   copy:
-    "Compare ta réponse avec un ami et vois si vous cherchez la même énergie dans une rencontre.",
+    "Les résultats affichés sont enregistrés sur cet appareil et ne représentent pas encore les votes de toute la communauté.",
   options: [
-    { id: "sincere", label: "Sincère", votes: 68 },
-    { id: "funny", label: "Drôle", votes: 46 },
-    { id: "bold", label: "Direct", votes: 31 },
+    { id: "sincere", label: "Sincère", votes: 0 },
+    { id: "funny", label: "Drôle", votes: 0 },
+    { id: "bold", label: "Direct", votes: 0 },
   ],
 };
 
@@ -6112,11 +6113,11 @@ const state = {
   activeConversation: conversations.length ? conversations[0].id : "",
   shareProfileIndex: 0,
   inviteCode: getStoredInviteCode(),
-  invitesSent: Number(localStorage.getItem("mbifeInvitesSent") || "0"),
-  wingVotes: readStoredJson("mbifeWingVotes", { go: 16, maybe: 7, pass: 3 }),
+  invitesSent: Number(localStorage.getItem("mbifeInviteCopies") || "0"),
+  wingVotes: readStoredJson("mbifeWingVotesV2", { go: 0, maybe: 0, pass: 0 }),
   challengeChoice: localStorage.getItem("mbifeChallengeChoice") || "",
   challengeVotes: readStoredJson(
-    "mbifeChallengeVotes",
+    "mbifeChallengeVotesV2",
     Object.fromEntries(dailyChallenge.options.map((option) => [option.id, option.votes])),
   ),
   supabase: {
@@ -6397,7 +6398,8 @@ function mergeProfileTags(existingTags = [], gender = "", lookingFor = "") {
     .map((tag) => String(tag || "").trim())
     .filter(Boolean)
     .filter((tag) => !tag.startsWith("gender:") && !tag.startsWith("looking_for:"));
-  const base = clean.length ? clean : ["serious", "verified"];
+  const base = clean.filter((tag) => tag !== "verified");
+  if (!base.length) base.push("serious");
   if (gender) base.push(`gender:${gender}`);
   if (lookingFor) base.push(`looking_for:${lookingFor}`);
   return [...new Set(base)];
@@ -6577,6 +6579,16 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function safeImageUrl(value) {
+  const fallback = "/icon-192.png";
+  try {
+    const parsed = new URL(String(value || ""), window.location.origin);
+    return parsed.protocol === "https:" || parsed.origin === window.location.origin ? parsed.href : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 function hasSupabaseConfig() {
@@ -6935,9 +6947,17 @@ function setAuthMode(mode) {
     mobileAuthPassword.autocomplete = nextMode === "signup" ? "new-password" : "current-password";
   }
 
+  if (signupButton) signupButton.hidden = nextMode === "signup";
+  if (loginButton) loginButton.hidden = nextMode === "signup";
+  if (mobileSignupButton) mobileSignupButton.hidden = nextMode === "signup";
+  if (mobileLoginButton) mobileLoginButton.hidden = nextMode === "signup";
+  [googleAuthButton, mobileGoogleAuthButton].filter(Boolean).forEach((button) => {
+    button.innerHTML = `<span>G</span> ${nextMode === "signup" ? "Créer mon compte avec Google" : "Continuer avec Google"}`;
+  });
+
   const message = nextMode === "signup"
-    ? "Renseigne tes informations en une seule fois, puis confirme ton adresse email."
-    : "Connecte-toi pour synchroniser likes, matches et messages.";
+    ? "Crée ton compte avec Google et renseigne ton profil en une seule fois."
+    : "Connecte-toi pour synchroniser tes likes, matches et messages.";
   if (!currentUser()) {
     if (authStatus) authStatus.textContent = message;
     if (mobileAuthStatus) mobileAuthStatus.textContent = message;
@@ -7380,10 +7400,8 @@ function revealSignupForm() {
 }
 
 async function requestSignupWithSupabase() {
-  if (revealSignupForm()) {
-    return;
-  }
-  await signupWithSupabase();
+  setAuthMode("signup");
+  showToast("L’inscription par e-mail est en pause. Utilise Google pour créer ton compte.");
 }
 
 function signupValidationError(fields, { google = false } = {}) {
@@ -7658,11 +7676,10 @@ async function ensureRemoteProfile(displayName) {
         city: "À compléter",
         interests: ["discussion", "respect", "découverte"],
         tags: mergeProfileTags(
-          ["serious", "verified"],
+          ["serious"],
           normalizeGender(authGender?.value || user.user_metadata?.gender || ""),
           normalizeLookingFor(authLookingFor?.value || user.user_metadata?.looking_for || oppositeGender(normalizeGender(authGender?.value || user.user_metadata?.gender || ""))),
         ),
-        compatibility_score: 82,
         is_verified: false,
         is_active: true,
       },
@@ -7718,7 +7735,7 @@ function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url |
     bio: profileBio.value.trim() || "Je découvre mbifê et je cherche une vraie connexion.",
     intent: profileIntent.value.trim() || "Rencontrer quelqu'un avec sincérité et respect.",
     interests: parseList(profileInterests.value || "discussion, respect, découverte"),
-    tags: mergeProfileTags(state.currentProfileRecord?.tags || ["serious", "verified"], gender, lookingFor),
+    tags: mergeProfileTags(state.currentProfileRecord?.tags || ["serious"], gender, lookingFor),
     gender: gender || null,
     looking_for: lookingFor || null,
     ...(validCoordinates(location)
@@ -7729,8 +7746,6 @@ function profileDraftFromForm(photoUrl = state.currentProfileRecord?.photo_url |
         }
       : {}),
     photo_url: photoUrl,
-    compatibility_score: state.currentProfileRecord?.compatibility_score || 84,
-    is_verified: true,
     is_active: true,
   };
 }
@@ -7756,9 +7771,10 @@ function renderProfileForm() {
   profileBio.value = record.bio || "";
   profileIntent.value = record.intent || "";
   profileInterests.value = Array.isArray(record.interests) ? record.interests.join(", ") : "";
-  profilePreview.src =
+  profilePreview.src = safeImageUrl(
     record.photo_url ||
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85";
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85",
+  );
   renderLocationStatus();
 
   const disabled = !hasSupabaseConfig() || !user;
@@ -7962,7 +7978,7 @@ async function saveProfile(event) {
 }
 
 function computeCompatibility(myProfile, theirRow) {
-  if (!myProfile) return { score: 75, traits: [], sharedInterests: [] };
+  if (!myProfile) return { score: 0, traits: [], sharedInterests: [] };
 
   const myInterests = (myProfile.interests || []).map((i) => String(i).toLowerCase().trim());
   const theirInterests = (theirRow.interests || []).map((i) => String(i).toLowerCase().trim());
@@ -8041,12 +8057,12 @@ function normalizeRemoteProfile(row, myProfile) {
     userId: row.user_id,
     gender,
     lookingFor,
-    name: row.display_name || "Membre mbifê",
+    name: row.display_name || "Profil à compléter",
     age: row.age || 24,
     city: row.city || "Ville à compléter",
     distance: distance ?? row.distance_km ?? 0,
     hasApproxLocation: distance !== null,
-    tags: row.tags?.length ? row.tags : ["serious"],
+    tags: row.tags?.length ? row.tags.filter((tag) => tag !== "verified") : ["serious"],
     verified: Boolean(row.is_verified),
     score: compat.score,
     sharedInterests: compat.sharedInterests,
@@ -8080,7 +8096,7 @@ async function loadRemoteProfiles() {
       `/rest/v1/profiles?select=*&or=(is_active.eq.true,is_active.is.null)&order=created_at.desc&limit=40`,
     );
     state.remoteProfiles = (rows || [])
-      .filter((row) => row.user_id !== currentUser().id)
+      .filter((row) => row.user_id !== currentUser().id && String(row.display_name || "").trim().length >= 2)
       .map((row) => normalizeRemoteProfile(row, state.currentProfileRecord));
     state.supabase.connected = true;
     state.supabase.lastError = "";
@@ -8168,7 +8184,7 @@ async function loadIncomingLikes() {
         ...like,
         profile: profilesByUserId[like.liker_user_id] || {
           id: like.liker_user_id,
-          name: "Membre mbifê",
+          name: "Profil indisponible",
           age: "—",
           photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
           city: "",
@@ -8297,7 +8313,7 @@ function renderMessageContent(body) {
   }
 
   const caption = media.caption ? `<span class="media-caption">${escapeHtml(media.caption)}</span>` : "";
-  const url = escapeHtml(media.url);
+  const url = escapeHtml(safeImageUrl(media.url));
 
   if (media.type === "photo") {
     return `<img src="${url}" alt="Photo envoyée dans la conversation" loading="lazy" />${caption}`;
@@ -8605,7 +8621,7 @@ function subscribeLikesRealtime() {
           if (!profile) {
             profile = {
               id: rec.liker_user_id,
-              name: "Membre mbifê",
+              name: "Profil indisponible",
               age: "—",
               photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
               city: "",
@@ -9019,6 +9035,9 @@ function filteredProfiles() {
     return availableProfiles;
   }
 
+  if (state.activeFilter === "verified") {
+    return availableProfiles.filter((profile) => profile.verified);
+  }
   return availableProfiles.filter((profile) => profile.tags.includes(state.activeFilter));
 }
 
@@ -9075,32 +9094,29 @@ function renderProfile() {
   }
 
   const profile = currentProfile();
-  const isCompleteProfile = Boolean(
-    profile.verified ||
-      (profile.photo && profile.bio && profile.intent && profile.interests?.length >= 2),
-  );
+  const isEmailVerified = Boolean(profile.verified);
   profileCard.innerHTML = `
-    <img class="profile-photo" src="${profile.photo}" alt="Portrait de ${profile.name}" />
+    <img class="profile-photo" src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
     <div class="photo-wash"></div>
     <div class="swipe-overlay like">LIKE</div>
     <div class="swipe-overlay nope">NOPE</div>
-    <div class="compatibility-orb" style="--score-deg:${profile.score * 3.6}deg">${profile.score}%</div>
+    <div class="compatibility-orb" style="--score-deg:${profile.score * 3.6}deg" title="Indice indicatif calculé à partir des profils, pas une garantie">${profile.score}%</div>
     <div class="profile-content">
       <div class="profile-title">
-        <h2>${profile.name}, ${profile.age}</h2>
+        <h2>${escapeHtml(profile.name)}, ${escapeHtml(profile.age)}</h2>
       </div>
       <div class="profile-meta-row">
-        <span class="distance">⌖ ${profile.city} • ${profile.hasApproxLocation ? "~" : ""}${profile.distance} km</span>
-        ${isCompleteProfile ? '<span class="badge verified">✓ Vérifié</span>' : ""}
+        <span class="distance">⌖ ${escapeHtml(profile.city)} • ${profile.hasApproxLocation ? "~" : ""}${escapeHtml(profile.distance)} km</span>
+        ${isEmailVerified ? '<span class="badge verified" title="Adresse e-mail confirmée">✓ E-mail vérifié</span>' : ""}
         ${profileBackendBadge(profile)}
       </div>
-      <p class="profile-bio">${profile.bio}</p>
+      <p class="profile-bio">${escapeHtml(profile.bio)}</p>
       <div class="interest-row">
-        ${profile.interests.map((interest) => `<span class="interest">${interest}</span>`).join("")}
+        ${profile.interests.map((interest) => `<span class="interest">${escapeHtml(interest)}</span>`).join("")}
       </div>
       <div class="intent-card">
         <span>Intention</span>
-        <strong>${profile.intent}</strong>
+        <strong>${escapeHtml(profile.intent)}</strong>
       </div>
     </div>
   `;
@@ -9110,7 +9126,7 @@ function renderProfile() {
 }
 
 function renderInsights(profile) {
-  insightName.textContent = "Signal mbifê";
+  insightName.textContent = "Indice indicatif";
   scoreValue.textContent = `${profile.score}%`;
 
   const deg = profile.score * 3.6;
@@ -9396,13 +9412,13 @@ function renderMatches() {
           const label = like.action === "spark" ? "t'a envoyé un Super like" : "a aimé ton profil";
           return `
             <article class="like-request-card">
-              <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+              <img src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
               <div class="like-request-body">
-                <strong>${profile.name}, ${profile.age}</strong>
+                <strong>${escapeHtml(profile.name)}, ${escapeHtml(profile.age)}</strong>
                 <p>${label}. Accepte pour créer le match et ouvrir la messagerie.</p>
                 <div class="like-request-actions">
-                  <button class="accept-like-button" data-like-id="${like.id}" type="button">Accepter</button>
-                  <button class="decline-like-button" data-like-id="${like.id}" type="button">Refuser</button>
+                  <button class="accept-like-button" data-like-id="${escapeHtml(like.id)}" type="button">Accepter</button>
+                  <button class="decline-like-button" data-like-id="${escapeHtml(like.id)}" type="button">Refuser</button>
                 </div>
               </div>
             </article>
@@ -9420,9 +9436,9 @@ function renderMatches() {
   const newestMatches = matchedProfiles.slice(0, 8)
     .map(
       (profile) => `
-        <button class="new-match" type="button" data-open-match="${profile.id}">
-          <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
-          <small>${profile.name}</small>
+        <button class="new-match" type="button" data-open-match="${escapeHtml(profile.id)}">
+          <img src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
+          <small>${escapeHtml(profile.name)}</small>
         </button>
       `,
     )
@@ -9432,10 +9448,10 @@ function renderMatches() {
     .map(
       (profile) => `
         <article class="mini-card">
-          <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+          <img src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
           <div>
-            <strong>${profile.name}, ${profile.age}</strong>
-            <span>${profile.score}% compatible · ${profile.city}</span>
+            <strong>${escapeHtml(profile.name)}, ${escapeHtml(profile.age)}</strong>
+            <span>${escapeHtml(profile.score)}% compatible · ${escapeHtml(profile.city)}</span>
           </div>
         </article>
       `,
@@ -9459,8 +9475,8 @@ function renderDateIdeas(profile = currentProfile()) {
     .map(
       ([title, description]) => `
         <div class="date-option">
-          <strong>${title}</strong>
-          <span>${description}</span>
+          <strong>${escapeHtml(title)}</strong>
+          <span>${escapeHtml(description)}</span>
         </div>
       `,
     )
@@ -9484,12 +9500,17 @@ function shareProfile() {
 }
 
 function buildShareText(profile) {
-  return `J'ai ${profile.score}% de compatibilité avec ${profile.name} sur mbifê. Mon code VIP : ${state.inviteCode}. Tu testes ton signal et le défi du jour ?`;
+  return `Mon indice indicatif mbifê est de ${profile.score}% avec ${profile.name}. Mon code mbifê : ${state.inviteCode}.`;
 }
 
 /* ── ANNONCES ─────────────────────────────────────────────── */
 // State for annonces (local + remote)
 state.annonces = readStoredJson("mbifeAnnonces", []);
+state.annonces = state.annonces.filter((ann) =>
+  !String(ann.id || "").startsWith("local-") ||
+  Boolean(ann.pending_sync && ann.author_id),
+);
+localStorage.setItem("mbifeAnnonces", JSON.stringify(state.annonces.slice(0, 80)));
 state.annonceLikes = readStoredJson("mbifeAnnonceLikes", {});
 state.annoncesRealtimeChannel = null;
 
@@ -9501,7 +9522,9 @@ function renderViralLab() {
 }
 
 function timeAgo(iso) {
-  const delta = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  const timestamp = new Date(iso).getTime();
+  if (!Number.isFinite(timestamp)) return "récemment";
+  const delta = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
   if (delta < 60) return "à l'instant";
   if (delta < 3600) return `il y a ${Math.floor(delta / 60)} min`;
   if (delta < 86400) return `il y a ${Math.floor(delta / 3600)} h`;
@@ -9512,12 +9535,15 @@ function renderAnnoncesFeed() {
   const feed = document.querySelector("#annoncesFeed");
   if (!feed) return;
 
-  if (!state.annonces.length) {
+  const visibleAnnonces = state.annonces.filter((ann) =>
+    !ann.pending_sync || (ann.author_id && ann.author_id === currentUser()?.id),
+  );
+  if (!visibleAnnonces.length) {
     feed.innerHTML = `<div class="annonces-empty">Aucune annonce pour l'instant.<br>Sois le premier à publier quelque chose !</div>`;
     return;
   }
 
-  feed.innerHTML = state.annonces
+  feed.innerHTML = visibleAnnonces
     .slice()
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .map((ann) => {
@@ -9525,9 +9551,9 @@ function renderAnnoncesFeed() {
       const likeCount = ann.like_count || 0;
       const isAnon = ann.anonymous;
       const authorName = isAnon ? "Anonyme" : escapeHtml(ann.author_name || "Utilisateur");
-      const initial = isAnon ? "?" : (ann.author_name || "U").slice(0, 1).toUpperCase();
+      const initial = escapeHtml(isAnon ? "?" : (ann.author_name || "U").slice(0, 1).toUpperCase());
       const avatarHtml = ann.author_photo && !isAnon
-        ? `<img class="annonce-avatar" src="${escapeHtml(ann.author_photo)}" alt="${authorName}" onerror="this.outerHTML='<div class=\\"annonce-avatar\\">${initial}</div>'" />`
+        ? `<img class="annonce-avatar" src="${escapeHtml(safeImageUrl(ann.author_photo))}" alt="${authorName}" data-annonce-avatar /><div class="annonce-avatar" hidden>${initial}</div>`
         : `<div class="annonce-avatar">${initial}</div>`;
       const canReply = !isAnon && ann.author_id && ann.author_id !== currentUser()?.id;
       const syncBadge = ann.pending_sync ? `<span class="annonce-sync-badge">en attente de synchro</span>` : "";
@@ -9544,7 +9570,7 @@ function renderAnnoncesFeed() {
           </div>
           <p class="annonce-body">${escapeHtml(ann.body)}</p>
           <div class="annonce-footer">
-            <button class="annonce-like-btn${liked ? " liked" : ""}" data-annonce-like="${escapeHtml(ann.id)}" type="button">
+            <button class="annonce-like-btn${liked ? " liked" : ""}" data-annonce-like="${escapeHtml(ann.id)}" type="button" ${ann.pending_sync ? "disabled title=\"Disponible après synchronisation\"" : ""}>
               ♥ ${likeCount > 0 ? likeCount : "J'aime"}
             </button>
             ${canReply ? `<button class="annonce-reply-btn" data-annonce-reply="${escapeHtml(ann.id)}" data-author-id="${escapeHtml(ann.author_id)}" type="button">Demander à discuter</button>` : ""}
@@ -9553,6 +9579,13 @@ function renderAnnoncesFeed() {
       `;
     })
     .join("");
+
+  feed.querySelectorAll("[data-annonce-avatar]").forEach((image) => {
+    image.addEventListener("error", () => {
+      image.hidden = true;
+      if (image.nextElementSibling) image.nextElementSibling.hidden = false;
+    }, { once: true });
+  });
 }
 
 async function submitAnnonce() {
@@ -9566,6 +9599,10 @@ async function submitAnnonce() {
   }
 
   const user = currentUser();
+  if (!user || !hasSupabaseConfig()) {
+    showToast("Connecte-toi pour publier une annonce visible par la communauté.");
+    return;
+  }
   const anonymous = anonCheck?.checked || false;
   const now = new Date().toISOString();
 
@@ -9581,28 +9618,30 @@ async function submitAnnonce() {
   };
 
   // Try to save to Supabase first
-  if (hasSupabaseConfig() && user) {
-    try {
-      const result = await supabaseJson("/rest/v1/annonces", {
-        method: "POST",
-        prefer: "return=representation",
-        body: {
-          body: newAnn.body,
-          anonymous,
-          author_id: anonymous ? null : user.id,
-          author_name: newAnn.author_name,
-          author_photo: newAnn.author_photo,
-        },
-      });
-      if (result?.[0]) {
-        newAnn.id = result[0].id;
-        newAnn.like_count = result[0].like_count || 0;
-      }
-    } catch (err) {
-      // Fall through to local save — show note but continue
+  let publishedRemotely = false;
+  try {
+    const result = await supabaseJson("/rest/v1/annonces", {
+      method: "POST",
+      prefer: "return=representation",
+      body: {
+        body: newAnn.body,
+        anonymous,
+        author_id: anonymous ? null : user.id,
+        author_name: newAnn.author_name,
+        author_photo: newAnn.author_photo,
+      },
+    });
+    if (result?.[0]) {
+      newAnn.id = result[0].id;
+      newAnn.like_count = result[0].like_count || 0;
+      publishedRemotely = true;
+    } else {
       newAnn.pending_sync = true;
-      showToast("Annonce enregistrée localement (Supabase non disponible)");
     }
+  } catch (error) {
+    newAnn.pending_sync = true;
+    state.supabase.lastError = error.message;
+    renderSupabaseStatus();
   }
 
   state.annonces.unshift(newAnn);
@@ -9613,7 +9652,7 @@ async function submitAnnonce() {
   if (charCount) charCount.textContent = "0";
 
   renderViralLab();
-  showToast("Annonce publiée !");
+  showToast(publishedRemotely ? "Annonce publiée pour la communauté" : "Annonce gardée sur cet appareil, en attente de synchronisation");
 }
 
 async function toggleAnnonceLike(annonceId) {
@@ -9621,7 +9660,17 @@ async function toggleAnnonceLike(annonceId) {
   if (idx === -1) return;
 
   const ann = state.annonces[idx];
+  if (ann.pending_sync) {
+    showToast("Attends que l'annonce soit synchronisée pour la liker.");
+    return;
+  }
+  const isRemoteAnnonce = !annonceId.startsWith("local-");
+  if (isRemoteAnnonce && (!currentUser() || !hasSupabaseConfig())) {
+    showToast("Connecte-toi pour aimer cette annonce.");
+    return;
+  }
   const alreadyLiked = !!state.annonceLikes[annonceId];
+  const previousLikeCount = Number(ann.like_count || 0);
 
   if (alreadyLiked) {
     state.annonceLikes[annonceId] = false;
@@ -9635,7 +9684,7 @@ async function toggleAnnonceLike(annonceId) {
   localStorage.setItem("mbifeAnnonces", JSON.stringify(state.annonces));
 
   // Try Supabase like
-  if (hasSupabaseConfig() && currentUser() && !annonceId.startsWith("local-")) {
+  if (isRemoteAnnonce) {
     try {
       if (alreadyLiked) {
         await supabaseFetch(`/rest/v1/annonce_likes?annonce_id=eq.${encodeURIComponent(annonceId)}&user_id=eq.${encodeURIComponent(currentUser().id)}`, {
@@ -9648,8 +9697,14 @@ async function toggleAnnonceLike(annonceId) {
           body: { annonce_id: annonceId, user_id: currentUser().id },
         });
       }
-    } catch {
-      // silent — UI already updated
+    } catch (error) {
+      state.annonceLikes[annonceId] = alreadyLiked;
+      ann.like_count = previousLikeCount;
+      localStorage.setItem("mbifeAnnonceLikes", JSON.stringify(state.annonceLikes));
+      localStorage.setItem("mbifeAnnonces", JSON.stringify(state.annonces));
+      state.supabase.lastError = error.message;
+      renderSupabaseStatus();
+      showToast("J’aime non enregistré. Réessaie quand la connexion sera rétablie.");
     }
   }
 
@@ -9710,7 +9765,7 @@ async function syncPendingAnnonces() {
   const user = currentUser();
   if (!hasSupabaseConfig() || !user) return;
 
-  const pending = state.annonces.filter((ann) => ann.pending_sync);
+  const pending = state.annonces.filter((ann) => ann.pending_sync && ann.author_id === user.id);
   if (!pending.length) return;
 
   let changed = false;
@@ -9808,7 +9863,7 @@ function renderInviteProgress() {
   if (!inviteProgressText || !inviteProgressBar) return;
   const target = 5;
   const progress = Math.min(100, (state.invitesSent / target) * 100);
-  inviteProgressText.textContent = `${state.invitesSent} invitation${state.invitesSent > 1 ? "s" : ""} envoyée${state.invitesSent > 1 ? "s" : ""} / ${target}`;
+  inviteProgressText.textContent = `${state.invitesSent} partage${state.invitesSent > 1 ? "s" : ""} copié${state.invitesSent > 1 ? "s" : ""} / ${target}`;
   inviteProgressBar.style.width = `${progress}%`;
 }
 
@@ -9821,7 +9876,7 @@ function renderWingVotes() {
   };
   const total = Object.values(state.wingVotes).reduce((sum, value) => sum + value, 0) || 1;
 
-  voteList.innerHTML = Object.entries(labels)
+  voteList.innerHTML = `<p class="muted-copy">Résultats enregistrés sur cet appareil uniquement.</p>${Object.entries(labels)
     .map(([key, label]) => {
       const votes = state.wingVotes[key] || 0;
       const percent = Math.round((votes / total) * 100);
@@ -9833,7 +9888,7 @@ function renderWingVotes() {
         </div>
       `;
     })
-    .join("");
+    .join("")}`;
 }
 
 function renderChallenge() {
@@ -9847,9 +9902,9 @@ function renderChallenge() {
       const percent = Math.round((votes / total) * 100);
       const selected = state.challengeChoice === option.id ? "selected" : "";
 
-      return `<button class="${selected}" data-option="${option.id}" type="button">${option.label} · ${percent}%</button>`;
+      return `<button class="${selected}" data-option="${escapeHtml(option.id)}" type="button">${escapeHtml(option.label)} · ${percent}%</button>`;
     })
-    .join("");
+    .join("") + `<p class="muted-copy">Ces pourcentages sont locaux à cet appareil.</p>`;
 }
 
 function drawShareCanvas(profile) {
@@ -9888,7 +9943,7 @@ function drawShareCanvas(profile) {
   ctx.fillText(`${profile.name}, ${profile.age}`, 292, 270);
   ctx.font = "800 26px DM Sans, system-ui, sans-serif";
   ctx.fillStyle = "#e6536a";
-  ctx.fillText(`${profile.score}% compatible`, 294, 314);
+  ctx.fillText(`${profile.score}% indicatif`, 294, 314);
   ctx.fillStyle = "#696675";
   ctx.font = "700 24px DM Sans, system-ui, sans-serif";
   ctx.fillText(`${profile.city} · ${profile.distance} km`, 294, 354);
@@ -9947,12 +10002,14 @@ async function copyToClipboard(text, successMessage) {
   try {
     await navigator.clipboard.writeText(text);
     showToast(successMessage);
+    return true;
   } catch {
     shareText.value = text;
     shareText.focus();
     shareText.select();
-    document.execCommand("copy");
-    showToast(successMessage);
+    const copied = document.execCommand("copy");
+    showToast(copied ? successMessage : "Copie impossible dans ce navigateur");
+    return copied;
   }
 }
 
@@ -9991,17 +10048,18 @@ function downloadShareCard() {
   });
 }
 
-function copyInvite() {
-  state.invitesSent += 1;
-  localStorage.setItem("mbifeInvitesSent", String(state.invitesSent));
-  renderInviteProgress();
-  copyToClipboard(
+async function copyInvite() {
+  const copied = await copyToClipboard(
     `Rejoins mbifê avec mon code ${state.inviteCode}. On compare nos signaux de compatibilité.`,
     "Invitation copiée",
   );
+  if (!copied) return;
+  state.invitesSent += 1;
+  localStorage.setItem("mbifeInviteCopies", String(state.invitesSent));
+  renderInviteProgress();
   recordRemoteEvent("invite_copied", {
     code: state.inviteCode,
-    invites_sent: state.invitesSent,
+    copies: state.invitesSent,
   });
 
   const user = currentUser();
@@ -10013,7 +10071,6 @@ function copyInvite() {
         {
           owner_user_id: user.id,
           code: state.inviteCode,
-          uses_count: state.invitesSent,
         },
       ],
     }).catch((error) => {
@@ -10026,7 +10083,7 @@ function copyInvite() {
 function voteWing(choice) {
   const profile = currentProfile();
   state.wingVotes[choice] = (state.wingVotes[choice] || 0) + 1;
-  localStorage.setItem("mbifeWingVotes", JSON.stringify(state.wingVotes));
+  localStorage.setItem("mbifeWingVotesV2", JSON.stringify(state.wingVotes));
   renderWingVotes();
   showToast("Vote ami ajouté");
   recordRemoteEvent("wing_vote", {
@@ -10058,7 +10115,7 @@ function chooseChallenge(optionId) {
     state.challengeVotes[optionId] = (state.challengeVotes[optionId] || 0) + 1;
     state.challengeChoice = optionId;
     localStorage.setItem("mbifeChallengeChoice", optionId);
-    localStorage.setItem("mbifeChallengeVotes", JSON.stringify(state.challengeVotes));
+    localStorage.setItem("mbifeChallengeVotesV2", JSON.stringify(state.challengeVotes));
   }
 
   renderChallenge();
@@ -10103,7 +10160,7 @@ function renderMessageRow({ side, body, createdAt, avatar, name }) {
   const isMe = side === "me";
   return `
     <div class="message-row ${isMe ? "me" : "them"}">
-      ${isMe ? "" : `<img class="message-avatar" src="${avatar}" alt="Portrait de ${name || "match"}" />`}
+      ${isMe ? "" : `<img class="message-avatar" src="${escapeHtml(safeImageUrl(avatar))}" alt="Portrait de ${escapeHtml(name || "match")}" />`}
       <div class="bubble-wrap">
         <div class="bubble ${isMe ? "me" : "them"}">${renderMessageContent(body)}</div>
         <time class="message-time">${formatMessageTime(createdAt)}</time>
@@ -10135,10 +10192,10 @@ function renderConversations() {
     const unread = state.unreadThreads[match.id] || 0;
 
     return `
-      <button class="conversation ${active} ${unread ? "has-unread" : ""}" data-conversation="remote:${match.id}" type="button">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+      <button class="conversation ${active} ${unread ? "has-unread" : ""}" data-conversation="remote:${escapeHtml(match.id)}" type="button">
+        <img src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
         <span>
-          <strong>${profile.name}</strong>
+          <strong>${escapeHtml(profile.name)}</strong>
           <span class="conversation-preview">
             <em>${escapeHtml(lastMessage)}</em>
             ${unread ? `<b class="unread-badge">${unread}</b>` : ""}
@@ -10157,11 +10214,11 @@ function renderConversations() {
     const active = conversation.id === state.activeConversation ? "active" : "";
 
     return `
-      <button class="conversation ${active}" data-conversation="${conversation.id}" type="button">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+      <button class="conversation ${active}" data-conversation="${escapeHtml(conversation.id)}" type="button">
+        <img src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
         <span>
-          <strong>${profile.name}</strong>
-          <span>${lastMessage}</span>
+          <strong>${escapeHtml(profile.name)}</strong>
+          <span>${escapeHtml(lastMessage)}</span>
         </span>
       </button>
     `;
@@ -10189,10 +10246,10 @@ function renderChat() {
     chatHeader.innerHTML = `
       <button class="chat-back-button" id="chatBackButton" type="button" aria-label="Retour aux messages">Retour</button>
       <div class="chat-person">
-        <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+        <img src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
         <div>
-          <strong>${profile.name}</strong>
-          <p>${profile.intent}</p>
+          <strong>${escapeHtml(profile.name)}</strong>
+          <p>${escapeHtml(profile.intent)}</p>
         </div>
       </div>
       <span class="chat-status">Match privé</span>
@@ -10232,10 +10289,10 @@ function renderChat() {
   chatHeader.innerHTML = `
     <button class="chat-back-button" id="chatBackButton" type="button" aria-label="Retour aux messages">Retour</button>
     <div class="chat-person">
-      <img src="${profile.photo}" alt="Portrait de ${profile.name}" />
+      <img src="${escapeHtml(safeImageUrl(profile.photo))}" alt="Portrait de ${escapeHtml(profile.name)}" />
       <div>
-        <strong>${profile.name}</strong>
-        <p>${profile.intent}</p>
+        <strong>${escapeHtml(profile.name)}</strong>
+        <p>${escapeHtml(profile.intent)}</p>
       </div>
     </div>
     <span class="chat-status">Démo</span>
