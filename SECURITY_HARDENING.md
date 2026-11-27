@@ -12,14 +12,14 @@ The migration intentionally invalidates any outstanding email codes. Users can r
 
 Add a private random `VERIFICATION_CODE_PEPPER` secret (at least 32 random bytes) and set `MODERATOR_USER_IDS` to the comma-separated Supabase Auth user IDs of trusted moderators. Keep these values, `SUPABASE_SERVICE_ROLE_KEY`, and `RESEND_API_KEY` in Supabase secrets only; none belongs in browser code. To find a moderator's ID, run `select id, email from auth.users;` in the SQL editor and copy only the intended account ID into the secret.
 
-Publish this repository's updated branch first: the function changes are currently local and are not yet in GitHub. Then deploy `send-verification-code` and `verify-code` with JWT verification disabled because signup and email confirmation happen before a user session exists. Deploy `moderation` with JWT verification enabled; it also checks the signed-in user against `MODERATOR_USER_IDS`.
+The updated code is already pushed to the GitHub branch `security/verification-hardening`. To publish the visual and app changes, merge that branch into the branch used by your hosting service. The Edge Functions can be deployed from this checked-out branch. Deploy `send-verification-code` and `verify-code` with JWT verification disabled because signup and email confirmation happen before a user session exists. Deploy `moderation` with JWT verification enabled; it also checks the signed-in user against `MODERATOR_USER_IDS`.
 
 Example deployment commands from the repository folder:
 
 ```bash
-supabase functions deploy send-verification-code --no-verify-jwt --project-ref mmsrozfrrzyyxwpebnxb
-supabase functions deploy verify-code --no-verify-jwt --project-ref mmsrozfrrzyyxwpebnxb
-supabase functions deploy moderation --project-ref mmsrozfrrzyyxwpebnxb
+npx supabase@latest functions deploy send-verification-code --no-verify-jwt --project-ref mmsrozfrrzyyxwpebnxb
+npx supabase@latest functions deploy verify-code --no-verify-jwt --project-ref mmsrozfrrzyyxwpebnxb
+npx supabase@latest functions deploy moderation --project-ref mmsrozfrrzyyxwpebnxb
 ```
 
 ## 3. Review the live Row Level Security policies
