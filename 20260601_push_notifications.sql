@@ -103,7 +103,7 @@ begin
 end;
 $$;
 
-grant execute on function public.enqueue_notification(uuid, text, text, text, uuid, jsonb) to authenticated;
+revoke all on function public.enqueue_notification(uuid, text, text, text, uuid, jsonb) from public, anon, authenticated;
 
 create extension if not exists pg_net with schema extensions;
 
@@ -128,7 +128,7 @@ begin
     return new;
   end if;
 
-  perform extensions.net.http_post(
+  perform net.http_post(
     url := v_url || '/functions/v1/send-push',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',

@@ -88,6 +88,11 @@ begin
       using errcode = '22023';
   end if;
 
+  if char_length(p_body) > 5000 then
+    raise exception 'Message is too long.'
+      using errcode = '22001';
+  end if;
+
   select *
   into v_match
   from public.matches

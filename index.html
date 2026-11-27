@@ -5735,7 +5735,7 @@ html[data-theme="dark"] .profile-editor:hover {
               </div>
               <div class="composer-main">
                 <div class="attachment-preview" id="attachmentPreview" hidden></div>
-                <input id="messageInput" name="message" type="text" autocomplete="off" placeholder="Écris une réponse simple..." />
+                <input id="messageInput" name="message" type="text" maxlength="4000" autocomplete="off" placeholder="Écris une réponse simple..." />
               </div>
               <button class="send-button" type="submit">Envoyer</button>
               <input id="messagePhotoInput" name="messagePhoto" type="file" accept="image/png,image/jpeg,image/webp" hidden />
@@ -8305,7 +8305,82 @@ function messagePreview(body) {
   return String(body || "");
 }
 
-function renderMessageContent(body) {
+function parseChatMediaReference(value) {
+  const raw = String(value || "");
+  let bucket = "";
+  let objectPath = "";
+
+  if (/^https:\/\//i.test(raw)) {
+    try {
+      const parsed = new URL(raw);
+      if (parsed.origin !== new URL(supabaseConfig.url).origin) return null;
+      const match = parsed.pathname.match(/^\/storage\/v1\/object\/(?:public|authenticated)\/(chat-images|chat-audio)\/(.+)$/);
+      if (!match) return null;
+      bucket = match[1];
+      objectPath = match[2].split("/").map((part) => decodeURIComponent(part)).join("/");
+    } catch {
+      return null;
+    }
+  } else {
+    const match = raw.match(/^(chat-images|chat-audio)\/(.+)$/);
+    if (!match) return null;
+    bucket = match[1];
+    objectPath = match[2];
+  }
+
+  const pathMatch = objectPath.match(/^([0-9a-f-]{36})\/(?:([0-9a-f-]{36})\/)?\d+-(photo|voice)\.(jpg|jpeg|png|webp|webm|ogg|mp3|m4a|wav)$/i);
+  if (!pathMatch || (bucket === "chat-images") !== (pathMatch[3] === "photo")) return null;
+  return { bucket, objectPath };
+}
+
+async function signedChatMediaUrl(bucket, objectPath) {
+  if (!currentUser() || !currentToken()) throw new Error("Connexion requise");
+  const encodedPath = objectPath.split("/").map(encodeURIComponent).join("/");
+  const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/sign/${bucket}/${encodedPath}`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      apikey: supabaseConfig.anonKey,
+      Authorization: `Bearer ${currentToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ expiresIn: 600 }),
+  });
+  if (!response.ok) throw new Error(`Média privé indisponible (${response.status})`);
+  const payload = await response.json();
+  const rawSignedUrl = String(payload.signedURL || payload.signedUrl || "");
+  const signedUrl = /^https:\/\//i.test(rawSignedUrl)
+    ? new URL(rawSignedUrl)
+    : new URL(`${supabaseConfig.url.replace(/\/$/, "")}/storage/v1${rawSignedUrl.startsWith("/") ? rawSignedUrl : `/${rawSignedUrl}`}`);
+  if (signedUrl.origin !== new URL(supabaseConfig.url).origin || !signedUrl.pathname.includes("/storage/v1/object/sign/")) {
+    throw new Error("URL de média invalide");
+  }
+  return signedUrl.href;
+}
+
+async function hydrateChatMedia(root = chatThread) {
+  if (!root) return;
+  const placeholders = [...root.querySelectorAll("[data-chat-media-bucket][data-chat-media-path]")];
+  await Promise.all(placeholders.map(async (placeholder) => {
+    try {
+      const src = await signedChatMediaUrl(placeholder.dataset.chatMediaBucket, placeholder.dataset.chatMediaPath);
+      if (!placeholder.isConnected) return;
+      const media = document.createElement(placeholder.dataset.chatMediaType === "photo" ? "img" : "audio");
+      media.src = src;
+      if (media.tagName === "IMG") {
+        media.alt = "Photo envoyée dans la conversation";
+        media.loading = "lazy";
+      } else {
+        media.controls = true;
+      }
+      placeholder.replaceWith(media);
+    } catch {
+      if (placeholder.isConnected) placeholder.textContent = "Média privé inaccessible.";
+    }
+  }));
+}
+
+function renderMessageContent(body, { allowBlob = false } = {}) {
   const media = parseMessageMedia(body);
 
   if (!media) {
@@ -8313,13 +8388,16 @@ function renderMessageContent(body) {
   }
 
   const caption = media.caption ? `<span class="media-caption">${escapeHtml(media.caption)}</span>` : "";
-  const url = escapeHtml(safeImageUrl(media.url));
-
-  if (media.type === "photo") {
-    return `<img src="${url}" alt="Photo envoyée dans la conversation" loading="lazy" />${caption}`;
+  if (allowBlob && /^blob:https?:\/\//i.test(media.url)) {
+    const url = escapeHtml(media.url);
+    return media.type === "photo"
+      ? `<img src="${url}" alt="Photo envoyée dans la conversation" loading="lazy" />${caption}`
+      : `<audio controls src="${url}"></audio>${caption}`;
   }
 
-  return `<audio controls src="${url}"></audio>${caption}`;
+  const reference = parseChatMediaReference(media.url);
+  if (!reference) return `<span class="muted-copy">Média privé inaccessible.</span>${caption}`;
+  return `<span class="chat-media-loading" data-chat-media-type="${media.type}" data-chat-media-bucket="${reference.bucket}" data-chat-media-path="${escapeHtml(reference.objectPath)}">Chargement du média…</span>${caption}`;
 }
 
 function mediaMessageBody(type, url, caption = "") {
@@ -8715,10 +8793,10 @@ function clearPendingAttachment() {
   updateAttachmentPreview();
 }
 
-async function uploadMessageAttachment(attachment) {
+async function uploadMessageAttachment(attachment, matchId) {
   const user = currentUser();
 
-  if (!attachment?.file || !user || !currentToken()) {
+  if (!attachment?.file || !user || !currentToken() || !matchId) {
     throw new Error("Connexion requise pour envoyer un média.");
   }
 
@@ -8731,7 +8809,7 @@ async function uploadMessageAttachment(attachment) {
   const extension = originalName.split(".").pop()?.toLowerCase() || (attachment.type === "voice" ? "webm" : "jpg");
   const allowed = attachment.type === "voice" ? ["webm", "ogg", "mp3", "m4a", "wav"] : ["jpg", "jpeg", "png", "webp"];
   const safeExtension = allowed.includes(extension) ? extension : allowed[0];
-  const storagePath = `${user.id}/${Date.now()}-${attachment.type}.${safeExtension}`;
+  const storagePath = `${user.id}/${matchId}/${Date.now()}-${attachment.type}.${safeExtension}`;
   const endpoint = `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/${bucketName}/${storagePath}`;
   const response = await fetch(endpoint, {
     method: "POST",
@@ -8749,15 +8827,15 @@ async function uploadMessageAttachment(attachment) {
     throw new Error(`${bucketName} ${response.status}: ${text.slice(0, 180)}`);
   }
 
-  return `${supabaseConfig.url.replace(/\/$/, "")}/storage/v1/object/public/${bucketName}/${storagePath}`;
+  return `${bucketName}/${storagePath}`;
 }
 
-async function buildOutgoingMessageBody(text, attachment, isRemote) {
+async function buildOutgoingMessageBody(text, attachment, matchId = null) {
   if (!attachment) {
     return text;
   }
 
-  const mediaUrl = isRemote ? await uploadMessageAttachment(attachment) : attachment.previewUrl;
+  const mediaUrl = matchId ? await uploadMessageAttachment(attachment, matchId) : attachment.previewUrl;
   return mediaMessageBody(attachment.type, mediaUrl, text);
 }
 
@@ -10156,13 +10234,13 @@ function formatMessageTime(value) {
   }
 }
 
-function renderMessageRow({ side, body, createdAt, avatar, name }) {
+function renderMessageRow({ side, body, createdAt, avatar, name, allowBlob = false }) {
   const isMe = side === "me";
   return `
     <div class="message-row ${isMe ? "me" : "them"}">
       ${isMe ? "" : `<img class="message-avatar" src="${escapeHtml(safeImageUrl(avatar))}" alt="Portrait de ${escapeHtml(name || "match")}" />`}
       <div class="bubble-wrap">
-        <div class="bubble ${isMe ? "me" : "them"}">${renderMessageContent(body)}</div>
+      <div class="bubble ${isMe ? "me" : "them"}">${renderMessageContent(body, { allowBlob })}</div>
         <time class="message-time">${formatMessageTime(createdAt)}</time>
       </div>
     </div>
@@ -10274,6 +10352,7 @@ function renderChat() {
           avatar: profile.photo,
           name: profile.name,
         });
+    hydrateChatMedia(chatThread);
     chatThread.scrollTop = chatThread.scrollHeight;
     document.querySelector("#chatBackButton")?.addEventListener("click", closeChatView);
     return;
@@ -10305,6 +10384,7 @@ function renderChat() {
         createdAt: "",
         avatar: profile.photo,
         name: profile.name,
+        allowBlob: true,
       }),
     )
     .join("");
@@ -10336,7 +10416,7 @@ async function submitMessage(event) {
     }
 
     try {
-      const body = await buildOutgoingMessageBody(value, attachment, true);
+      const body = await buildOutgoingMessageBody(value, attachment, matchId);
       await sendRemoteMessage(matchId, body);
       state.messageCooldownUntil = Date.now() + 5000;
       messageInput.value = "";
@@ -10361,7 +10441,7 @@ async function submitMessage(event) {
   if (!conversation) {
     return;
   }
-  const body = await buildOutgoingMessageBody(value, attachment, false);
+  const body = await buildOutgoingMessageBody(value, attachment);
   conversation.messages.push(["me", body]);
   messageInput.value = "";
   clearPendingAttachment();

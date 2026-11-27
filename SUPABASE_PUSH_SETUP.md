@@ -10,11 +10,17 @@ Dans Supabase SQL Editor, exécute:
 -- contenu de supabase/migrations/20260601_push_notifications.sql
 ```
 
-Puis remplace et exécute ces lignes avec ton URL Supabase et ta service role key:
+Puis configure uniquement l'URL du projet dans PostgreSQL. Ne stocke pas la service role key dans un paramètre PostgreSQL:
 
 ```sql
 alter database postgres set app.settings.supabase_url = 'https://TON-PROJET.supabase.co';
-alter database postgres set app.settings.service_role_key = 'TA_SERVICE_ROLE_KEY';
+select pg_reload_conf();
+```
+
+Applique ensuite `20261128_security_hardening_followup.sql`. La migration transfère automatiquement une ancienne clé enregistrée dans `app.settings.service_role_key` vers Supabase Vault. Si aucune ancienne clé n'existe, ajoute la clé dans le coffre Vault de Supabase avec le nom `supabase_service_role_key`. Après la migration, réinitialise l'ancien paramètre dans SQL Editor:
+
+```sql
+alter database postgres reset app.settings.service_role_key;
 select pg_reload_conf();
 ```
 
@@ -26,7 +32,6 @@ La clé publique VAPID est dans `index.html`. La clé privée VAPID ne doit jama
 supabase secrets set VAPID_PUBLIC_KEY="TA_VAPID_PUBLIC_KEY"
 supabase secrets set VAPID_PRIVATE_KEY="TA_VAPID_PRIVATE_KEY"
 supabase secrets set VAPID_SUBJECT="mailto:ton-email@example.com"
-supabase secrets set SUPABASE_SERVICE_ROLE_KEY="TA_SERVICE_ROLE_KEY"
 ```
 
 Important: vérifie que `VAPID_PUBLIC_KEY` dans les secrets est exactement la même valeur que `VAPID_PUBLIC_KEY` dans `index.html`.
@@ -41,7 +46,7 @@ La fonction vérifie elle-même le header `Authorization` avec la service role k
 
 ## 4. Test
 
-1. Déploie `index.html`, `sw.js`, `manifest.json` et `vercel.json`.
+1. Après application de la migration `20261128_security_hardening_followup.sql`, déploie `index.html`, `sw.js`, `manifest.json` et `vercel.json`.
 2. Ouvre l'app en HTTPS.
 3. Connecte-toi.
 4. Active Notifications dans Réglages.

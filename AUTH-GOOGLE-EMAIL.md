@@ -37,7 +37,11 @@ Ensuite, dans Supabase > Authentication > Providers > Google :
 - Coller le Client ID Google.
 - Coller le Client Secret Google.
 
-## 3. Deploiement
+## 3. Bloquer les nouvelles inscriptions par email
+
+La migration `20261128_security_hardening_followup.sql` crée le hook `public.before_user_created_google_only(jsonb)`. Après l'avoir appliquée, ouvre Supabase > Authentication > Hooks, active **Before User Created**, puis sélectionne cette fonction PostgreSQL. Le hook refuse les nouvelles inscriptions autres que Google et laisse les comptes e-mail existants se connecter.
+
+## 4. Deploiement
 
 Redeployer sur Vercel avec :
 
